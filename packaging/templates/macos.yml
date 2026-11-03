@@ -1,0 +1,113 @@
+name: macOS
+
+# Reusable macOS release pipeline: build, sign, notarize, package.
+#
+# Copy this file into any project's .github/workflows/ and set the three
+# variables below. The signing step needs six repository secrets (owner-side);
+# without them the build still runs, ad-hoc signed.
+#
+#   APPLE_CERTIFICATE           base64 of the Developer ID Application .p12
+#   APPLE_CERTIFICATE_PASSWORD  that .p12's password
+#   KEYCHAIN_PASSWORD           password for the temporary signing keychain
+#   APPLE_ID                    Apple account email for notarization
+#   APPLE_PASSWORD              app-specific password for that account
+#   APPLE_TEAM_ID               10-character Apple team id
+#
+# The App name and the binary path are set here; the packaging script does the
+# rest (assemble the .app, xattr -cr, sign inside-out, notarize, staple, DMG,
+# verify the app inside the mounted image).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version override for a test run (empty = Cargo.toml)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # --- configure these three for your project -------------------------------
+  APP_NAME: "Your App"                 # display name, also the .app folder
+  BINARY_NAME: "your-app"              # the executable inside the .app
+  APPLE_BUNDLE_ID: "com.example.yourapp"
+  # -------------------------------------------------------------------------
+  RUST_VERSION: "1.99.1"
+  CARGO_TARGET_DIR: ${{ github.workspace }}/target
+  # `inputs.version` is user-supplied, so it only ever reaches the build
+  # through the environment - never interpolated into a `run:` line, where it
+  # would be a command-injection vector. packaging/env.sh validates its shape.
+  WORDCRAFT_VERSION: ${{ inputs.version }}
+
+jobs:
+  build:
+    name: Build, sign and notarize
+    runs-on: macos-14
+    timeout-minutes: 90
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+          components: rustfmt,clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: macos-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            macos-${{ runner.os }}-
+
+      - name: Import the Developer ID certificate
+        # Sets MACOS_SIGN_IDENTITY and MACOS_KEYCHAIN for the next step.
+        # Without APPLE_CERTIFICATE it warns and exits 0, and the build is
+        # ad-hoc signed.
+        run: packaging/macos/import-cert.sh
+
+      - name: Build, sign, notarize and package
+        run: packaging/macos/package.sh --arch universal
+
+      - name: Checksums
+        run: |
+          cd "${{ github.workspace }}/dist/release"
+          # macOS has no sha256sum; shasum -a 256 is the portable form.
+          shasum -a 256 ./*.dmg ./*.zip > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Upload the artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            ${{ github.workspace }}/dist/release/*.dmg
+            ${{ github.workspace }}/dist/release/*.zip
+            ${{ github.workspace }}/dist/release/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ github.workspace }}/dist/release/*.dmg
+            ${{ github.workspace }}/dist/release/*.zip
+            ${{ github.workspace }}/dist/release/SHA256SUMS.txt
+          fail_on_unmatched_files: true
