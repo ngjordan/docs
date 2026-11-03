@@ -1,0 +1,202 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		5D9F16E25D8A566E876D96E6 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = IridiumDocsApp.swift;
+			sourceTree = "<group>";
+		};
+		2B4680228A61540DBB51CFBC = {
+			isa = PBXBuildFile;
+			fileRef = 5D9F16E25D8A566E876D96E6 /* IridiumDocsApp.swift */;
+		};
+		C1E863620C975BE3BF649E79 = {
+			isa = PBXGroup;
+			children = (
+				5D9F16E25D8A566E876D96E6 /* IridiumDocsApp.swift */,
+			);
+			path = IridiumDocs;
+			sourceTree = "<group>";
+		};
+		4C783A25446C57388AD390BD = {
+			isa = PBXGroup;
+			children = (
+				C1E863620C975BE3BF649E79 /* IridiumDocs */,
+				75F813D4D8C852129C03B4CB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CD0E56AB31FD50ECAA938E44 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = IridiumDocs.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		75F813D4D8C852129C03B4CB = {
+			isa = PBXGroup;
+			children = (
+				CD0E56AB31FD50ECAA938E44 /* IridiumDocs.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7003A85A968953B4B05845B3 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4680228A61540DBB51CFBC /* IridiumDocsApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FA1742435A1A528BAFF8B0B0 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7CF36D043A65B10A3DA0C31 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		58FD4927A1F05E8081BC0608 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
+			DEVELOPMENT_TEAM = 5JY6QC2345;
+			SWIFT_VERSION = 5.0;
+			IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+			MARKETING_VERSION = 0.1.0;
+			CURRENT_PROJECT_VERSION = 1;
+			TARGETED_DEVICE_FAMILY = "1,2";
+			SDKROOT = iphoneos;
+			CODE_SIGN_STYLE = Automatic;
+			ENABLE_PREVIEWS = YES;
+			SWIFT_EMIT_LOC_STRINGS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+			};
+			name = Debug;
+		};
+		C37DB35DB49A56FCBF9CD91F = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
+			DEVELOPMENT_TEAM = 5JY6QC2345;
+			SWIFT_VERSION = 5.0;
+			IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+			MARKETING_VERSION = 0.1.0;
+			CURRENT_PROJECT_VERSION = 1;
+			TARGETED_DEVICE_FAMILY = "1,2";
+			SDKROOT = iphoneos;
+			CODE_SIGN_STYLE = Automatic;
+			ENABLE_PREVIEWS = YES;
+			SWIFT_EMIT_LOC_STRINGS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+			};
+			name = Release;
+		};
+		47C3F7BBFC955887A4B6184B = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+			};
+			name = Debug;
+		};
+		E022876F7DBF5A0FBFEC10FA = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		978A4EE823D25EDAB5CDC974 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				47C3F7BBFC955887A4B6184B /* Debug */,
+				E022876F7DBF5A0FBFEC10FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D4AF5137236856CAB6B680BE = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58FD4927A1F05E8081BC0608 /* Debug */,
+				C37DB35DB49A56FCBF9CD91F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0D7E8DF2681D56E5A8DD59F3 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D4AF5137236856CAB6B680BE /* Build configuration list */;
+			buildPhases = (
+				7003A85A968953B4B05845B3 /* Sources */,
+				A7CF36D043A65B10A3DA0C31 /* Frameworks */,
+				FA1742435A1A528BAFF8B0B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IridiumDocs;
+			productName = IridiumDocs;
+			productReference = CD0E56AB31FD50ECAA938E44 /* IridiumDocs.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4CAADC29A4865EC29B7C6F6A = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					0D7E8DF2681D56E5A8DD59F3 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 978A4EE823D25EDAB5CDC974 /* Build configuration list */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4C783A25446C57388AD390BD;
+			productRefGroup = 75F813D4D8C852129C03B4CB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D7E8DF2681D56E5A8DD59F3 /* IridiumDocs */,
+			);
+		};
+	};
+	rootObject = 4CAADC29A4865EC29B7C6F6A /* Project object */;
+}

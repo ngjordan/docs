@@ -1,0 +1,146 @@
+name: iOS
+
+# Builds, signs and uploads an iOS app to TestFlight.
+#
+# Signing material comes from repository secrets, all set through the App Store
+# Connect API (packaging/asc_create_cert.py, packaging/asc_setup.py):
+#
+#   ASC_API_KEY                          the AuthKey_*.p8
+#   ASC_ISSUER_ID                        the Issuer ID
+#   ASC_KEY_ID                           the Key ID
+#   APPLE_DISTRIBUTION_CERTIFICATE       base64 of the distribution .p12
+#   APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD  that .p12's password
+#   APPLE_MOBILEROVISION_PROFILE         hex of the .mobileprovision
+#   APPLE_TEAM_ID                        the team id
+#
+# Requires a macOS runner: xcodebuild, the iOS SDK and the signing tools only
+# exist there.
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BUNDLE_ID: ph.iridium.docs
+  TEAM_ID: 5JY6QC2345
+  SCHEME_NAME: IridiumDocs
+  # The workspace root: an Xcode project sits in apps/ios/.
+  PROJECT_DIR: apps/ios
+
+jobs:
+  build:
+    name: Build and upload to TestFlight
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app
+          xcodebuild -version
+
+      - name: Import the distribution certificate
+        env:
+          # Secrets go through the environment, never into a run: line, where
+          # an expression would be interpolated into the shell command.
+          DIST_CERT_B64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE }}
+          DIST_CERT_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          CERT="$RUNNER_TEMP/dist.p12"
+          echo "$DIST_CERT_B64" | base64 --decode > "$CERT"
+          # A throwaway keychain: the password is random and the keychain dies
+          # with the job.
+          KC="$RUNNER_TEMP/signing.keychain-db"
+          security create-keychain -p "$RUNNER_TEMP" "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p "$RUNNER_TEMP" "$KC"
+          security import "$CERT" -P "$DIST_CERT_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security -f pkcs12 -k "$KC"
+          rm -f "$CERT"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$RUNNER_TEMP" "$KC" >/dev/null
+          security list-keychains -d user -s "$KC"
+          echo "MACOS_KEYCHAIN=$KC" >> "$GITHUB_ENV"
+          security find-identity -v -p codesigning "$KC"
+
+      - name: Install the provisioning profile
+        env:
+          PROFILE_HEX: ${{ secrets.APPLE_MOBILEROVISION_PROFILE }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          # The profile is stored hex-encoded so it survives the secrets API.
+          echo "$PROFILE_HEX" | xxd -r -p \
+            > "$HOME/Library/MobileDevice/Provisioning Profiles/$BUNDLE_ID.mobileprovision"
+          security cms -D -i "$HOME/Library/MobileDevice/Provisioning Profiles/$BUNDLE_ID.mobileprovision" \
+            > /tmp/profile.plist
+          /usr/libexec/PlistBuddy -c "Print :Name" /tmp/profile.plist
+
+      - name: Build the archive
+        run: |
+          set -euo pipefail
+          cd "$PROJECT_DIR"
+          xcodebuild archive \
+            -scheme "$SCHEME_NAME" \
+            -project IridiumDocs.xcodeproj \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$BUNDLE_ID" \
+            | xcpretty || true
+          ls -la "$RUNNER_TEMP/App.xcarchive"
+
+      - name: Export the ipa
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          {
+            "method": "app-store",
+            "teamID": "$TEAM_ID",
+            "signingStyle": "manual",
+            "provisioningProfiles": { "$BUNDLE_ID" = "$BUNDLE_ID" },
+            "destination": "upload"
+          }
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/ipa" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+          ls -la "$RUNNER_TEMP/ipa"
+
+      - name: Upload the artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: ${{ runner.temp }}/ipa/*.ipa
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload to TestFlight
+        if: github.ref == 'refs/heads/main'
+        env:
+          ASC_KEY: ${{ secrets.ASC_API_KEY }}
+          ASC_ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          set -euo pipefail
+          pip3 install --quiet aliyun-asc-api 2>/dev/null || true
+          # The Transporter CLI ships with Xcode; it is the supported upload path.
+          xcrun altool --upload-app --file "$RUNNER_TEMP/ipa"/*.ipa \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER" --type ios

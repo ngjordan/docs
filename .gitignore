@@ -4,3 +4,6 @@
 *.csr
 *.p12
 *.pem
+apps/ios/*.xcodeproj/xcuserdata/
+**/xcuserdata/
+*.xcworkspace/xcuserdata/
