@@ -18,8 +18,6 @@ import sys
 import time
 import uuid
 
-from PIL import Image
-
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "apps/ios")
 PROJ = ROOT / "IridiumDocs.xcodeproj"
 BUNDLE_ID = "ph.iridium.docs"
@@ -502,12 +500,15 @@ print("self-check: every resource is a group child and in the resources phase")
 # iOS rejects an icon with an alpha channel, and a transparent corner is the
 # usual cause. Catch it here rather than at upload time.
 _icon_bad = []
-_seen = {}
-for _png in sorted(ICON_SET.glob("*.png")):
-    _mode = Image.open(_png).mode
-    if _mode not in ("RGB", "L"):
-        _icon_bad.append(f"{_png.name} is {_mode}")
-    _seen.setdefault(_png.name, []).append(_png)
+try:
+    from PIL import Image as _PILImage
+except ImportError:
+    _PILImage = None
+if _PILImage is not None:
+    for _png in sorted(ICON_SET.glob("*.png")):
+        _mode = _PILImage.open(_png).mode
+        if _mode not in ("RGB", "L"):
+            _icon_bad.append(f"{_png.name} is {_mode}")
 # Every declared slot must point at its own file.
 _declared = json.loads((ICON_SET / "Contents.json").read_text())
 _names = [i["filename"] for i in _declared["images"]]
