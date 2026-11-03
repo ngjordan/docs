@@ -61,6 +61,20 @@ jobs:
           set -euo pipefail
           CERT="$RUNNER_TEMP/dist.p12"
           printf '%s' "$DIST_CERT_B64" | base64 --decode > "$CERT"
+          # Prove the secret survived the trip: the decoded file must be a valid
+          # PKCS#12 and must open with the password we were given. Without these
+          # checks a bad decode or a mangled password surfaces only as the
+          # opaque "MAC verification failed" from security import.
+          echo "cert bytes: $(wc -c < "$CERT")"
+          echo "cert sha256: $(shasum -a 256 "$CERT" | cut -d' ' -f1)"
+          echo "password length: ${#DIST_CERT_PASSWORD}"
+          echo "password repr: $(printf '%s' "$DIST_CERT_PASSWORD" | od -c | head -2)"
+          if ! openssl pkcs12 -in "$CERT" -passin "pass:$DIST_CERT_PASSWORD" -nokeys -passout pass: \
+               >/dev/null 2>&1; then
+            echo "::error::the certificate and password do not match as delivered"
+            exit 1
+          fi
+          echo "certificate opens with the password"
           # A throwaway keychain: the password is random and the keychain dies
           # with the job.
           KC="$RUNNER_TEMP/signing.keychain-db"
