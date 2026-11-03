@@ -62,15 +62,34 @@ def newest_build():
     return builds[0]
 
 
+def build_by_version(version):
+    """Pick the build with this version number.
+
+    The upload step knows the version it built; the newest build may be a
+    different one while Apple is still processing.
+    """
+    for b in api(f"/v1/apps/{APP_ID}/builds").get("data", []):
+        if str(b["attributes"].get("version")) == str(version):
+            return b
+    sys.exit(f"no build with version {version} on the app")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--build", help="build id; default: the newest")
+    ap.add_argument("--version", help="pick the build with this version number")
     ap.add_argument("--group", default=DEFAULT_GROUP)
     ap.add_argument("--no-encryption", action="store_true", default=True,
                     help="declare that the build uses no non-exempt encryption")
     args = ap.parse_args()
 
-    build_id = args.build or newest_build()["id"]
+    if args.build:
+        build = api(f"/v1/builds/{args.build}")["data"]
+    elif args.version:
+        build = build_by_version(args.version)
+    else:
+        build = newest_build()
+    build_id = build["id"]
     attrs = api(f"/v1/builds/{build_id}")["data"]["attributes"]
     print(f"build {build_id}: version {attrs.get('version')}, "
           f"state {attrs.get('processingState')}")

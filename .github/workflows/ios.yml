@@ -222,6 +222,12 @@ jobs:
           mkdir -p "$HOME/.appstoreconnect/private_keys"
           printf '%s' "$ASC_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          # The build number (CFBundleVersion). It has to be higher than the
+          # last uploaded one, and the project generator computes it; read it
+          # back so the TestFlight step targets this build and not another.
+          BUILD_VERSION=$(grep -oE 'CURRENT_PROJECT_VERSION = [0-9]+' \
+            apps/ios/IridiumDocs.xcodeproj/project.pbxproj | head -1 | grep -oE '[0-9]+')
+          echo "build version: $BUILD_VERSION"
           # Apple reports a missing App Store Connect app record as
           # "No suitable application records were found", which reads like a
           # signing problem. Turn it into an actionable message.
@@ -245,19 +251,35 @@ jobs:
             # export compliance declared and the build attached to an
             # external beta group (the default "Team" group is internal and
             # refuses manually uploaded builds).
-            python3 -m pip install --quiet --disable-pip-version-check jwt \
-              || python3 -m pip install --quiet --disable-pip-version-check --break-system-packages jwt
+            # The runner's python is externally managed, so a plain pip
+            # install fails and leaves a *different* jwt package behind
+            # (one without .encode). Use a venv.
+            python3 -m venv "$RUNNER_TEMP/asc-venv"
+            "$RUNNER_TEMP/asc-venv/bin/pip" install --quiet --disable-pip-version-check jwt
             export APPLE_KEY_DIR="$RUNNER_TEMP/apple-key"
             mkdir -p "$APPLE_KEY_DIR"
             printf '%s' "$ASC_KEY" > "$APPLE_KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
             printf '%s' "$ASC_ISSUER" > "$APPLE_KEY_DIR/issuer_id"
             printf '%s' "$ASC_KEY_ID" > "$APPLE_KEY_DIR/key_id"
             chmod 600 "$APPLE_KEY_DIR"/*
-            for _try in 1 2 3 4 5 6; do
-              if python3 packaging/testflight.py; then break; fi
+            # Apple processes an upload asynchronously, so the build may not be
+            # assignable yet. Retry, and fail the job if it never becomes
+            # assignable - a silent success here would leave an untestable
+            # build in App Store Connect.
+            TF_OK=0
+            for _try in 1 2 3 4 5 6 7 8; do
+              if "$RUNNER_TEMP/asc-venv/bin/python" packaging/testflight.py --version "$BUILD_VERSION"; then
+                TF_OK=1
+                break
+              fi
               echo "::warning::the build is still processing; retrying in 60s"
               sleep 60
             done
+            if [[ "$TF_OK" != 1 ]]; then
+              echo "::error::the build uploaded but was never made testable (export"
+              echo "::error::compliance or the beta group assignment failed)."
+              exit 1
+            fi
           fi
           if [[ "$UPLOAD_RC" != 0 ]] && grep -q "No suitable application records" "$RUNNER_TEMP/altool.log"; then
             echo "::error::no App Store Connect app record exists for bundle id $BUNDLE_ID."
