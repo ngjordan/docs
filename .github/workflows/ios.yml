@@ -135,6 +135,9 @@ jobs:
           ls -la "$RUNNER_TEMP/App.xcarchive"
 
       - name: Export the ipa
+        env:
+          ASC_KEY: ${{ secrets.ASC_API_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
           set -euo pipefail
           # The YAML block scalar indents this block, so the heredoc body is
@@ -149,7 +152,7 @@ jobs:
           <plist version="1.0">
           <dict>
             <key>method</key>
-            <string>app-store</string>
+            <string>app-store-connect</string>
             <key>teamID</key>
             <string>PLACEHOLDER_TEAM</string>
             <key>signingStyle</key>
@@ -170,6 +173,12 @@ jobs:
               "$RUNNER_TEMP/ExportOptions.plist.in" \
               | sed -e 's/^[[:space:]]*//' > "$RUNNER_TEMP/ExportOptions.plist"
           plutil -lint "$RUNNER_TEMP/ExportOptions.plist"
+          # "Failed to Use Accounts" means the export wants an App Store Connect
+          # account. With destination=upload it uploads from xcodebuild itself,
+          # so it needs the API key on disk.
+          mkdir -p "$HOME/private_keys"
+          printf '%s' "$ASC_KEY" > "$HOME/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          chmod 600 "$HOME/private_keys/AuthKey_$ASC_KEY_ID.p8"
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportPath "$RUNNER_TEMP/ipa" \
