@@ -1,6 +1,9 @@
 [workspace]
 resolver = "3"
+# apps/ios is an Xcode project, not a cargo package: exclude it from the
+# members glob so cargo does not look for a Cargo.toml there.
 members = ["crates/*", "apps/*", "xtask"]
+exclude = ["apps/ios"]
 default-members = ["crates/*", "apps/wordcraft", "apps/wordcraft-cli", "xtask"]
 
 [workspace.package]
