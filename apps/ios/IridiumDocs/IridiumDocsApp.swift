@@ -6,10 +6,11 @@ struct IridiumDocsApp: App {
     @State private var showingAbout = false
 
     var body: some Scene {
-        // DocumentGroup hands the closure a `Document` reference (a class), so
-        // the binding is `$file`, not a projected value on a value type.
-        DocumentGroup(newDocument: Document()) { $file in
-            DocumentView(document: $file)
+        // DocumentGroup hands the closure a FileDocumentConfiguration, which
+        // carries the document itself. `document` is the reference type;
+        // DocumentView observes it directly.
+        DocumentGroup(newDocument: Document()) { file in
+            DocumentView(document: file.document)
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
                         Button {
@@ -51,7 +52,7 @@ final class Document: ObservableObject, FileDocument {
 }
 
 struct DocumentView: View {
-    @Binding var document: Document
+    @ObservedObject var document: Document
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
