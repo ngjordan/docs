@@ -51,9 +51,9 @@ def main() -> None:
         roles = a.get("roles", [])
         print(f"  user      {a.get('username')} ({a.get('firstName','')} {a.get('lastName','')})")
         print(f"  roles     {roles}")
+        # Apple returns roles as plain strings: ["ACCOUNT_HOLDER", "ADMIN"].
         for r in roles:
-            perms = r.get("rolePermissions", [])
-            print(f"  {r.get('role'):14s} -> {perms}")
+            print(f"  role           {r}")
         print()
 
     # What the key's role can actually do, per Apple's matrix.
@@ -71,9 +71,9 @@ def main() -> None:
     }
     for u in d.get("data", []):
         for r in u.get("attributes", {}).get("roles", []):
-            caps = ROLE_CAPS.get(r.get("role", "").upper())
+            caps = ROLE_CAPS.get(str(r).upper())
             if caps:
-                print(f"  role {r.get('role')} capabilities:")
+                print(f"  role {r} capabilities:")
                 for c in caps:
                     print(f"    - {c}")
 
