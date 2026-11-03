@@ -43,7 +43,7 @@ env:
 jobs:
   build:
     name: Build and upload to TestFlight
-    runs-on: macos-26-arm64
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - name: Check out
@@ -72,7 +72,9 @@ jobs:
           # checks a bad decode or a mangled password surfaces only as the
           # opaque "MAC verification failed" from security import.
           echo "cert bytes: $(wc -c < "$CERT")"
-          echo "cert sha256: $(shasum -a 256 "$CERT" | cut -d' ' -f1)"
+          # Quote the cut output: shellcheck SC2046.
+          CERT_SHA=$(shasum -a 256 "$CERT" | cut -d' ' -f1)
+          echo "cert sha256: $CERT_SHA"
           echo "password length: ${#DIST_CERT_PASSWORD}"
           echo "password repr: $(printf '%s' "$DIST_CERT_PASSWORD" | od -c | head -2)"
           if ! openssl pkcs12 -in "$CERT" -passin "pass:$DIST_CERT_PASSWORD" -nokeys -passout pass: \
