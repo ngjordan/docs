@@ -34,6 +34,9 @@ env:
   BUNDLE_ID: ph.iridium.docs
   TEAM_ID: 5JY6QC2345
   SCHEME_NAME: IridiumDocs
+  # The profile's NAME (not its bundle id): Xcode matches
+  # PROVISIONING_PROFILE_SPECIFIER against the name.
+  PROFILE_NAME: Iridium Docs App Store
   # The workspace root: an Xcode project sits in apps/ios/.
   PROJECT_DIR: apps/ios
 
@@ -120,7 +123,7 @@ jobs:
             DEVELOPMENT_TEAM="$TEAM_ID" \
             PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="$BUNDLE_ID" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             | tee "$RUNNER_TEMP/xcodebuild.log"
           # xcpretty swallows the useful part of xcodebuild's output; grep the
           # raw log so a failure names its real cause.
@@ -139,7 +142,7 @@ jobs:
             "method": "app-store",
             "teamID": "$TEAM_ID",
             "signingStyle": "manual",
-            "provisioningProfiles": { "$BUNDLE_ID" = "$BUNDLE_ID" },
+            "provisioningProfiles": { "$BUNDLE_ID" = "$PROFILE_NAME" },
             "destination": "upload"
           }
           PLIST
