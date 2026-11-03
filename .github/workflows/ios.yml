@@ -137,15 +137,39 @@ jobs:
       - name: Export the ipa
         run: |
           set -euo pipefail
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
-          {
-            "method": "app-store",
-            "teamID": "$TEAM_ID",
-            "signingStyle": "manual",
-            "provisioningProfiles": { "$BUNDLE_ID" = "$PROFILE_NAME" },
-            "destination": "upload"
-          }
+          # The YAML block scalar indents this block, so the heredoc body is
+          # indented too - which would become part of the plist. Strip the
+          # leading whitespace, then check it parses before using it.
+          # An XML plist: the JSON form is not a plist plistlib can read, and
+          # the YAML block scalar indents this block, so the heredoc body is
+          # indented too - which would become part of the file. Strip it.
+          cat > "$RUNNER_TEMP/ExportOptions.plist.in" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>PLACEHOLDER_TEAM</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>PLACEHOLDER_BUNDLE</key>
+              <string>PLACEHOLDER_PROFILE</string>
+            </dict>
+            <key>destination</key>
+            <string>upload</string>
+          </dict>
+          </plist>
           PLIST
+          sed -e "s/PLACEHOLDER_TEAM/$TEAM_ID/" \
+              -e "s/PLACEHOLDER_BUNDLE/$BUNDLE_ID/" \
+              -e "s/PLACEHOLDER_PROFILE/$PROFILE_NAME/" \
+              "$RUNNER_TEMP/ExportOptions.plist.in" \
+              | sed -e 's/^[[:space:]]*//' > "$RUNNER_TEMP/ExportOptions.plist"
+          plutil -lint "$RUNNER_TEMP/ExportOptions.plist"
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportPath "$RUNNER_TEMP/ipa" \
