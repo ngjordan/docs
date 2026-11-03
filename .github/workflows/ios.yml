@@ -173,16 +173,16 @@ jobs:
               "$RUNNER_TEMP/ExportOptions.plist.in" \
               | sed -e 's/^[[:space:]]*//' > "$RUNNER_TEMP/ExportOptions.plist"
           plutil -lint "$RUNNER_TEMP/ExportOptions.plist"
-          # "Failed to Use Accounts" means the export wants an App Store Connect
-          # account. With destination=upload it uploads from xcodebuild itself,
-          # so it needs the API key on disk.
-          mkdir -p "$HOME/private_keys"
-          printf '%s' "$ASC_KEY" > "$HOME/private_keys/AuthKey_$ASC_KEY_ID.p8"
-          chmod 600 "$HOME/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          # destination=upload makes xcodebuild want an Apple ID in Xcode's
+          # Accounts ("App Store Connect access for <team> is required"), which
+          # an API key cannot provide. Export the ipa locally instead and let
+          # altool do the upload - altool takes the API key.
+          sed -e 's|<string>upload</string>|<string>export</string>|' \
+            "$RUNNER_TEMP/ExportOptions.plist" > "$RUNNER_TEMP/ExportOptions-export.plist"
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportPath "$RUNNER_TEMP/ipa" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-export.plist"
           ls -la "$RUNNER_TEMP/ipa"
 
       - name: Upload the artifact
@@ -201,7 +201,10 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
           set -euo pipefail
-          pip3 install --quiet aliyun-asc-api 2>/dev/null || true
-          # The Transporter CLI ships with Xcode; it is the supported upload path.
+          # altool reads the key from ~/.appstoreconnect/private_keys (or
+          # ./private_keys); --apiKey names the key id, --apiIssuer the issuer.
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           xcrun altool --upload-app --file "$RUNNER_TEMP/ipa"/*.ipa \
             --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER" --type ios
