@@ -1,4 +1,4 @@
-//! WordCraft import/export for the "other" text formats: plain text, Markdown (CommonMark subset
+//! Iridium Docs import/export for the "other" text formats: plain text, Markdown (CommonMark subset
 //! plus GFM tables and strikethrough), HTML (and MHT web archives, read-only), RTF, OpenDocument
 //! Text and LaTeX — and, read-only, spreadsheet cells for mail-merge recipient lists ([`sheet`]:
 //! .xlsx/.xlsm/.xls/.ods).

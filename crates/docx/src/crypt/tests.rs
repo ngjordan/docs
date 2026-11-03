@@ -49,7 +49,7 @@ fn legacy_protection_hash_is_verified() {
     assert_eq!(super::check_protection_password(&attrs, "Example"), Correct);
     assert_eq!(super::check_protection_password(&attrs, "example"), Incorrect);
     assert_eq!(super::check_protection_password(&attrs, ""), Incorrect);
-    // MD5 (and the other algorithms WordCraft lacks), hostile spin counts: refused.
+    // MD5 (and the other algorithms Iridium Docs lacks), hostile spin counts: refused.
     assert_eq!(super::check_protection_password(&legacy("3", KNOWN_LEGACY_SHA1, "100000"), "Example"), Unsupported);
     assert_eq!(super::check_protection_password(&legacy("4", KNOWN_LEGACY_SHA1, "4294967295"), "Example"), Unsupported);
     assert_eq!(super::check_protection_password(&legacy("4", KNOWN_LEGACY_SHA1, "-1"), "Example"), Unsupported);
@@ -213,7 +213,7 @@ fn standard_key_matches_a_real_world_package() {
 }
 
 /// Standard encryption's key derivation (§2.3.4.7) for the password "Password1234_" and the
-/// salt 00 01 … 0F. The expected keys were computed outside WordCraft (Python's hashlib)
+/// salt 00 01 … 0F. The expected keys were computed outside Iridium Docs (Python's hashlib)
 /// following the specification's steps, so the encryptor and decryptor can't share a mistake.
 #[test]
 fn standard_key_matches_an_independent_derivation() {
@@ -267,7 +267,7 @@ fn hand_built_standard(payload: &[u8], password: &str) -> Vec<u8> {
     let key = standard_key(&salt, password, 16);
     let mut hash = sha1::Sha1::digest(verifier).to_vec();
     hash.resize(32, 0); // the hash, zero-padded to two AES blocks
-    let csp: Vec<u8> = "WordCraft test provider".encode_utf16().chain([0]).flat_map(u16::to_le_bytes).collect();
+    let csp: Vec<u8> = "Iridium Docs test provider".encode_utf16().chain([0]).flat_map(u16::to_le_bytes).collect();
 
     let mut header = Vec::new();
     header.extend_from_slice(&0x24u32.to_le_bytes()); // Flags: fCryptoAPI | fAES

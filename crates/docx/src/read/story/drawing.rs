@@ -10,7 +10,7 @@ impl Reader<'_> {
     /// Read a `w:drawing` frame and dispatch its payload to the picture, shape or graphic reader.
     /// Frame dimensions are converted from EMUs to bounded point values; placement, alternative
     /// text and drawing ids are carried into the object. Returns `None` when the frame or payload
-    /// cannot be read. Ink written by WordCraft keeps its tool's caps rather than an outline cap.
+    /// cannot be read. Ink written by Iridium Docs keeps its tool's caps rather than an outline cap.
     pub(super) fn read_drawing(&mut self, sc: &mut StoryCtx, d: &El, rels: &Rels) -> Option<InlineObject> {
         let (c, anchored) = match d.child("wp:inline") {
             Some(c) => (c, false),
@@ -86,7 +86,7 @@ impl Reader<'_> {
         } else {
             let wsp = direct_shape.or_else(|| gd.find("wps:wsp"))?;
             let mut obj = self.read_wsp(sc, wsp, rels, w, h, float);
-            // A freeform: whether it's ink WordCraft wrote.
+            // A freeform: whether it's ink Iridium Docs wrote.
             if let InlineObject::Shape { freeform: Some(f), extra, .. } = &mut obj
                 && let Some(name) = c.child("wp:docPr").and_then(|p| p.attr("name"))
                 && let Some(tool) = crate::read::freeform::ink_tool(name)
@@ -220,7 +220,7 @@ impl Reader<'_> {
         }
         let items = if self.chunks.graphic == 0 { Vec::new() } else { self.graphic_items(kind, &key.1, w, h) };
         self.chunks.graphic = self.chunks.graphic.saturating_sub(graphic_work(&items));
-        // A chart or SmartArt that is exactly what WordCraft writes for its model can be edited
+        // A chart or SmartArt that is exactly what Iridium Docs writes for its model can be edited
         // (and is written from the model); any other stays as it was read.
         let chart = match kind {
             GraphicKind::Chart if !items.is_empty() => self.graphic_part(&key.1).and_then(|space| crate::chart_spec::spec_of(&space)).map(Arc::new),

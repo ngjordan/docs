@@ -253,7 +253,7 @@ fn other_regions_show_by_name_once() {
     assert_eq!(c.listed, PROOFING_LANGUAGES.map(|(t, _)| t == "pt-BR"));
 }
 
-/// The Englishes WordCraft proofs differently are in the menu, checked by their tags, and
+/// The Englishes Iridium Docs proofs differently are in the menu, checked by their tags, and
 /// every English region has a name (#1281, #1045).
 #[test]
 fn english_dialects_are_in_the_language_menu() {
@@ -282,7 +282,7 @@ fn indonesian_has_a_name_in_the_language_menu() {
     }
 }
 
-/// #3360, #3553: the Spanishes WordCraft proofs are in the menu, checked by their tags; other
+/// #3360, #3553: the Spanishes Iridium Docs proofs are in the menu, checked by their tags; other
 /// Spanish regions show by name, and a bare `es` is Spain's.
 #[test]
 fn spanish_varieties_are_in_the_language_menu() {

@@ -1072,8 +1072,8 @@ fn run_fmt<'a>(runs: &'a [(String, Fmt)], t: &str) -> &'a Fmt {
 
 #[test]
 fn heading_and_code_runs_take_their_style_formatting_on_import() {
-    // A stylesheet entry without formatting words (WordCraft's older files, minimal
-    // stylesheets): WordCraft's own heading and code formatting stand in for the style's.
+    // A stylesheet entry without formatting words (Iridium Docs's older files, minimal
+    // stylesheets): Iridium Docs's own heading and code formatting stand in for the style's.
     let rtf = br"{\rtf1\ansi{\fonttbl{\f0 Times New Roman;}{\f1 Arial;}{\f2 Courier New;}}{\stylesheet{\s0 Normal;}{\s2 heading 2;}{\s9 Code;}}
 \pard\s2\b\fs32 Head\par
 \pard\s2\b\fs26 Small\par
@@ -1151,7 +1151,7 @@ fn code_runs_in_the_files_code_font_have_no_direct_font() {
 fn hostile_sbasedon_chains_are_harmless() {
     let mut chain = String::new();
     // s100 (heading 5) based on s101 … s139, the last one not bold: past the bound, so
-    // heading 5 takes WordCraft's bold.
+    // heading 5 takes Iridium Docs's bold.
     for i in 100..140 {
         let name = if i == 100 { "heading 5".to_string() } else { format!("x{i}") };
         let b0 = if i == 139 { "\\b0" } else { "" };
@@ -1169,7 +1169,7 @@ fn hostile_sbasedon_chains_are_harmless() {
 \pard\s-2147483648\fs56 title\par}}"
     );
     let runs = text_runs(rtf.as_bytes());
-    // Self-based heading 1: WordCraft's values.
+    // Self-based heading 1: Iridium Docs's values.
     assert_eq!((run_fmt(&runs, "one").size, run_fmt(&runs, "one").bold), (None, false));
     // A loop between heading 3 and 4: both take heading 3's `\b0`.
     assert!(run_fmt(&runs, "three").bold);
@@ -1218,7 +1218,7 @@ fn a_style_chain_without_a_size_has_rtfs_default_size() {
 
 #[test]
 fn a_code_paragraph_round_trips_without_a_direct_code_font() {
-    // WordCraft's Code entry has no `\f` (the code font is on the paragraph): the code font
+    // Iridium Docs's Code entry has no `\f` (the code font is on the paragraph): the code font
     // stands in for the style's.
     let mut code = Para { kind: Kind::Code, ..Default::default() };
     code.push_text("let x", &Fmt::default());

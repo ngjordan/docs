@@ -5,7 +5,7 @@ use wordcraft_doc::Document;
 #[cfg(not(target_arch = "wasm32"))]
 mod safe_save;
 
-/// Formats WordCraft opens.
+/// Formats Iridium Docs opens.
 pub const OPEN_EXTS: &[&str] = &[
     "docx",
     "docm",
@@ -29,7 +29,7 @@ pub const OPEN_EXTS: &[&str] = &[
     "wcraft.json",
     "json",
 ];
-/// Formats WordCraft saves (Save As).
+/// Formats Iridium Docs saves (Save As).
 pub const SAVE_EXTS: &[&str] = &["docx", "docm", "dotx", "dotm", "pdf", "txt", "md", "html", "rtf", "odt", "tex", "png", "json", "xml"];
 
 /// Magic number for ZIP package signatures (used by .docx/.docm/.dotx/.dotm).
@@ -373,7 +373,7 @@ fn looks_like_web_page(bytes: &[u8]) -> bool {
     tag("<!doctype html") || tag("<html")
 }
 
-/// A file whose extension names no format WordCraft knows (`.m3u`, `.log`, `.ini`, none…),
+/// A file whose extension names no format Iridium Docs knows (`.m3u`, `.log`, `.ini`, none…),
 /// opened by what it holds, as Word does: a Word document or RTF file by its signature, a Word
 /// XML Document by its root element, a web page under a Word or RTF name as one
 /// (#2853), any other text through the plain-text import with encoding detection (#569).
@@ -388,10 +388,10 @@ fn open_by_content(
     let (mut doc, encrypted) = if bytes.starts_with(OLE_SIG) && wordcraft_docx::is_encrypted(bytes) {
         (read_docx(bytes, password).map_err(|e| e.to_string())?, true)
     } else if bytes.starts_with(ZIP_SIG) {
-        (read_docx(bytes, None).map_err(|e| format!("{name}: not a document WordCraft can open ({e})"))?, false)
+        (read_docx(bytes, None).map_err(|e| format!("{name}: not a document Iridium Docs can open ({e})"))?, false)
     } else if bytes.starts_with(OLE_SIG) {
         open_binary_doc(bytes, password)
-            .map_err(|e| if needs_password(&e) || wrong_password(&e) { e } else { format!("{name}: not a document WordCraft can open ({e})") })?
+            .map_err(|e| if needs_password(&e) || wrong_password(&e) { e } else { format!("{name}: not a document Iridium Docs can open ({e})") })?
     } else if bytes.starts_with(b"{\\rtf") {
         (wordcraft_formats::rtf::import(bytes)?, false)
     } else if is_word_xml(bytes) {
@@ -405,7 +405,7 @@ fn open_by_content(
     } else if wordcraft_formats::txt::is_text(bytes) {
         (wordcraft_formats::txt::import_on(bytes, page), false)
     } else if ext.is_empty() {
-        return Err(format!("{name}: not a document or text file WordCraft can open"));
+        return Err(format!("{name}: not a document or text file Iridium Docs can open"));
     } else {
         return Err(format!("{name}: unsupported format `.{ext}` (not a document or text file)"));
     };

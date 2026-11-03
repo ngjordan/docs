@@ -1,4 +1,4 @@
-//! WordCraft rasteriser: draws a page's display list with vello_cpu.
+//! Iridium Docs rasteriser: draws a page's display list with vello_cpu.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
 use std::collections::HashMap;

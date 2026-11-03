@@ -17,7 +17,7 @@ set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 HERE="$ROOT/packaging/linux"
-APP_ID=ai.storyteller.wordcraft
+APP_ID=ph.iridium.docs
 
 SKIP_BUILD=0
 FORMATS="appimage deb rpm tar"
@@ -37,7 +37,7 @@ case "$ARCH" in
   aarch64 | arm64) ARCH=aarch64; DEB_ARCH=arm64 ;;
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
-export WORDCRAFT_MAINTAINER="${WORDCRAFT_MAINTAINER:-WordCraft maintainers <wordcraft@storyteller.ai>}"
+export IRIDIUM_DOCS_MAINTAINER="${IRIDIUM_DOCS_MAINTAINER:-Iridium maintainers <docs@iridium.ph>}"
 BASENAME="wordcraft-$VERSION-linux-$ARCH"
 
 echo "==> WordCraft $VERSION for Linux $ARCH ($FORMATS)"

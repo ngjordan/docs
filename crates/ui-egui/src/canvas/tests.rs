@@ -340,7 +340,7 @@ fn caret_contrasts_with_what_lies_under_it() {
     assert_eq!(caret_contrast(Rgb(0x33, 0x33, 0x33)), Color32::WHITE, "dark paper");
     assert_eq!(caret_contrast(Rgb(0xC0, 0xC0, 0xC0)), Color32::BLACK, "light grey");
 
-    let doc = wordcraft_doc::Document::from_text("Hello WordCraft");
+    let doc = wordcraft_doc::Document::from_text("Hello Iridium Docs");
     let mut a = WordApp::new(wordcraft_engine::Session::new(doc), Default::default());
     let at = |a: &mut WordApp, off: usize| {
         let layout = a.session.layout();
@@ -368,7 +368,7 @@ fn caret_contrasts_with_what_lies_under_it() {
 #[test]
 fn read_mode_page_color_sets_the_reading_paper() {
     use wordcraft_doc::props::Rgb;
-    let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::from_text("Hello WordCraft")), Default::default());
+    let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::from_text("Hello Iridium Docs")), Default::default());
     a.run("design.pageColor", json!({"color": "#102040"})).unwrap();
     let paper = |a: &WordApp| page_render_options(a, false).paper_of(&a.session.doc);
     assert_eq!(paper(&a), Rgb(0x10, 0x20, 0x40), "Print Layout shows the page color");
@@ -407,7 +407,7 @@ fn read_mode_page_color_sets_the_reading_paper() {
 /// there is no caret, so the page's draw list isn't built for it.
 #[test]
 fn caret_colour_is_not_worked_out_while_the_caret_is_hidden() {
-    let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::from_text("Hello WordCraft")), Default::default());
+    let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::from_text("Hello Iridium Docs")), Default::default());
     a.run("select.text", json!({"text": "Hello"})).unwrap();
     let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(1440.0, 900.0)).build_ui_state(
         |ui, app: &mut WordApp| {
@@ -1490,7 +1490,7 @@ fn balloon_wrapper_keeps_real_font_rows_ink_and_reading_origins() {
 }
 
 fn assert_balloon_timestamp(when: &str) {
-    assert_eq!(when.len(), 16, "WordCraft comments carry a local YYYY-MM-DD HH:MM timestamp: {when:?}");
+    assert_eq!(when.len(), 16, "Iridium Docs comments carry a local YYYY-MM-DD HH:MM timestamp: {when:?}");
     let b = when.as_bytes();
     assert_eq!((b.get(4), b.get(7), b.get(10), b.get(13)), (Some(&b'-'), Some(&b'-'), Some(&b' '), Some(&b':')), "timestamp separators: {when:?}");
     assert!(b.iter().enumerate().all(|(i, c)| matches!(i, 4 | 7 | 10 | 13) || c.is_ascii_digit()), "timestamp fields are digits: {when:?}");
@@ -4802,7 +4802,7 @@ fn page_at_index(rects: &[Rect], p: Pos2) -> Option<usize> {
 /// the preview follows the pointer, and the object shows twice.
 #[test]
 fn the_view_key_changes_when_a_drag_takes_an_object_off_the_page() {
-    let doc = wordcraft_doc::Document::from_text("Hello WordCraft");
+    let doc = wordcraft_doc::Document::from_text("Hello Iridium Docs");
     let app = WordApp::new(wordcraft_engine::Session::new(doc), Default::default());
     let object = Pos::body(0, 5);
     let hidden = view_key(&app, false, Some(&object));

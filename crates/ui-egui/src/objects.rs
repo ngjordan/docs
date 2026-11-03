@@ -124,7 +124,7 @@ fn active_story(app: &WordApp, layout: &DocLayout) -> StoryRef {
     }
 }
 
-/// Whether the object under `hit` keeps its place and size: a chart or diagram WordCraft has no
+/// Whether the object under `hit` keeps its place and size: a chart or diagram Iridium Docs has no
 /// model for can be selected and deleted, not moved or resized, so it gets no handles, no move
 /// cursor and no drag.
 fn fixed(app: &WordApp, hit: &ObjectHit) -> bool {
@@ -132,7 +132,7 @@ fn fixed(app: &WordApp, hit: &ObjectHit) -> bool {
     matches!(app.session.doc.para_at(&pos).and_then(|p| p.object_at(pos.off)), Some(InlineObject::Graphic { .. })) && !size_only(app, hit)
 }
 
-/// Whether the object under `hit` is a chart or SmartArt that WordCraft can edit: it takes
+/// Whether the object under `hit` is a chart or SmartArt that Iridium Docs can edit: it takes
 /// resize handles and is laid out again at the new size, but it can't be moved or turned.
 fn size_only(app: &WordApp, hit: &ObjectHit) -> bool {
     let pos = hit.pos();

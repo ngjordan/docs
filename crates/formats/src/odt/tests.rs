@@ -125,7 +125,7 @@ fn frames_sharing_a_picture_all_show_it() {
 fn embedded_formula_object_reads_its_mathml() {
     // #3099: LibreOffice saves an equation as a `draw:object` (a formula sub-document whose
     // own `content.xml` is MathML) plus a `draw:image` replacement preview in LibreOffice's
-    // own metafile format, which WordCraft can't decode as a picture. The object's MathML
+    // own metafile format, which Iridium Docs can't decode as a picture. The object's MathML
     // must be read instead of silently dropping the frame (blank equation).
     let math = r#"<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo stretchy="false">=</mo><msup><mi mathvariant="italic">mc</mi><mn>2</mn></msup></mrow><annotation encoding="StarMath 5.0">E=mc^2</annotation></semantics></math>"#;
     let frame = r#"<draw:frame svg:width="0.5in" svg:height="0.2in"><draw:object xlink:href="./Object 1"/><draw:image xlink:href="./ObjectReplacements/Object 1"/></draw:frame>"#;

@@ -28,7 +28,7 @@ use zeroize::Zeroizing;
 use crate::DocxError;
 use crate::xml;
 
-/// The spin count Word uses, and WordCraft writes.
+/// The spin count Word uses, and Iridium Docs writes.
 pub const DEFAULT_SPIN_COUNT: u32 = 100_000;
 /// The largest spin count the specification allows (§2.3.4.10 `ST_SpinCount`): it bounds the
 /// work a hostile file can ask for.
@@ -192,10 +192,10 @@ fn parse_standard(info: &[u8]) -> Result<Standard<'_>, DocxError> {
     };
     let flags = u32_at(4)?;
     if flags & F_EXTERNAL != 0 {
-        return Err(bad("this file uses extensible encryption, which WordCraft can't open"));
+        return Err(bad("this file uses extensible encryption, which Iridium Docs can't open"));
     }
     if flags & STANDARD_FLAGS != STANDARD_FLAGS {
-        return Err(bad("this file's encryption isn't AES, which WordCraft can't open"));
+        return Err(bad("this file's encryption isn't AES, which Iridium Docs can't open"));
     }
     // EncryptionHeader (§2.3.2): Flags, SizeExtra, AlgID, AlgIDHash, KeySize, ProviderType, two
     // reserved words, then the CSP name, which isn't needed.
@@ -322,7 +322,7 @@ pub fn encrypt_with_spin_count(package: &[u8], password: &str, spin_count: u32) 
 }
 
 /// A package encrypted with the *Standard* method (§2.3.4.5–§2.3.4.9: AES-ECB, SHA-1, 50,000
-/// spins), as Word 2007 wrote it, for tests only: WordCraft saves with the agile method
+/// spins), as Word 2007 wrote it, for tests only: Iridium Docs saves with the agile method
 /// ([`encrypt`]). `key_bits` is 128, 192 or 256. The compound file holds just the two streams
 /// [`decrypt`] reads.
 #[doc(hidden)]
@@ -401,7 +401,7 @@ pub enum PasswordCheck {
     Correct,
     /// The password doesn't match.
     Incorrect,
-    /// The hash uses an algorithm or form WordCraft can't check, or is damaged. The protection
+    /// The hash uses an algorithm or form Iridium Docs can't check, or is damaged. The protection
     /// must stay on: guessing would let any password through.
     Unsupported,
 }
@@ -557,7 +557,7 @@ fn stream<F: Read + std::io::Seek>(comp: &mut cfb::CompoundFile<F>, path: &str, 
     Ok(v)
 }
 
-/// The hash algorithms agile encryption names that WordCraft supports.
+/// The hash algorithms agile encryption names that Iridium Docs supports.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Hash {
     Sha1,
@@ -831,7 +831,7 @@ fn parse_info(info: &[u8]) -> Result<Info, DocxError> {
     };
     match (major, minor) {
         (4, 4) => {}
-        (3 | 4, 3) => return Err(bad("this file uses extensible encryption, which WordCraft can't open")),
+        (3 | 4, 3) => return Err(bad("this file uses extensible encryption, which Iridium Docs can't open")),
         _ => return Err(bad(format!("unknown encryption version {major}.{minor}"))),
     }
     let root = xml::parse(info.get(8..).unwrap_or(&[]))?;

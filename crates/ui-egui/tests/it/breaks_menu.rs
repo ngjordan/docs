@@ -4,7 +4,7 @@ use serde_json::json;
 use wordcraft_engine::Session;
 use wordcraft_ui_egui::{Services, WordApp};
 
-/// A WordCraft window on the Layout tab, ready for ribbon clicks.
+/// A Iridium Docs window on the Layout tab, ready for ribbon clicks.
 fn layout_tab() -> egui_kittest::Harness<'static, WordApp> {
     let mut app = WordApp::new(Session::new(wordcraft_doc::Document::from_text("one\ntwo")), Services::default());
     // The labels below are English; an integration test otherwise follows the machine's language.

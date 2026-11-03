@@ -26,7 +26,7 @@ pub trait Backend {
 /// Looks up the control key for an address (`HOST:PORT`).
 type KeyFinder = Box<dyn Fn(&str) -> Result<String, String> + Send>;
 
-/// A running WordCraft app, reached through its loopback control port.
+/// A running Iridium Docs app, reached through its loopback control port.
 pub struct Remote {
     addr: String,
     conn: Option<(BufReader<TcpStream>, TcpStream)>,
@@ -203,7 +203,7 @@ impl Remote {
     fn exchange(&mut self, id: u64, method: &str, params: &Value) -> Result<Value, String> {
         let unreachable = |addr: &str, e: std::io::Error, connected: bool| {
             let retry = if connected { String::new() } else { "; will retry on each call".to_string() };
-            format!("WordCraft app at {addr} is not reachable: {e}{retry}")
+            format!("Iridium Docs app at {addr} is not reachable: {e}{retry}")
         };
         let mut first = true;
         let reply = loop {
@@ -254,7 +254,7 @@ impl Backend for Remote {
             Err(self.key_warning().map_or_else(
                 || {
                     format!(
-                        "unauthorized: the WordCraft app at {} refused the control key (from WORDCRAFT_CONTROL_KEY or the app's key file)",
+                        "unauthorized: the Iridium Docs app at {} refused the control key (from WORDCRAFT_CONTROL_KEY or the app's key file)",
                         self.addr
                     )
                 },
@@ -271,9 +271,9 @@ impl Backend for Remote {
 
     fn describe(&self) -> String {
         if self.connected {
-            format!("connected to the WordCraft app at {}", self.addr)
+            format!("connected to the Iridium Docs app at {}", self.addr)
         } else {
-            format!("will connect to the WordCraft app at {} when it opens", self.addr)
+            format!("will connect to the Iridium Docs app at {} when it opens", self.addr)
         }
     }
 }

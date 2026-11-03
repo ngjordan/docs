@@ -194,7 +194,7 @@ pub struct Session {
     /// Custom ribbon and Quick Access Toolbar (`tools.customizeRibbon`); the front end saves it too.
     pub ribbon: crate::RibbonLayout,
     /// The language new blank documents (and opened plain text) are written in, a BCP 47 tag;
-    /// `None` is WordCraft's default, US English. The front end sets it from the interface
+    /// `None` is Iridium Docs's default, US English. The front end sets it from the interface
     /// language with [`Session::set_editing_language`] (a Polish interface writes Polish).
     pub editing_lang: Option<String>,
     /// Editing inside an equation: which one and the caret in it.

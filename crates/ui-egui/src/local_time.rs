@@ -1,5 +1,5 @@
 //! Comment times in the user's own time zone. A document keeps a comment's time as written, and
-//! its UTC time beside it when it knows it (`w16cex:dateUtc`, which WordCraft writes for the
+//! its UTC time beside it when it knows it (`w16cex:dateUtc`, which Iridium Docs writes for the
 //! comments it stamps). The Comments pane and the balloons show it in local time, as Word does.
 
 /// Minutes to add to UTC for local time at Unix time `secs` (east of Greenwich is positive).
@@ -153,7 +153,7 @@ mod tests {
         assert_eq!(days_from_civil(2026, 10, 12), 20_738);
     }
 
-    /// WordCraft's own comments carry their UTC time: shown in the user's zone, across a date
+    /// Iridium Docs's own comments carry their UTC time: shown in the user's zone, across a date
     /// line too.
     #[test]
     fn utc_times_show_in_local_time() {

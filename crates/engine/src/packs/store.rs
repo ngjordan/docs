@@ -11,7 +11,7 @@ use super::{Cancel, Pack};
 
 /// The pack index this build trusts: craft-i18n's first Language pack release, language-packs-1
 /// (61 packs, built from craft-i18n `4504e288`), pinned by the sha256 of its `index.json`.
-/// `CRAFT_LANGUAGE_PACK_INDEX` (read by the font store itself) points WordCraft at a local or test
+/// `CRAFT_LANGUAGE_PACK_INDEX` (read by the font store itself) points Iridium Docs at a local or test
 /// index instead, for trying packs before they are released.
 pub const PACK_INDEX: PackIndexPin = PackIndexPin {
     url: "https://github.com/storytold/craft-i18n/releases/download/language-packs-1/index.json",

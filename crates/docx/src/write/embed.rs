@@ -3,7 +3,7 @@
 //! Each written object gets its kept markup with fresh relationship ids, pointing at copies of the
 //! parts it needs. The first object to use a part writes it under its original name (unless that
 //! name is one this writer uses for something else: then it's renamed). An object written again
-//! (copied and pasted in WordCraft) gets its own renamed copies of every part, so the copies stay
+//! (copied and pasted in Iridium Docs) gets its own renamed copies of every part, so the copies stay
 //! independent in Word; past [`MAX_COPY_BYTES`] of such copies, later ones share the first's parts.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
@@ -265,7 +265,7 @@ impl<'d> EmbedWriter<'d> {
                 }
                 None => {
                     log::warn!(
-                        "docx: the glossary's part {p} can't be cleaned of personal information; the glossary is written from its entries, without what WordCraft doesn't model"
+                        "docx: the glossary's part {p} can't be cleaned of personal information; the glossary is written from its entries, without what Iridium Docs doesn't model"
                     );
                     return false;
                 }

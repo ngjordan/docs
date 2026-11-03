@@ -566,7 +566,7 @@ fn reading_layout_reflows_into_viewport_height_pages_without_changing_print_layo
 
 #[test]
 fn hit_and_caret_agree() {
-    let d = Document::from_text("Hello world, this is WordCraft.\nSecond paragraph here.");
+    let d = Document::from_text("Hello world, this is Iridium Docs.\nSecond paragraph here.");
     let l = lay(&d);
     for off in [0, 5, 12, 31] {
         let pos = Pos::body(0, off);
@@ -2032,7 +2032,7 @@ fn private_use_bullet_no_font_draws_shows_the_levels_default_bullet() {
     for a in &mut d.numbering.abstracts {
         if let Some(l) = a.levels.get_mut(1) {
             l.text = "\u{F081}".into();
-            l.chr.font = Some("WordCraft Missing Font 1683".into());
+            l.chr.font = Some("Iridium Docs Missing Font 1683".into());
         }
     }
     d.format_paragraphs(&Pos::body(0, 0), &Pos::body(0, 0), &|p| p.numbering = Some(wordcraft_doc::props::NumRef { num: id, level: 1 })).unwrap();
@@ -5234,7 +5234,7 @@ fn justified_lines_shrink_spaces_in_word_2013_mode() {
 /// the right indent leaving room for N words plus one more that fits only if the spaces shrink):
 /// the spaces give up at most a quarter of their width, and a word with the space before it may
 /// overrun the line by at most 0.355 of its own width ("nn" fitted with its line's spaces 14.5%
-/// shrunk, "nnnn" with 25%). WordCraft allowed 20% whatever the word, so long words wrapped too
+/// shrunk, "nnnn" with 25%). Iridium Docs allowed 20% whatever the word, so long words wrapped too
 /// early and short ones too late.
 #[test]
 fn justified_spaces_shrink_a_quarter_at_most_and_by_the_word() {
@@ -8332,7 +8332,7 @@ fn list_item_first_word_gets_no_capital_squiggle() {
     assert_eq!(grammar_squiggles(&d), 1, "list switched off");
 }
 
-/// Text in a language WordCraft can't proof gets no spelling marks, and "Do not check spelling
+/// Text in a language Iridium Docs can't proof gets no spelling marks, and "Do not check spelling
 /// or grammar" text none either; the document default language applies to text without its own.
 #[test]
 fn unproofed_languages_and_no_proof_runs_are_not_marked() {
@@ -8699,7 +8699,7 @@ fn a_hidden_cell_mark_takes_no_room() {
 
 /// A text frame in a header, footer or cell (NIH's footers put the page number in one, centred,
 /// with the footer text wrapping around it) is placed apart: it takes no room in the flow, sits
-/// where its alignment says, and the text beside it keeps clear of it. WordCraft laid it out as
+/// where its alignment says, and the text beside it keeps clear of it. Iridium Docs laid it out as
 /// an ordinary paragraph, a line of its own above the footer text.
 #[test]
 fn a_text_frame_in_a_cell_floats_beside_the_text() {
@@ -8726,7 +8726,7 @@ fn a_text_frame_in_a_cell_floats_beside_the_text() {
 
 /// Word has no frames inside a text box: a paragraph there whose style carries a frame (a
 /// letterhead's "Weld" and "Governor" styles, framed at the page's left) runs in the box's text
-/// like any other. WordCraft placed each one apart at the frame's offset, so two of them in a row
+/// like any other. Iridium Docs placed each one apart at the frame's offset, so two of them in a row
 /// were drawn over each other (#2357).
 #[test]
 fn a_frame_inside_a_text_box_flows_with_its_text() {
@@ -8848,7 +8848,7 @@ fn keep_with_next_moves_a_paragraph_only_when_it_would_fit() {
 /// A kept heading goes with the paragraph after it when that paragraph cannot start on its
 /// page (#966): with widow/orphan control on, one line of it at the bottom of the page moves
 /// over with the rest, so only two lines below the heading hold it there. Word and LibreOffice
-/// both move the heading; WordCraft left it alone. With the control off the single line stays,
+/// both move the heading; Iridium Docs left it alone. With the control off the single line stays,
 /// and the heading keeps it company.
 #[test]
 fn keep_with_next_carries_the_heading_when_widow_control_moves_the_next_paragraph() {
@@ -9215,7 +9215,7 @@ fn paragraph_relative_floats_start_above_the_space_before() {
 }
 
 /// Unequal columns (a narrow label column and a wide text column, as in NIH's SARP form): text
-/// after a column break is broken for the column it lands in. WordCraft broke it for the narrow
+/// after a column break is broken for the column it lands in. Iridium Docs broke it for the narrow
 /// column it started in, so a paragraph took a dozen lines a word or two wide.
 #[test]
 fn text_after_a_column_break_takes_the_new_column_s_width() {
@@ -9316,7 +9316,7 @@ fn space_before_at_the_top_of_a_page_like_word() {
 }
 
 /// Word kerns a run only when Kerning for fonts (`w:kern`) is set and the font is at least that
-/// size; WordCraft kerned everything, so its lines held more text than Word's (measured in Word for
+/// size; Iridium Docs kerned everything, so its lines held more text than Word's (measured in Word for
 /// Windows with Calibri at 14 pt: no `w:kern`, `w:kern="0"` and a threshold above the size are
 /// all unkerned).
 #[test]
@@ -9343,7 +9343,7 @@ fn kerning_follows_kerning_for_fonts_like_word() {
 
 /// The ligatures a document asks for (`w14:ligatures`, Word's Font ▸ Advanced ▸ Ligatures) are
 /// the ones shaped: `none` draws every letter, `standard` turns them back on over a style that
-/// turned them off. Without a value WordCraft keeps its default, standard and contextual.
+/// turned them off. Without a value Iridium Docs keeps its default, standard and contextual.
 #[test]
 fn ligatures_follow_w14_ligatures() {
     use wordcraft_doc::props::{CharProps, Ligatures};
@@ -9373,7 +9373,7 @@ fn ligatures_follow_w14_ligatures() {
     let letters = text.chars().count();
     let none = Ligatures::from_ooxml("none");
     let standard = Ligatures::from_ooxml("standard");
-    assert!(glyphs(None, None) < letters, "WordCraft's default draws ligatures");
+    assert!(glyphs(None, None) < letters, "Iridium Docs's default draws ligatures");
     assert_eq!(glyphs(None, none), letters, "none: one glyph per letter");
     assert_eq!(glyphs(none, None), letters, "none from the character style");
     assert!(glyphs(none, standard) < letters, "standard over a style with none draws them again");

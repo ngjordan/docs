@@ -16,8 +16,8 @@ macro_rules! needs_catalogs {
     };
 }
 
-/// The translations in `code`'s embedded WordCraft catalog, plural forms apart: the fonts must
-/// cover WordCraft's own wording. (The shared catalog holds every app's; the CJK checks read it too.)
+/// The translations in `code`'s embedded Iridium Docs catalog, plural forms apart: the fonts must
+/// cover Iridium Docs's own wording. (The shared catalog holds every app's; the CJK checks read it too.)
 fn translations(code: &str) -> Vec<String> {
     let code = lang(code).code();
     CRAFT_I18N
@@ -730,7 +730,7 @@ fn a_polish_interface_writes_new_documents_in_polish() {
     let ctx = egui::Context::default();
     let frame = |app: &mut crate::WordApp| ctx.run_ui(egui::RawInput::default(), |ui| app.logic(ui.ctx())).drop_without_applying_deltas();
     frame(&mut app);
-    assert_eq!(app.session.editing_lang, None, "English interface: WordCraft's default, US English");
+    assert_eq!(app.session.editing_lang, None, "English interface: Iridium Docs's default, US English");
     assert_eq!(app.session.doc.styles.default_chr.lang.as_deref(), Some("en-US"));
     app.run("ui.language", serde_json::json!({"value": "pl"})).unwrap();
     frame(&mut app);
@@ -1156,7 +1156,7 @@ fn a_context_lookup_never_borrows_the_plain_translation() {
     assert_eq!(get("spacing", "Open"), None);
 }
 
-/// WordCraft offers exactly the languages in `LANGUAGES` when craft-i18n is embedded, and English
+/// Iridium Docs offers exactly the languages in `LANGUAGES` when craft-i18n is embedded, and English
 /// alone when it isn't: a missing catalog never fails, it shows English.
 #[test]
 fn the_languages_offered_are_the_embedded_ones_of_the_list() {
@@ -1170,7 +1170,7 @@ fn the_languages_offered_are_the_embedded_ones_of_the_list() {
         return;
     }
     let listed: Vec<&str> = LANGUAGES.iter().map(|l| l.code).collect();
-    assert_eq!(all, listed, "every language WordCraft lists has its catalog in craft-i18n");
+    assert_eq!(all, listed, "every language Iridium Docs lists has its catalog in craft-i18n");
     assert!(Lang::from_code("pseudo").is_none(), "the pseudo locale is never a setting");
 }
 
@@ -1182,7 +1182,7 @@ fn the_flatpak_manifest_pins_the_craft_i18n_rev() {
     let rev = std::fs::read_to_string(root.join("craft-i18n.rev")).unwrap();
     let rev = rev.trim();
     assert!(rev.len() == 40 && rev.bytes().all(|b| b.is_ascii_hexdigit()), "craft-i18n.rev holds one full SHA: {rev:?}");
-    let manifest = std::fs::read_to_string(root.join("packaging/linux/flatpak/ai.storyteller.wordcraft.yml")).unwrap();
+    let manifest = std::fs::read_to_string(root.join("packaging/linux/flatpak/ph.iridium.docs.yml")).unwrap();
     let source = manifest.split("url: https://github.com/storytold/craft-i18n").nth(1).expect("a craft-i18n git source");
     let source = source.split("- type:").next().unwrap_or(source);
     let commit = source.lines().find_map(|l| l.trim().strip_prefix("commit:")).expect("the craft-i18n source pins a commit");

@@ -46,7 +46,7 @@ pub(crate) use state::{lenient_order, lenient_places};
 /// The task panes, in their default order: each edge's first pane is outermost.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Pane {
-    /// SmartArt Design › Text Pane, while a SmartArt graphic WordCraft can edit is selected.
+    /// SmartArt Design › Text Pane, while a SmartArt graphic Iridium Docs can edit is selected.
     SmartArtText,
     Navigation,
     Clipboard,

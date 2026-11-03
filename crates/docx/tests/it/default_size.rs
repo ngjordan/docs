@@ -40,7 +40,7 @@ fn an_explicit_default_size_is_written_as_it_is() {
 }
 #[test]
 fn a_file_that_omits_the_default_size_is_still_read_as_ten_points() {
-    // The reader is unchanged: only what WordCraft writes differs. A package without a size
+    // The reader is unchanged: only what Iridium Docs writes differs. A package without a size
     // anywhere keeps its established reading.
     let root = r#"<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>"#;
     let doc = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>x</w:t></w:r></w:p></w:body></w:document>"#;

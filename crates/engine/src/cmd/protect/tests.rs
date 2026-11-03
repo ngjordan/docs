@@ -478,7 +478,7 @@ fn forms_mode_allows_edits_only_inside_fillable_controls() {
 }
 
 /// While Filling in forms is enforced, Word offers no Remove Content Control and greys out the
-/// Developer tab's control buttons and Properties. WordCraft removed a fillable control (its
+/// Developer tab's control buttons and Properties. Iridium Docs removed a fillable control (its
 /// content left as plain text), inserted new controls inside one, and renamed one.
 #[test]
 fn forms_mode_keeps_its_controls() {
@@ -889,7 +889,7 @@ fn forms_protection_survives_save_and_password_guards_stop() {
 }
 
 /// A Word file with the legacy hash (`w:cryptAlgorithmSid`): a wrong password is rejected, the
-/// right one unlocks; a hash WordCraft can't check never unlocks.
+/// right one unlocks; a hash Iridium Docs can't check never unlocks.
 #[test]
 fn legacy_password_is_verified_and_unknown_forms_refused() {
     let protected = |sid: &str| {

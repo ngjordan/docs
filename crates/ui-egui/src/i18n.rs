@@ -55,7 +55,7 @@ static I18N: LazyLock<I18n> = LazyLock::new(|| {
 /// The `language` setting that follows the system.
 pub const AUTO: &str = "auto";
 
-/// One interface language WordCraft offers: what the app needs beyond the catalogs. Its name and
+/// One interface language Iridium Docs offers: what the app needs beyond the catalogs. Its name and
 /// translations come from craft-i18n.
 pub struct LangInfo {
     /// BCP 47 code, lowercase (`ja`, `zh-hans`). Also the `language` setting's value and the
@@ -64,11 +64,11 @@ pub struct LangInfo {
     /// Which CJK interface face comes first (Chinese text wants the Chinese face).
     pub prefer_hans: bool,
     /// The language (BCP 47) new blank documents are written in with this interface, for
-    /// languages WordCraft can proof; `None` keeps WordCraft's default, US English.
+    /// languages Iridium Docs can proof; `None` keeps Iridium Docs's default, US English.
     pub editing_lang: Option<&'static str>,
 }
 
-/// The languages WordCraft offers, when their catalogs are embedded. English first: it is the
+/// The languages Iridium Docs offers, when their catalogs are embedded. English first: it is the
 /// fallback and the source language.
 pub static LANGUAGES: [LangInfo; 27] = [
     LangInfo { code: "en", prefer_hans: false, editing_lang: None },
@@ -92,7 +92,7 @@ pub static LANGUAGES: [LangInfo; 27] = [
     // Serbian, Latin script; `sr-Latn-*` resolves here; a script is never
     // crossed, so Latin Serbian never shows Cyrillic.
     LangInfo { code: "sr-latn", prefer_hans: false, editing_lang: None },
-    // Polish; `pl`, `pl-PL` and `pl_PL.UTF-8` resolve here. WordCraft proofs Polish (spelling,
+    // Polish; `pl`, `pl-PL` and `pl_PL.UTF-8` resolve here. Iridium Docs proofs Polish (spelling,
     // grammar, hyphenation), so new documents are written in Polish with this interface.
     LangInfo { code: "pl", prefer_hans: false, editing_lang: Some("pl-PL") },
     LangInfo { code: "cs", prefer_hans: false, editing_lang: Some("cs-CZ") },
@@ -193,7 +193,7 @@ impl Lang {
         self.name().chars().any(|c| ('\u{2E80}'..='\u{9FFF}').contains(&c) || ('\u{AC00}'..='\u{D7AF}').contains(&c))
     }
 
-    /// The embedded catalogs (shared, then WordCraft's) this language reads; none for English.
+    /// The embedded catalogs (shared, then Iridium Docs's) this language reads; none for English.
     fn catalog_texts(self) -> impl Iterator<Item = &'static str> {
         let code = self.code();
         CRAFT_I18N.iter().filter(move |(c, ..)| c.eq_ignore_ascii_case(code)).flat_map(|(_, shared, app)| [*shared, *app])
@@ -264,7 +264,7 @@ pub fn normalize_pref(pref: &str) -> Option<&'static str> {
     Lang::from_code(pref).map(Lang::code)
 }
 
-/// Portuguese other than Brazil's (`pt`, `pt-PT`, `pt_AO.UTF-8`): WordCraft has no catalog for
+/// Portuguese other than Brazil's (`pt`, `pt-PT`, `pt_AO.UTF-8`): Iridium Docs has no catalog for
 /// it (the European vocabulary differs), so it stays English rather than falling to `pt-br` as the
 /// crate's matching would.
 fn non_brazilian_portuguese(tag: &str) -> bool {
@@ -282,7 +282,7 @@ pub fn lang_from_tag(tag: &str) -> Option<Lang> {
     I18N.match_tag(tag).and_then(|lang| Lang::from_code(I18N.code(lang)))
 }
 
-/// The first of the system's preferred languages WordCraft has, in the user's order: someone
+/// The first of the system's preferred languages Iridium Docs has, in the user's order: someone
 /// who prefers French, then Japanese, gets Japanese rather than English.
 pub fn first_supported<'a>(tags: impl IntoIterator<Item = &'a str>) -> Option<Lang> {
     tags.into_iter().find_map(lang_from_tag)
@@ -439,7 +439,7 @@ pub fn prefixed(prefix: &str, rest: &str) -> String {
     fmt(t(&format!("{prefix} {{action}}")), &[("action", t(rest))])
 }
 
-/// A test language whose WordCraft catalog is `source` (catalog format), so tests of lookup code
+/// A test language whose Iridium Docs catalog is `source` (catalog format), so tests of lookup code
 /// don't depend on the embedded catalogs' wording. `code` selects code-specific rules such as
 /// Turkish casing.
 #[cfg(test)]

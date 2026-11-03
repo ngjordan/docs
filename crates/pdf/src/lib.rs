@@ -1,4 +1,4 @@
-//! WordCraft PDF export through the shared `craft-pdf` writer and Krilla drawing primitives.
+//! Iridium Docs PDF export through the shared `craft-pdf` writer and Krilla drawing primitives.
 //!
 //! [`export`] lays the document out and draws each page's display list
 //! ([`wordcraft_layout::display::page_display`]) into a PDF page:

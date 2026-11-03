@@ -34,7 +34,7 @@ pub(super) fn movable_story(s: &Session, story: StoryRef) -> bool {
 /// as imported: they can be selected and deleted, not moved, resized or arranged.
 pub(super) const FROZEN: &str = "charts and diagrams can't be moved or resized yet";
 
-/// `has_movable` for Size: charts and SmartArt WordCraft can edit are laid out again at their
+/// `has_movable` for Size: charts and SmartArt Iridium Docs can edit are laid out again at their
 /// new size.
 pub(super) fn has_sizable(s: &Session) -> Option<&'static str> {
     match selected(s) {

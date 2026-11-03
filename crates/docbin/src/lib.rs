@@ -1,9 +1,9 @@
-//! WordCraft reader for the Word 97-2003 binary file format (`.doc`, [MS-DOC]).
+//! Iridium Docs reader for the Word 97-2003 binary file format (`.doc`, [MS-DOC]).
 //!
 //! [`read`] turns the bytes of a `.doc` file into a [`wordcraft_doc::Document`]. There is no
 //! writer: saving always goes through the other formats. The reader is written from the public
 //! specification ([MS-DOC], Word (.doc) Binary File Format, Microsoft Open Specifications) and,
-//! like every WordCraft parser, is lenient by design (unknown structures are skipped, bad numbers
+//! like every Iridium Docs parser, is lenient by design (unknown structures are skipped, bad numbers
 //! fall back to defaults) and bounded (stream sizes, piece counts and property counts are
 //! capped), so hostile input yields an error or a best-effort document, never a panic.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
@@ -122,7 +122,7 @@ impl Work {
     fn log(&self) {
         let dropped = self.dropped();
         for c in &dropped {
-            log::warn!(".doc: the document repeats more than WordCraft copies ({MAX_WORK} bytes): {}", c.left_out());
+            log::warn!(".doc: the document repeats more than Iridium Docs copies ({MAX_WORK} bytes): {}", c.left_out());
         }
         #[cfg(test)]
         LAST_DROPPED.with(|d| *d.borrow_mut() = dropped);
@@ -158,7 +158,7 @@ pub enum DocbinError {
     /// The password does not open the document.
     #[error("the password is incorrect")]
     WrongPassword,
-    /// The document is encrypted in a way WordCraft can't read (AES, an external provider, an
+    /// The document is encrypted in a way Iridium Docs can't read (AES, an external provider, an
     /// unknown header).
     #[error("encrypted document: {0}")]
     Encryption(String),

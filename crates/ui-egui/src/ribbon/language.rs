@@ -20,7 +20,7 @@ pub(crate) const PROOFING_LANGUAGES: [(&str, &str); 16] = [
     ("es-UY", "Spanish (Uruguay)"),
 ];
 
-/// The English name of a proofing language tag, as the status bar shows it (no tag: WordCraft's
+/// The English name of a proofing language tag, as the status bar shows it (no tag: Iridium Docs's
 /// default, US English): a listed language by its name; another region of one by the language
 /// and the region ("French (Canada)"); a bare language subtag by its usual variant; else the tag.
 pub(crate) fn language_name(tag: Option<&str>) -> String {
@@ -48,7 +48,7 @@ pub(crate) fn language_name(tag: Option<&str>) -> String {
                 None => tag.to_string(),
             }
         }
-        // A bare language subtag ("pt", "pl"): the variant WordCraft proofs.
+        // A bare language subtag ("pt", "pl"): the variant Iridium Docs proofs.
         None => match wordcraft_engine::proof::ProofLang::from_tag(Some(tag)) {
             wordcraft_engine::proof::ProofLang::Pl => "Polish".into(),
             wordcraft_engine::proof::ProofLang::Hr => "Croatian".into(),
@@ -158,7 +158,7 @@ pub(crate) fn caret_no_proof(app: &WordApp) -> bool {
     caret_char(app).no_proof
 }
 
-/// Does WordCraft check spelling and grammar in the caret's language at all (Bulgarian: no)?
+/// Does Iridium Docs check spelling and grammar in the caret's language at all (Bulgarian: no)?
 pub(crate) fn caret_language_proofed(app: &WordApp) -> bool {
     wordcraft_engine::proof::has_dictionary(caret_lang_tag(app).as_deref())
 }

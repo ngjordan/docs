@@ -37,8 +37,8 @@ impl Reader {
 
     /// The formatting a paragraph of kind `kind` in style `id` gives its runs. A style whose
     /// entry and `\sbasedon` chain set no character formatting (a bare `{\s2 heading 2;}`) has
-    /// WordCraft's own (`style_fmt`); otherwise what the chain doesn't set is RTF's default (not
-    /// bold, not italic, 12 pt). The font alone falls back per property: WordCraft writes the code
+    /// Iridium Docs's own (`style_fmt`); otherwise what the chain doesn't set is RTF's default (not
+    /// bold, not italic, 12 pt). The font alone falls back per property: Iridium Docs writes the code
     /// font on each code paragraph, not in its Code entry.
     pub(super) fn style_base(&self, kind: Kind, id: i32) -> Fmt {
         let mut f = style_fmt(kind);

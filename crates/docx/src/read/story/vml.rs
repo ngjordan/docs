@@ -536,7 +536,7 @@ fn vml_float(shape: &El, style: &str, in_hf: bool) -> Float {
     let get = |k: &str| vml_style(style, k);
     let hidden = get("visibility").is_some_and(|v| v.eq_ignore_ascii_case("hidden"));
     if !get("position").is_some_and(|p| p.eq_ignore_ascii_case("absolute")) {
-        // Inline: only the turn (an OLE object turned in WordCraft is saved so, #319).
+        // Inline: only the turn (an OLE object turned in Iridium Docs is saved so, #319).
         let mut f = Float { hidden, ..Float::default() };
         f.set_spin(vml_spin(style));
         return f;

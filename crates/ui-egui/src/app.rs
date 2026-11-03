@@ -223,7 +223,7 @@ impl WordApp {
         crate::language_packs::tick(self);
         let lang = i18n::Lang::from_pref(&self.ui.language);
         i18n::set_current(lang);
-        // New documents are written in the interface's language when WordCraft can proof it
+        // New documents are written in the interface's language when Iridium Docs can proof it
         // (a Polish interface: Polish spelling, grammar and hyphenation from the first word).
         // An English interface writes the region's English (English (UK) on a British system,
         // #1045), a Spanish one the region's Spanish (Spanish (Uruguay) on a Uruguayan system,
