@@ -230,6 +230,16 @@ jobs:
             --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER" --type ios 2>&1 | tee "$RUNNER_TEMP/altool.log"
           UPLOAD_RC=${PIPESTATUS[0]}
           set -e
+          # altool has been observed to exit 0 even when it prints
+          # "Failed to upload package", so trust the log as well as the code.
+          if grep -q "Failed to upload package" "$RUNNER_TEMP/altool.log"; then
+            UPLOAD_RC=1
+          fi
+          if [[ "$UPLOAD_RC" != 0 ]]; then
+            # Surface altool's own error lines; the step's log is the only
+            # place they appear and they say exactly what Apple rejected.
+            grep -E "ERROR:|iris-code" "$RUNNER_TEMP/altool.log" | head -10 || true
+          fi
           if [[ "$UPLOAD_RC" != 0 ]] && grep -q "No suitable application records" "$RUNNER_TEMP/altool.log"; then
             echo "::error::no App Store Connect app record exists for bundle id $BUNDLE_ID."
             echo "::error::Apple does not allow creating app records through the API - it is a one-time"

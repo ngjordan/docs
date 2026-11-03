@@ -33,6 +33,12 @@ def oid(name: str) -> str:
 FILE_REFS = [
     ("IridiumDocsApp.swift", "IridiumDocs"),
 ]
+# Resources: the asset catalog carries the app icon. Xcode needs a file
+# reference for it, otherwise it is never compiled into Assets.car and
+# App Store Connect rejects the build with "Missing required icon file".
+RESOURCE_REFS = [
+    ("Assets.xcassets", "IridiumDocs", "folder.assetcatalog"),
+]
 GROUPS = ["IridiumDocs"]
 
 objects = []
@@ -55,10 +61,25 @@ for fname, group in FILE_REFS:
 \t\t\tfileRef = {oid(f"fileref:{fname}")} /* {fname} */;
 \t\t}}""")
 
+# ---- resource file references and build files
+for fname, group, ftype in RESOURCE_REFS:
+    obj("PBXFileReference", oid(f"fileref:{fname}"), f"""{{
+\t\t\tisa = PBXFileReference;
+\t\t\tlastKnownFileType = {ftype};
+\t\t\tpath = {fname};
+\t\t\tsourceTree = "<group>";
+\t\t}}""")
+    obj("PBXBuildFile", oid(f"buildfile:{fname}"), f"""{{
+\t\t\tisa = PBXBuildFile;
+\t\t\tfileRef = {oid(f"fileref:{fname}")} /* {fname} */;
+\t\t}}""")
+
 # ---- groups
 for g in GROUPS:
+    kid_files = [f for f, _ in FILE_REFS if _ == g]
+    kid_files += [f for f, _, _ in RESOURCE_REFS if _ == g]
     kids = ",\n".join(
-        f"\t\t\t\t{oid(f'fileref:{f}')} /* {f} */" for f, _ in FILE_REFS if _ == g)
+        f"\t\t\t\t{oid(f'fileref:{f}')} /* {f} */" for f in kid_files)
     obj("PBXGroup", oid(f"group:{g}"), f"""{{
 \t\t\tisa = PBXGroup;
 \t\t\tchildren = (
@@ -105,13 +126,16 @@ obj("PBXSourcesBuildPhase", oid("phase:sources"), f"""{{
 \t\t\trunOnlyForDeploymentPostprocessing = 0;
 \t\t}}""")
 
-obj("PBXResourcesBuildPhase", oid("phase:resources"), """{
+resources = ",\n".join(f"\t\t\t\t{oid(f'buildfile:{f}')} /* {f} in Resources */"
+                        for f, _, _ in RESOURCE_REFS)
+obj("PBXResourcesBuildPhase", oid("phase:resources"), f"""{{
 \t\t\tisa = PBXResourcesBuildPhase;
 \t\t\tbuildActionMask = 2147483647;
 \t\t\tfiles = (
+{resources},
 \t\t\t);
 \t\t\trunOnlyForDeploymentPostprocessing = 0;
-\t\t}""")
+\t\t}}""")
 
 obj("PBXFrameworksBuildPhase", oid("phase:frameworks"), """{
 \t\t\tisa = PBXFrameworksBuildPhase;
@@ -143,6 +167,8 @@ obj("XCBuildConfiguration", oid("config:debug:target"), f"""{{
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
+\t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+\t\t\t\tINFOPLIST_KEY_CFBundleIconName = AppIcon;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
@@ -156,6 +182,8 @@ obj("XCBuildConfiguration", oid("config:release:target"), f"""{{
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
+\t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+\t\t\t\tINFOPLIST_KEY_CFBundleIconName = AppIcon;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
