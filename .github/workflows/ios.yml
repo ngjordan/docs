@@ -43,7 +43,7 @@ env:
 jobs:
   build:
     name: Build and upload to TestFlight
-    runs-on: macos-26
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - name: Check out
@@ -52,8 +52,8 @@ jobs:
       - name: Select Xcode
         run: |
           # Apple requires uploads to be built with Xcode 26+ / the iOS 26 SDK
-          # (since 2026-04-28). The runner image ships 26.6 as its default.
-          sudo xcode-select -s /Applications/Xcode_26.6.app
+          # (since 2026-04-28). The macos-15 arm64 image ships 26.3.
+          sudo xcode-select -s /Applications/Xcode_26.3.app
           xcodebuild -version
           xcodebuild -showsdks | grep -i "ios" || true
 
