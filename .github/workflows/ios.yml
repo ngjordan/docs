@@ -268,7 +268,10 @@ jobs:
             # install fails and leaves a *different* jwt package behind
             # (one without .encode). Use a venv.
             python3 -m venv "$RUNNER_TEMP/asc-venv"
-            "$RUNNER_TEMP/asc-venv/bin/pip" install --quiet --disable-pip-version-check jwt
+            # PyJWT is the package that provides jwt.encode; the PyPI
+            # package literally named "jwt" is a different project and
+            # installs a module without encode.
+            "$RUNNER_TEMP/asc-venv/bin/pip" install --quiet --disable-pip-version-check "PyJWT[crypto]"
             export APPLE_KEY_DIR="$RUNNER_TEMP/apple-key"
             mkdir -p "$APPLE_KEY_DIR"
             printf '%s' "$ASC_KEY" > "$APPLE_KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
