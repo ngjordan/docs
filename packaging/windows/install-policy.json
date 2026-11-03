@@ -1,6 +1,6 @@
 {
   "id": "wordcraft",
-  "name": "WordCraft",
+  "name": "Iridium Docs",
   "upgradeCode": "075497F9-E861-45D0-9C7F-A74F8C34E6BA",
   "sources": [
     "wordcraft.wxs"

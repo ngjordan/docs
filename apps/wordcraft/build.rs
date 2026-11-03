@@ -16,7 +16,7 @@ fn main() {
     res.set_icon("../../assets/app-icon/wordcraft.ico")
         .set("ProductName", "Iridium Docs")
         .set("FileDescription", "Iridium Docs word processor")
-        .set("CompanyName", "Learning Machines LLC")
+        .set("CompanyName", "Iridium Technologies, Inc.")
         .set("LegalCopyright", "Copyright (c) the Iridium Docs authors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "wordcraft.exe")
         .set("InternalName", "wordcraft");

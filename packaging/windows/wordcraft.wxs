@@ -3,27 +3,27 @@
   <?ifndef HasCraftFontLicences ?>
   <?define HasCraftFontLicences=0 ?>
   <?endif?>
-  <Package Name="WordCraft" Manufacturer="Learning Machines LLC" Version="$(var.Version)" UpgradeCode="075497F9-E861-45D0-9C7F-A74F8C34E6BA" Scope="perUserOrMachine" Compressed="yes" Language="1033">
-    <SummaryInformation Description="WordCraft word processor" Manufacturer="Learning Machines LLC" />
+  <Package Name="Iridium Docs" Manufacturer="Iridium Technologies, Inc." Version="$(var.Version)" UpgradeCode="075497F9-E861-45D0-9C7F-A74F8C34E6BA" Scope="perUserOrMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Iridium Docs word processor" Manufacturer="Iridium Technologies, Inc." />
     <?include $(sys.SOURCEFILEDIR)install-policy.wxi?>
     <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
          (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
-    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of WordCraft is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Iridium Docs is already installed." />
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
     <Icon Id="WordcraftIcon.ico" SourceFile="$(var.IconPath)" />
     <Property Id="ARPPRODUCTICON" Value="WordcraftIcon.ico" />
-    <Property Id="ARPURLINFOABOUT" Value="https://getartcraft.com/apps/wordcraft" />
-    <Property Id="ARPURLUPDATEINFO" Value="https://getartcraft.com/apps/wordcraft" />
-    <Property Id="ARPHELPLINK" Value="https://discord.gg/artcraft" />
+    <Property Id="ARPURLINFOABOUT" Value="https://iridium.ph" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://iridium.ph" />
+    <Property Id="ARPHELPLINK" Value="https://iridium.ph" />
 
     <!-- Installer UI (#198): WixUI_Minimal is welcome + license, progress, then a finish page so
          people can see the install worked. Its dialogs and bitmaps are WiX's own
          (WixToolset.UI.wixext); package.ps1 builds the license RTF from LICENSE-MIT and
-         LICENSE-APACHE. The finish page offers to launch WordCraft (ticked by default) through
+         LICENSE-APACHE. The finish page offers to launch Iridium Docs (ticked by default) through
          WixShellExec (WixToolset.Util.wixext); silent installs (/qn) never show it. -->
     <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtf)" />
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch WordCraft" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Iridium Docs" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
     <Property Id="WixShellExecTarget" Value="[#WordcraftExe]" />
     <CustomAction Id="LaunchWordcraft" BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)" DllEntry="WixShellExec" Impersonate="yes" Return="ignore" />
@@ -33,13 +33,13 @@
     </UI>
 
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="CraftSuiteFolder" Name="ArtCraft">
-        <Directory Id="INSTALLFOLDER" Name="WordCraft" />
+      <Directory Id="CraftSuiteFolder" Name="Iridium">
+        <Directory Id="INSTALLFOLDER" Name="Iridium Docs" />
       </Directory>
     </StandardDirectory>
     <StandardDirectory Id="ProgramMenuFolder" />
 
-    <Feature Id="Main" Title="WordCraft" Level="1">
+    <Feature Id="Main" Title="Iridium Docs" Level="1">
       <ComponentGroupRef Id="AppNotices" />
       <?if $(var.HasCraftFontLicences) = 1 ?>
       <ComponentGroupRef Id="CraftFontLicences" />
@@ -60,7 +60,7 @@
     <ComponentGroup Id="WordcraftFiles" Directory="INSTALLFOLDER">
       <Component Id="WordcraftApp" Guid="855DCEC6-9285-444F-9382-9654B83B34F6">
         <File Id="WordcraftExe" Source="$(var.BinDir)\wordcraft.exe" KeyPath="yes">
-          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="WordCraft" Description="WordCraft word processor" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="WordcraftIcon.ico" IconIndex="0" />
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Iridium Docs" Description="Iridium Docs word processor" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="WordcraftIcon.ico" IconIndex="0" />
         </File>
 
         <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\wordcraft.exe" Value="[#WordcraftExe]" Type="string" />
@@ -75,11 +75,11 @@
            extension's default: the installer never takes over .docx from another app. Markdown and
            plain text are only "Open with" candidates. Removed again on uninstall. -->
       <Component Id="WordcraftFileTypes" Guid="EFF89E6A-F9B8-49F9-B3AE-E243347484B4">
-        <RegistryValue Root="HKMU" Key="Software\RegisteredApplications" Name="WordCraft" Value="Software\WordCraft\Capabilities" Type="string" KeyPath="yes" />
-        <RegistryValue Root="HKMU" Key="Software\WordCraft\Capabilities" Name="ApplicationName" Value="WordCraft" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\RegisteredApplications" Name="Iridium Docs" Value="Software\WordCraft\Capabilities" Type="string" KeyPath="yes" />
+        <RegistryValue Root="HKMU" Key="Software\WordCraft\Capabilities" Name="ApplicationName" Value="Iridium Docs" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\WordCraft\Capabilities" Name="ApplicationDescription" Value="Write and design documents; open and save Word files." Type="string" />
         <RegistryValue Root="HKMU" Key="Software\WordCraft\Capabilities" Name="ApplicationIcon" Value="&quot;[#WordcraftExe]&quot;,0" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\wordcraft.exe" Name="FriendlyAppName" Value="WordCraft" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\wordcraft.exe" Name="FriendlyAppName" Value="Iridium Docs" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\Applications\wordcraft.exe\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
 
         <ProgId Id="WordCraft.Document" Description="Word Document" Icon="WordcraftExe" IconIndex="0" />
