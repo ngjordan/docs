@@ -82,7 +82,8 @@ jobs:
       - name: Checksums
         run: |
           cd "${{ github.workspace }}/dist/release"
-          sha256sum ./* > SHA256SUMS.txt
+          # macOS has no sha256sum; shasum -a 256 is the portable form.
+          shasum -a 256 ./*.dmg ./*.zip > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
       - name: Upload the artifacts
