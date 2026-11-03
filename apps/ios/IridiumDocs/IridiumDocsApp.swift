@@ -1,12 +1,14 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 @main
 struct IridiumDocsApp: App {
-    @State private var document = Document()
     @State private var showingAbout = false
 
     var body: some Scene {
-        DocumentGroup(newDocument: Document()) { file in
+        // DocumentGroup hands the closure a `Document` reference (a class), so
+        // the binding is `$file`, not a projected value on a value type.
+        DocumentGroup(newDocument: Document()) { $file in
             DocumentView(document: $file)
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
