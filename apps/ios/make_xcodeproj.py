@@ -129,6 +129,7 @@ common = f"""PRODUCT_NAME = IridiumDocs;
 \t\t\tTARGETED_DEVICE_FAMILY = "1,2";
 \t\t\tSDKROOT = iphoneos;
 \t\t\tCODE_SIGN_STYLE = Automatic;
+			GENERATE_INFOPLIST_FILE = YES;
 \t\t\tENABLE_PREVIEWS = YES;
 \t\t\tSWIFT_EMIT_LOC_STRINGS = YES;"""
 
@@ -138,6 +139,7 @@ obj("XCBuildConfiguration", oid("config:debug:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Iridium Docs;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
@@ -150,6 +152,7 @@ obj("XCBuildConfiguration", oid("config:release:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Iridium Docs;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
