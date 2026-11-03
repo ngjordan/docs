@@ -209,5 +209,20 @@ jobs:
           mkdir -p "$HOME/.appstoreconnect/private_keys"
           printf '%s' "$ASC_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          # Apple reports a missing App Store Connect app record as
+          # "No suitable application records were found", which reads like a
+          # signing problem. Turn it into an actionable message.
+          set +e
           xcrun altool --upload-app --file "$RUNNER_TEMP/ipa"/*.ipa \
-            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER" --type ios
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER" --type ios 2>&1 | tee "$RUNNER_TEMP/altool.log"
+          UPLOAD_RC=${PIPESTATUS[0]}
+          set -e
+          if [[ "$UPLOAD_RC" != 0 ]] && grep -q "No suitable application records" "$RUNNER_TEMP/altool.log"; then
+            echo "::error::no App Store Connect app record exists for bundle id $BUNDLE_ID."
+            echo "::error::Apple does not allow creating app records through the API - it is a one-time"
+            echo "::error::step in the web UI: https://appstoreconnect.apple.com/apps"
+            echo "::error::  + -> New App -> Name 'Iridium Docs' -> Platform iOS"
+            echo "::error::  -> Bundle ID '$BUNDLE_ID' (the existing one) -> SKU IRIDIUM-DOCS-IOS"
+            exit 1
+          fi
+          exit "$UPLOAD_RC"
