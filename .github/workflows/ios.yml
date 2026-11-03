@@ -240,6 +240,25 @@ jobs:
             # place they appear and they say exactly what Apple rejected.
             grep -E "ERROR:|iris-code" "$RUNNER_TEMP/altool.log" | head -10 || true
           fi
+          if [[ "$UPLOAD_RC" == 0 ]]; then
+            # The upload alone does not make the build testable. Apple needs
+            # export compliance declared and the build attached to an
+            # external beta group (the default "Team" group is internal and
+            # refuses manually uploaded builds).
+            python3 -m pip install --quiet --disable-pip-version-check jwt \
+              || python3 -m pip install --quiet --disable-pip-version-check --break-system-packages jwt
+            export APPLE_KEY_DIR="$RUNNER_TEMP/apple-key"
+            mkdir -p "$APPLE_KEY_DIR"
+            printf '%s' "$ASC_KEY" > "$APPLE_KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
+            printf '%s' "$ASC_ISSUER" > "$APPLE_KEY_DIR/issuer_id"
+            printf '%s' "$ASC_KEY_ID" > "$APPLE_KEY_DIR/key_id"
+            chmod 600 "$APPLE_KEY_DIR"/*
+            for _try in 1 2 3 4 5 6; do
+              if python3 packaging/testflight.py; then break; fi
+              echo "::warning::the build is still processing; retrying in 60s"
+              sleep 60
+            done
+          fi
           if [[ "$UPLOAD_RC" != 0 ]] && grep -q "No suitable application records" "$RUNNER_TEMP/altool.log"; then
             echo "::error::no App Store Connect app record exists for bundle id $BUNDLE_ID."
             echo "::error::Apple does not allow creating app records through the API - it is a one-time"
