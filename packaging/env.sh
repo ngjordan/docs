@@ -27,6 +27,13 @@ if [[ -z "$VERSION" ]]; then
   echo "error: could not read [workspace.package] version from $ROOT/Cargo.toml" >&2
   exit 1
 fi
+# The version reaches file names, a sed substitution and a plist value, so it must
+# be a plain version string. It can come from the environment (a CI workflow
+# input), so it is validated here rather than trusted.
+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]]; then
+  echo "error: version '$VERSION' is not a plain version string (X.Y.Z[-suffix])" >&2
+  exit 1
+fi
 export VERSION
 
 DIST="${DIST:-$ROOT/dist/release}"
