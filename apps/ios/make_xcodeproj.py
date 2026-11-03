@@ -139,7 +139,7 @@ obj("XCBuildConfiguration", oid("config:debug:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Iridium Docs;
+				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
@@ -152,7 +152,7 @@ obj("XCBuildConfiguration", oid("config:release:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Iridium Docs;
+				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 \t\t\t}};
@@ -315,6 +315,22 @@ scheme_dir.mkdir(parents=True, exist_ok=True)
    </ArchiveAction>
 </Scheme>
 """, encoding="utf-8")
+
+# Self-check: the pbxproj is an OpenStep plist and xcodebuild refuses to open a
+# project that does not parse ("the project is damaged and cannot be opened
+# due to a parse error"). Parse it here so a bad build setting is caught now,
+# not three CI minutes later. The usual cause is an unquoted value containing a
+# space - `FOO = Bar Baz;` is invalid; it must be `FOO = "Bar Baz";`.
+try:
+    import openstep_parser
+    openstep_parser.OpenStepDecoder.ParseFromString(
+        (PROJ / "project.pbxproj").read_text())
+except ImportError:
+    print("note: openstep_parser is not installed; skipped the parse check")
+except Exception as exc:  # noqa: BLE001
+    sys.exit(f"error: the generated project.pbxproj does not parse: {exc}")
+else:
+    print("parse check: OK")
 
 print(f"wrote {PROJ}")
 print(f"  project.pbxproj  ({len(objects)} objects)")
