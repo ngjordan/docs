@@ -100,8 +100,12 @@ jobs:
           rm -f "$CERT"
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
             -s -k "$RUNNER_TEMP" "$KC" >/dev/null
-          security list-keychains -d user -s "$KC" \
-            $(security list-keychains -d user | tr -d '"')
+          # Add our keychain to the user's search list, keeping the ones that
+          # are already there. Build the list as an array: the raw output is
+          # one quoted path per line, and letting the shell word-split it
+          # breaks on any path with a space in it.
+          mapfile -t EXISTING_KEYCHAINS < <(security list-keychains -d user | tr -d '"')
+          security list-keychains -d user -s "$KC" "${EXISTING_KEYCHAINS[@]}"
           echo "MACOS_KEYCHAIN=$KC" >> "$GITHUB_ENV"
           security find-identity -v -p codesigning "$KC"
 
