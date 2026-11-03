@@ -9,10 +9,12 @@ Usage: python3 make_xcodeproj.py [project_dir]
 """
 
 import json
+import os
 import pathlib
 import re
 import subprocess
 import sys
+import time
 import uuid
 
 from PIL import Image
@@ -26,7 +28,29 @@ TEAM_ID = "5JY6QC2345"
 # iOS 16. Raising this would needlessly drop devices.
 DEPLOYMENT_TARGET = "16.0"
 MARKETING_VERSION = "0.1.0"
-BUILD_VERSION = "1"
+# The build number (CFBundleVersion) must be higher than the last uploaded
+# one or App Store Connect rejects the upload with "The bundle version must
+# be higher than the previously uploaded version".
+#
+# The GitHub run number restarts at 1 per workflow and would collide with
+# the build numbers already uploaded, so use a Unix timestamp instead -
+# always larger, and it sorts chronologically. IRIDIUM_BUILD_NUMBER
+# overrides it for a manual build.
+def _build_version() -> str:
+    """A CFBundleVersion that always increases.
+
+    CFBundleVersion is up to three period-separated integers, so a raw Unix
+    timestamp is too long. Use the seconds since 2024-01-01, which is
+    monotonic, short enough for a single component, and far above any
+    build number uploaded so far.
+    """
+    override = os.environ.get("IRIDIUM_BUILD_NUMBER")
+    if override:
+        return override
+    return str(int((time.time() - 1704067200) / 60))  # minutes since 2024-01-01
+
+
+BUILD_VERSION = _build_version()
 SWIFT_VERSION = "5.0"
 
 # ---- the iOS app icon set
