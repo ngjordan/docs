@@ -1,11 +1,11 @@
 {
   "id": "wordcraft",
   "name": "Iridium Docs",
-  "upgradeCode": "075497F9-E861-45D0-9C7F-A74F8C34E6BA",
+  "upgradeCode": "283A0877-18F9-5B73-9D61-75EFA29FF097",
   "sources": [
     "wordcraft.wxs"
   ],
-  "icon": "assets/app-icon/wordcraft.ico",
+  "icon": "assets/app-icon/iridium-docs.ico",
   "localization": [],
   "extensions": [
     "UI",

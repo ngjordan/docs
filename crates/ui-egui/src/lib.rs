@@ -9,9 +9,15 @@
 /// prompt shows both, and an AppImage's menu entry gets the icon.
 #[cfg(not(target_arch = "wasm32"))]
 pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
+    id: "iridium-docs",
+    name: "Iridium Docs",
+    tagline: "Writing and document design",
+    repo: "ngjordan/iridium-docs",
+    former_ids: &[],
+    former_names: &[],
     icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ph.iridium.docs.png")),
     accent: Some([0x0b, 0x6e, 0x4f]),
-    ..craft_update::suite::WORDCRAFT
+    developer: "Iridium Technologies, Inc.",
 };
 
 /// An English UI string in the current interface language ([`i18n::t`]).

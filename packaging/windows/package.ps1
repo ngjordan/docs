@@ -151,7 +151,7 @@ $Msi = Join-Path $Dist "wordcraft-$Version-windows-$Arch.msi"
 Invoke-Native "wix build" {
   wix build (Join-Path $PSScriptRoot 'wordcraft.wxs') -arch $Arch `
     -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext `
-    -d "Version=$MsiVersion" -d "BinDir=$Stage" -d "IconPath=$(Join-Path $Root 'assets\app-icon\wordcraft.ico')" `
+    -d "Version=$MsiVersion" -d "BinDir=$Stage" -d "IconPath=$(Join-Path $Root 'assets\app-icon\iridium-docs.ico')" `
     -d "LicenseRtf=$LicenseRtf" `
     -d "AppNoticesDir=$AppNotices" -d "DocsDir=$Docs" -d "HasCraftFontLicences=$HasCraftFontLicences" -d "Scope=perUserOrMachine" `
     -o $Msi
