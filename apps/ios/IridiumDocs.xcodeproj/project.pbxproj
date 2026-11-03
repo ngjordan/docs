@@ -71,7 +71,8 @@
 		58FD4927A1F05E8081BC0608 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
+				PRODUCT_NAME = IridiumDocs;
+			PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
 			DEVELOPMENT_TEAM = 5JY6QC2345;
 			SWIFT_VERSION = 5.0;
 			IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -92,7 +93,8 @@
 		C37DB35DB49A56FCBF9CD91F = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
+				PRODUCT_NAME = IridiumDocs;
+			PRODUCT_BUNDLE_IDENTIFIER = ph.iridium.docs;
 			DEVELOPMENT_TEAM = 5JY6QC2345;
 			SWIFT_VERSION = 5.0;
 			IPHONEOS_DEPLOYMENT_TARGET = 16.0;

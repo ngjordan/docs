@@ -119,7 +119,8 @@ obj("PBXFrameworksBuildPhase", oid("phase:frameworks"), """{
 \t\t}""")
 
 # ---- build configurations
-common = f"""PRODUCT_BUNDLE_IDENTIFIER = {BUNDLE_ID};
+common = f"""PRODUCT_NAME = IridiumDocs;
+\t\t\tPRODUCT_BUNDLE_IDENTIFIER = {BUNDLE_ID};
 \t\t\tDEVELOPMENT_TEAM = {TEAM_ID};
 \t\t\tSWIFT_VERSION = {SWIFT_VERSION};
 \t\t\tIPHONEOS_DEPLOYMENT_TARGET = {DEPLOYMENT_TARGET};
