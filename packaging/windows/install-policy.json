@@ -24,45 +24,9 @@
     ],
     [
       "-1",
-      "Software\\RegisteredApplications",
-      "WordCraft",
-      "Software\\Iridium Docs\\Capabilities"
-    ],
-    [
-      "-1",
-      "Software\\Iridium Docs\\Capabilities",
-      "ApplicationName",
-      "WordCraft"
-    ],
-    [
-      "-1",
       "Software\\Iridium Docs\\Capabilities",
       "ApplicationDescription",
       "Write and design documents; open and save Word files."
-    ],
-    [
-      "-1",
-      "Software\\Iridium Docs\\Capabilities",
-      "ApplicationIcon",
-      "\"[#WordcraftExe]\",0"
-    ],
-    [
-      "-1",
-      "Software\\Classes\\Applications\\wordcraft.exe",
-      "FriendlyAppName",
-      "WordCraft"
-    ],
-    [
-      "-1",
-      "Software\\Classes\\Applications\\wordcraft.exe\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
-      "Software\\Classes\\WordCraft.Document\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
     ],
     [
       "-1",
@@ -84,12 +48,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.DocumentMacroEnabled\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.docm\\OpenWithProgids",
       "WordCraft.DocumentMacroEnabled",
       ""
@@ -105,12 +63,6 @@
       "Software\\Iridium Docs\\Capabilities\\FileAssociations",
       ".docm",
       "WordCraft.DocumentMacroEnabled"
-    ],
-    [
-      "-1",
-      "Software\\Classes\\WordCraft.Template\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
     ],
     [
       "-1",
@@ -132,12 +84,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.TemplateMacroEnabled\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.dotm\\OpenWithProgids",
       "WordCraft.TemplateMacroEnabled",
       ""
@@ -153,12 +99,6 @@
       "Software\\Iridium Docs\\Capabilities\\FileAssociations",
       ".dotm",
       "WordCraft.TemplateMacroEnabled"
-    ],
-    [
-      "-1",
-      "Software\\Classes\\WordCraft.LegacyDocument\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
     ],
     [
       "-1",
@@ -180,12 +120,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.LegacyTemplate\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.dot\\OpenWithProgids",
       "WordCraft.LegacyTemplate",
       ""
@@ -201,12 +135,6 @@
       "Software\\Iridium Docs\\Capabilities\\FileAssociations",
       ".dot",
       "WordCraft.LegacyTemplate"
-    ],
-    [
-      "-1",
-      "Software\\Classes\\WordCraft.RichText\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
     ],
     [
       "-1",
@@ -228,12 +156,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.OpenDocumentText\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.odt\\OpenWithProgids",
       "WordCraft.OpenDocumentText",
       ""
@@ -252,12 +174,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.Markdown\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.md\\OpenWithProgids",
       "WordCraft.Markdown",
       ""
@@ -270,12 +186,6 @@
     ],
     [
       "-1",
-      "Software\\Classes\\WordCraft.PlainText\\shell\\open\\command",
-      "",
-      "\"[#WordcraftExe]\" \"%1\""
-    ],
-    [
-      "-1",
       "Software\\Classes\\.txt\\OpenWithProgids",
       "WordCraft.PlainText",
       ""
@@ -285,6 +195,102 @@
       "Software\\Classes\\Applications\\wordcraft.exe\\SupportedTypes",
       ".txt",
       ""
+    ],
+    [
+      "-1",
+      "Software\\Iridium Docs",
+      "InstallDir",
+      "[INSTALLFOLDER]"
+    ],
+    [
+      "-1",
+      "Software\\RegisteredApplications",
+      "Iridium Docs",
+      "Software\\Iridium Docs\\Capabilities"
+    ],
+    [
+      "-1",
+      "Software\\Iridium Docs\\Capabilities",
+      "ApplicationName",
+      "Iridium Docs"
+    ],
+    [
+      "-1",
+      "Software\\Iridium Docs\\Capabilities",
+      "ApplicationIcon",
+      "&quot;[#WordcraftExe]&quot;,0"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\wordcraft.exe",
+      "FriendlyAppName",
+      "Iridium Docs"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\wordcraft.exe\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.Document\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.DocumentMacroEnabled\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.Template\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.TemplateMacroEnabled\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.LegacyDocument\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.LegacyTemplate\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.RichText\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.OpenDocumentText\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.Markdown\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\WordCraft.PlainText\\shell\\open\\command",
+      "",
+      "&quot;[#WordcraftExe]&quot; &quot;%1&quot;"
     ]
   ],
   "mode": "dualScope"
