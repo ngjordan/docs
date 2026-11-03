@@ -12,6 +12,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -47,7 +48,9 @@ def _build_version() -> str:
     override = os.environ.get("IRIDIUM_BUILD_NUMBER")
     if override:
         return override
-    return str(int((time.time() - 1704067200) / 60))  # minutes since 2024-01-01
+    # Minutes since 2024-01-01. Strictly increasing across runs, and a
+    # single component, which is what CFBundleVersion allows.
+    return str(int((time.time() - 1704067200) / 60))
 
 
 BUILD_VERSION = _build_version()
@@ -78,7 +81,13 @@ IOS_ICON_SPECS = [
 def build_ios_icons():
     """Render the icon set into the asset catalog. Returns the Contents.json
     images list."""
-    if not ICON_SVG.exists():
+    # The icon set is committed, so a CI runner that does not have resvg
+    # (or Pillow) can still regenerate the project - it only needs the
+    # version stamped. IRIDIUM_SKIP_ICONS forces the skip.
+    if os.environ.get("IRIDIUM_SKIP_ICONS") or not ICON_SVG.exists():
+        return None
+    if shutil.which("resvg") is None:
+        print("note: resvg is not installed; keeping the committed icon set")
         return None
     svg = ICON_SVG.read_text(encoding="utf-8")
     # Drop the rounded-corner rect: iOS masks the icon itself.

@@ -57,6 +57,19 @@ jobs:
           xcodebuild -version
           xcodebuild -showsdks | grep -i "ios" || true
 
+      - name: Regenerate the Xcode project with a fresh build number
+        run: |
+          set -euo pipefail
+          # The committed project carries the CFBundleVersion from when it
+          # was generated. Re-uploading the same build number is rejected
+          # with "The bundle version must be higher than the previously
+          # uploaded version", so regenerate it here.
+          # The icon set is committed; the runner has no resvg, so only the
+          # build number needs stamping.
+          IRIDIUM_SKIP_ICONS=1 python3 apps/ios/make_xcodeproj.py apps/ios
+          grep -oE 'CURRENT_PROJECT_VERSION = [0-9]+' \
+            apps/ios/IridiumDocs.xcodeproj/project.pbxproj | head -1
+
       - name: Import the distribution certificate
         env:
           # Secrets go through the environment, never into a run: line, where
