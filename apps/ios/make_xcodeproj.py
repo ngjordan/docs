@@ -77,7 +77,9 @@ for fname, group, ftype in RESOURCE_REFS:
 # ---- groups
 for g in GROUPS:
     kid_files = [f for f, _ in FILE_REFS if _ == g]
-    kid_files += [f for f, _, _ in RESOURCE_REFS if _ == g]
+    # RESOURCE_REFS entries are (name, group, filetype): the group is the
+    # second field. Unpacking as (f, _, _) would bind _ to the filetype.
+    kid_files += [f for f, grp, _ft in RESOURCE_REFS if grp == g]
     kids = ",\n".join(
         f"\t\t\t\t{oid(f'fileref:{f}')} /* {f} */" for f in kid_files)
     obj("PBXGroup", oid(f"group:{g}"), f"""{{
@@ -304,6 +306,21 @@ pbx = f"""// !$*UTF8*$!
 
 PROJ.mkdir(parents=True, exist_ok=True)
 (PROJ / "project.pbxproj").write_text(pbx, encoding="utf-8")
+
+# Self-check: every resource must be a child of its group AND in the resources
+# build phase. A file reference that is not a child of any group resolves
+# against SOURCE_ROOT instead, so actool gets the wrong path and Xcode
+# reports "None of the input catalogs contained a matching ... app icon set".
+_generated = (PROJ / "project.pbxproj").read_text(encoding="utf-8")
+for _name, _grp, _ft in RESOURCE_REFS:
+    assert _name in _generated, f"{_name} missing from the generated project"
+    # A group child appears as "<id> /* name */," and a build file as
+    # "<id> /* name in Resources */,".
+    assert f"/* {_name} */," in _generated, (
+        f"{_name} is not a child of its group")
+    assert f"/* {_name} in Resources */," in _generated, (
+        f"{_name} is not in the resources build phase")
+print("self-check: every resource is a group child and in the resources phase")
 
 # The shared scheme, so xcodebuild -scheme finds it.
 scheme_dir = PROJ / "xcshareddata" / "xcschemes"

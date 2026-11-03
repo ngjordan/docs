@@ -29,6 +29,7 @@
 			isa = PBXGroup;
 			children = (
 				5D9F16E25D8A566E876D96E6 /* IridiumDocsApp.swift */,
+				0AF12734A76A5C1E826B7FD2 /* Assets.xcassets */,
 			);
 			path = IridiumDocs;
 			sourceTree = "<group>";
