@@ -8,9 +8,14 @@ the project be regenerated after a rename.
 Usage: python3 make_xcodeproj.py [project_dir]
 """
 
+import json
 import pathlib
+import re
+import subprocess
 import sys
 import uuid
+
+from PIL import Image
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "apps/ios")
 PROJ = ROOT / "IridiumDocs.xcodeproj"
@@ -23,6 +28,76 @@ DEPLOYMENT_TARGET = "16.0"
 MARKETING_VERSION = "0.1.0"
 BUILD_VERSION = "1"
 SWIFT_VERSION = "5.0"
+
+# ---- the iOS app icon set
+#
+# iOS rejects an app icon that carries an alpha channel, and it applies its own
+# rounded-rect mask. So the iOS icons are full-bleed squares on an opaque
+# background, rendered from the shared SVG with the corner radius removed.
+REPO = ROOT.parent.parent   # ROOT is apps/ios, so the repo root is two up
+ICON_SVG = REPO / "assets" / "app-icon" / "wordcraft.svg"
+ICON_SET = ROOT / "IridiumDocs" / "Assets.xcassets" / "AppIcon.appiconset"
+
+# (idiom, points, scale)
+IOS_ICON_SPECS = [
+    ("iphone", 60, 2), ("iphone", 60, 3),
+    ("iphone", 120, 2), ("iphone", 120, 3),
+    ("ipad", 20, 1), ("ipad", 20, 2),
+    ("ipad", 29, 1), ("ipad", 29, 2),
+    ("ipad", 40, 1), ("ipad", 40, 2),
+    ("ipad", 76, 1), ("ipad", 76, 2),
+    ("ipad", 83.5, 2),
+    ("ios-marketing", 1024, 1),
+]
+
+
+def build_ios_icons():
+    """Render the icon set into the asset catalog. Returns the Contents.json
+    images list."""
+    if not ICON_SVG.exists():
+        return None
+    svg = ICON_SVG.read_text(encoding="utf-8")
+    # Drop the rounded-corner rect: iOS masks the icon itself.
+    flat = re.sub(r'<rect[^>]*rx="[^"]*"[^>]*/>', '<rect width="512" height="512" fill="#0B6E4F"/>', svg, count=1)
+    flat_path = ROOT / ".icon-flat.svg"
+    flat_path.write_text(flat, encoding="utf-8")
+    try:
+        ICON_SET.mkdir(parents=True, exist_ok=True)
+        images = []
+        for idiom, points, scale in IOS_ICON_SPECS:
+            px = int(round(points * scale))
+            # Name the file after the slot, not just the pixel size: two slots
+            # can share a pixel size (ipad 20x20 @2x and ipad 40x40 @1x are
+            # both 40x40), and a file shared by two slots is asking for an
+            # "invalid icon" rejection.
+            slot = f"{idiom}-{str(points).replace('.', '_')}x{scale}"
+            name = f"Icon-{slot}-{px}x{px}.png"
+            out = ICON_SET / name
+            subprocess.run(
+                ["resvg", "-w", str(px), "-h", str(px), str(flat_path), str(out)],
+                check=True)
+            # Flatten onto an opaque background: resvg writes RGBA, and iOS
+            # rejects an icon with an alpha channel.
+            subprocess.run(
+                ["python3", "-c",
+                 "from PIL import Image; import sys\n"
+                 "im = Image.open(sys.argv[1]).convert('RGBA')\n"
+                 "bg = Image.new('RGB', im.size, '#0B6E4F')\n"
+                 "bg.paste(im, mask=im.split()[-1])\n"
+                 "bg.save(sys.argv[1])",
+                 str(out)],
+                check=True)
+            size = f"{int(points)}x{int(points)}" if points == int(points) else f"{points}x{points}"
+            images.append({"filename": name, "idiom": idiom,
+                           "scale": f"{scale}x", "size": size})
+        (ICON_SET / "Contents.json").write_text(
+            json.dumps({"images": images,
+                        "info": {"author": "xcode", "version": 1}},
+                       indent=2) + "\n", encoding="utf-8")
+        return images
+    finally:
+        flat_path.unlink(missing_ok=True)
+
 
 # Xcode object ids are 24 hex characters (96 bits). uuid5 gives 32, so take the
 # first 24 - stable across runs, so regenerating produces no spurious diff.
@@ -304,23 +379,14 @@ pbx = f"""// !$*UTF8*$!
 }}
 """
 
+# Regenerate the icon set before writing the project, so the catalog and the
+# project always agree.
+build_ios_icons()
+
 PROJ.mkdir(parents=True, exist_ok=True)
 (PROJ / "project.pbxproj").write_text(pbx, encoding="utf-8")
 
-# Self-check: every resource must be a child of its group AND in the resources
-# build phase. A file reference that is not a child of any group resolves
-# against SOURCE_ROOT instead, so actool gets the wrong path and Xcode
-# reports "None of the input catalogs contained a matching ... app icon set".
-_generated = (PROJ / "project.pbxproj").read_text(encoding="utf-8")
-for _name, _grp, _ft in RESOURCE_REFS:
-    assert _name in _generated, f"{_name} missing from the generated project"
-    # A group child appears as "<id> /* name */," and a build file as
-    # "<id> /* name in Resources */,".
-    assert f"/* {_name} */," in _generated, (
-        f"{_name} is not a child of its group")
-    assert f"/* {_name} in Resources */," in _generated, (
-        f"{_name} is not in the resources build phase")
-print("self-check: every resource is a group child and in the resources phase")
+
 
 # The shared scheme, so xcodebuild -scheme finds it.
 scheme_dir = PROJ / "xcshareddata" / "xcschemes"
@@ -384,3 +450,38 @@ print(f"wrote {PROJ}")
 print(f"  project.pbxproj  ({len(objects)} objects)")
 print(f"  xcshareddata/xcschemes/IridiumDocs.xcscheme")
 print(f"  bundle id {BUNDLE_ID}, team {TEAM_ID}, iOS {DEPLOYMENT_TARGET}+")
+
+# Self-check: every resource must be a child of its group AND in the resources
+# build phase. A file reference that is not a child of any group resolves
+# against SOURCE_ROOT instead, so actool gets the wrong path and Xcode
+# reports "None of the input catalogs contained a matching ... app icon set".
+_generated = (PROJ / "project.pbxproj").read_text(encoding="utf-8")
+for _name, _grp, _ft in RESOURCE_REFS:
+    assert _name in _generated, f"{_name} missing from the generated project"
+    # A group child appears as "<id> /* name */," and a build file as
+    # "<id> /* name in Resources */,".
+    assert f"/* {_name} */," in _generated, (
+        f"{_name} is not a child of its group")
+    assert f"/* {_name} in Resources */," in _generated, (
+        f"{_name} is not in the resources build phase")
+print("self-check: every resource is a group child and in the resources phase")
+
+# iOS rejects an icon with an alpha channel, and a transparent corner is the
+# usual cause. Catch it here rather than at upload time.
+_icon_bad = []
+_seen = {}
+for _png in sorted(ICON_SET.glob("*.png")):
+    _mode = Image.open(_png).mode
+    if _mode not in ("RGB", "L"):
+        _icon_bad.append(f"{_png.name} is {_mode}")
+    _seen.setdefault(_png.name, []).append(_png)
+# Every declared slot must point at its own file.
+_declared = json.loads((ICON_SET / "Contents.json").read_text())
+_names = [i["filename"] for i in _declared["images"]]
+if len(_names) != len(set(_names)):
+    _icon_bad.append("two slots share one icon file")
+if _icon_bad:
+    raise SystemExit("iOS app icons must be opaque, no alpha channel:\n  "
+                     + "\n  ".join(_icon_bad))
+print(f"self-check: {len(list(ICON_SET.glob('*.png')))} app icons are opaque")
+
