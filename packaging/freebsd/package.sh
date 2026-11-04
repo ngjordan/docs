@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Build and package WordCraft for FreeBSD:
 #
-#   $DIST/wordcraft-<version>-freebsd-<arch>.tar.gz   a /usr/local-style tree (<arch> is x86_64, or
+#   $DIST/iridium-docs-<version>-freebsd-<arch>.tar.gz   a /usr/local-style tree (<arch> is x86_64, or
 #       aarch64 when CARGO_BUILD_TARGET=aarch64-unknown-freebsd):
-#       wordcraft-<version>-freebsd-<arch>/{bin, share/applications, share/icons, share/mime,
+#       iridium-docs-<version>-freebsd-<arch>/{bin, share/applications, share/icons, share/mime,
 #       share/metainfo, share/doc/wordcraft}
 #
 # Install by copying the tree's contents into /usr/local, e.g.
@@ -58,7 +58,7 @@ HOST_ARCH="$(release_arch "$(uname -m)" 2>/dev/null)" || HOST_ARCH="$(uname -m)"
 if [ -n "${CARGO_BUILD_TARGET:-}" ] && [ "$(uname -s)" != FreeBSD ]; then
   HOST_ARCH="$(uname -s) $HOST_ARCH"
 fi
-BASENAME="wordcraft-$VERSION-freebsd-$ARCH"
+BASENAME="iridium-docs-$VERSION-freebsd-$ARCH"
 
 echo "==> WordCraft $VERSION for FreeBSD $ARCH"
 

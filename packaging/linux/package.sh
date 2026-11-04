@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Build and package WordCraft for Linux (<arch> is x86_64 or aarch64, or riscv64 when cross-compiling):
 #
-#   $DIST/wordcraft-<version>-linux-<arch>.AppImage  any distro with glibc >= the build host's
-#   $DIST/wordcraft-<version>-linux-<arch>.AppImage.zsync  delta updates (needs zsyncmake)
-#   $DIST/wordcraft-<version>-linux-<arch>.deb       Debian, Ubuntu, Mint, Pop!_OS, ...
-#   $DIST/wordcraft-<version>-linux-<arch>.rpm       Fedora, openSUSE, RHEL, ...
-#   $DIST/wordcraft-<version>-linux-<arch>.tar.gz    plain FHS-style tree (bin/, share/)
+#   $DIST/iridium-docs-<version>-linux-<arch>.AppImage  any distro with glibc >= the build host's
+#   $DIST/iridium-docs-<version>-linux-<arch>.AppImage.zsync  delta updates (needs zsyncmake)
+#   $DIST/iridium-docs-<version>-linux-<arch>.deb       Debian, Ubuntu, Mint, Pop!_OS, ...
+#   $DIST/iridium-docs-<version>-linux-<arch>.rpm       Fedora, openSUSE, RHEL, ...
+#   $DIST/iridium-docs-<version>-linux-<arch>.tar.gz    plain FHS-style tree (bin/, share/)
 #
 # Usage: packaging/linux/package.sh [--skip-build] [--formats "appimage deb rpm tar"]
 #
@@ -38,7 +38,7 @@ case "$ARCH" in
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
 export IRIDIUM_DOCS_MAINTAINER="${IRIDIUM_DOCS_MAINTAINER:-Iridium maintainers <docs@iridium.ph>}"
-BASENAME="wordcraft-$VERSION-linux-$ARCH"
+BASENAME="iridium-docs-$VERSION-linux-$ARCH"
 
 echo "==> WordCraft $VERSION for Linux $ARCH ($FORMATS)"
 
