@@ -1,0 +1,14 @@
+{
+  "_comment": "Single source of truth for the app's visual brand. Run `python3 packaging/brand.py` after editing to regenerate icons and propagate the values into the source tree. Product NAME strings in Rust stay literals (they are translatable UI text); this file covers the things that are mechanical: icons, app id, accent colour.",
+  "name": "Iridium Docs",
+  "app_id": "ph.iridium.docs",
+  "slug": "iridium-docs",
+  "developer": "Iridium Technologies, Inc.",
+  "website": "https://iridium.ph",
+  "repo": "ngjordan/iridium-docs",
+  "tagline": "Writing and document design",
+  "accent": "0b6e4f",
+  "accent_ink": "084f39",
+  "_icon_comment": "The master artwork. Point `icon_svg` at any SVG and the script re-renders every size (hicolor PNGs, macOS .icns, Windows .ico, the 1024 and macOS-512 PNGs) and renames the files to match `slug`/`app_id`. Keep the viewBox 0 0 512 512; the macOS variant is derived from it.",
+  "icon_svg": "assets/app-icon/iridium-docs.svg"
+}

@@ -432,7 +432,7 @@ fn main() -> eframe::Result {
     let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("Iridium Docs")
-            .with_app_id("ai.storyteller.wordcraft")
+            .with_app_id("ph.iridium.docs")
             .with_inner_size([1440.0, 920.0])
             .with_min_inner_size([760.0, 480.0])
             .with_drag_and_drop(true)
