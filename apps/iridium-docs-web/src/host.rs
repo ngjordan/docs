@@ -1,6 +1,6 @@
 //! The `postMessage` bridge to a same-origin parent page (`?host=parent`), for pages that embed
 //! Docs in an `<iframe>` and keep its files (a Nextcloud app, a personal file server). The
-//! same messages as GridCraft's and PdfCraft's bridges; each is a plain object with a `type`:
+//! same messages as the upstream apps' bridges; each is a plain object with a `type`:
 //!
 //! - `iridium_docs:ready` (to the parent): `{ version }`, sent once the app is running and
 //!   listening; send a file now.

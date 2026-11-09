@@ -97,7 +97,7 @@ struct AboutView: View {
             Text("A word processor by Iridium Technologies, Inc.")
                 .font(.subheadline)
             Divider()
-            Text("Based on WordCraft by the ArtCraft team.")
+            Text("Based on the upstream open-source word processor.")
                 .font(.footnote)
             Text("MIT OR Apache-2.0.")
                 .font(.footnote)
