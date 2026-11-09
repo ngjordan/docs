@@ -1,6 +1,6 @@
 //! Language packs in the window (CP4.3): the list in File › Options › Language, the missing-pack
 //! bar over the page and About › Language data. The engine does the work
-//! ([`wordcraft_engine::packs`]): in the app installs and fetches of the list run on its thread,
+//! ([`iridium_docs_engine::packs`]): in the app installs and fetches of the list run on its thread,
 //! whoever asks (these buttons, or `proof.installPack` from MCP and the control channel), so the
 //! window keeps drawing. A click of the person's own on Install, Show available languages or
 //! Refresh is their consent: it turns on the font store's downloading (there is no second
@@ -10,8 +10,8 @@ use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use egui::{RichText, Ui, vec2};
+use iridium_docs_engine::packs::{self, Pack};
 use serde_json::json;
-use wordcraft_engine::packs::{self, Pack};
 
 use crate::WordApp;
 use crate::theme::{Tokens, semibold};
@@ -232,7 +232,7 @@ fn missing(app: &mut WordApp, now: f64) -> Vec<Pack> {
     let key = MissingKey {
         document: app.session.document_id(),
         rev: app.session.rev(),
-        generation: wordcraft_engine::proof::dictionary_generation(),
+        generation: iridium_docs_engine::proof::dictionary_generation(),
         packs: packs::index_generation(),
     };
     if let Some((k, at, m)) = &app.packs_rt.missing
@@ -350,7 +350,7 @@ pub(crate) fn options_section(app: &mut WordApp, ui: &mut Ui) {
     if !network {
         ui.label(
             RichText::new(tl!(
-                "Downloading is off. Clicking Show available languages, Refresh or Install turns it on: Iridium Docs then downloads language packs and fonts from GitHub."
+                "Downloading is off. Clicking Show available languages, Refresh or Install turns it on: Docs then downloads language packs and fonts from GitHub."
             ))
             .small()
             .weak(),
@@ -448,7 +448,7 @@ const ABOUT_HEIGHT: f32 = 420.0;
 static LICENCES: std::sync::Mutex<Option<(u64, Arc<Vec<(String, String)>>)>> = std::sync::Mutex::new(None);
 
 fn licence_texts() -> Arc<Vec<(String, String)>> {
-    let generation = wordcraft_engine::proof::dictionary_generation();
+    let generation = iridium_docs_engine::proof::dictionary_generation();
     let mut cached = LICENCES.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
     if let Some((g, texts)) = cached.as_ref()
         && *g == generation
@@ -464,7 +464,7 @@ fn licence_texts() -> Arc<Vec<(String, String)>> {
 /// About › Language data: the full licence text of the embedded English data and of each
 /// installed pack.
 pub(crate) fn about_tab(ui: &mut Ui) {
-    ui.label(RichText::new(tl!("The spelling and hyphenation data Iridium Docs uses, and their licences.")).small().weak());
+    ui.label(RichText::new(tl!("The spelling and hyphenation data Docs uses, and their licences.")).small().weak());
     ui.add_space(4.0);
     let texts = licence_texts();
     // A fixed height: entries open and long texts scroll inside it, and the dialog keeps its size.
@@ -489,8 +489,8 @@ pub(crate) fn about_tab(ui: &mut Ui) {
 mod tests {
     use std::sync::atomic::Ordering;
 
+    use iridium_docs_engine::packs::{self, Backend, FixedBackend};
     use serde_json::{Value, json};
-    use wordcraft_engine::packs::{self, Backend, FixedBackend};
 
     use crate::WordApp;
 
@@ -576,7 +576,7 @@ mod tests {
         let _reset = Reset;
         let backend = std::sync::Arc::new(FixedBackend::sample());
         packs::set_backend(Some(backend.clone() as std::sync::Arc<dyn Backend>));
-        let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::new()), crate::Services::default());
+        let mut a = WordApp::new(iridium_docs_engine::Session::new(iridium_docs_doc::Document::new()), crate::Services::default());
         a.run("document.setText", json!({"text": "Dzień dobry, jak się masz?"})).unwrap();
         a.run("select.all", json!({})).unwrap();
         a.run("review.language", json!({"lang": "pl-PL"})).unwrap();

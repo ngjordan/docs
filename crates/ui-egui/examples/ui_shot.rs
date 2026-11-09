@@ -1,7 +1,7 @@
-//! Headless UI screenshots: renders the whole Iridium Docs window offscreen (wgpu), so it works
+//! Headless UI screenshots: renders the whole Docs window offscreen (wgpu), so it works
 //! with a locked screen or a hidden window.
 //!
-//! `cargo run -p wordcraft-ui-egui --example ui_shot -- script.jsonl`
+//! `cargo run -p iridium-docs-ui-egui --example ui_shot -- script.jsonl`
 //!
 //! The script is JSON lines: control-channel requests (`{"method": …, "params": …}`, see
 //! `docs/control-protocol.md`), `{"shot": "/abs/out.png"}` to save the window as PNG, or
@@ -14,8 +14,8 @@
 //! folder rather than the person's, or in `"storeDir"` given on the same line (with
 //! `CRAFT_LANGUAGE_PACK_INDEX` for a local pack index).
 
-use wordcraft_engine::Session;
-use wordcraft_ui_egui::{ControlRequest, Services, WordApp};
+use iridium_docs_engine::Session;
+use iridium_docs_ui_egui::{ControlRequest, Services, WordApp};
 
 static READY: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
@@ -26,9 +26,9 @@ fn main() {
     let lines: Vec<serde_json::Value> =
         script.lines().filter(|l| !l.trim().is_empty()).map(|l| serde_json::from_str(l).expect("json line")).collect();
     let doc = if lines.first().is_some_and(|l| l.get("empty").is_some()) {
-        wordcraft_doc::Document::new()
+        iridium_docs_doc::Document::new()
     } else {
-        wordcraft_engine::sample::sample_document()
+        iridium_docs_engine::sample::sample_document()
     };
     match lines.iter().find_map(|l| l.get("demoPacks")) {
         Some(serde_json::Value::String(s)) if s == "store" => {
@@ -38,9 +38,9 @@ fn main() {
                 .find_map(|l| l.get("storeDir").and_then(|v| v.as_str()))
                 .map(std::path::PathBuf::from)
                 .unwrap_or_else(|| std::env::temp_dir().join(format!("ui_shot-font-store-{}", std::process::id())));
-            wordcraft_engine::packs::use_font_store_in(dir, true);
+            iridium_docs_engine::packs::use_font_store_in(dir, true);
         }
-        Some(_) => wordcraft_engine::packs::set_backend(Some(std::sync::Arc::new(wordcraft_engine::packs::FixedBackend::sample()))),
+        Some(_) => iridium_docs_engine::packs::set_backend(Some(std::sync::Arc::new(iridium_docs_engine::packs::FixedBackend::sample()))),
         None => {}
     }
     let mut app = WordApp::new(Session::new(doc), Services::default()).with_control(rx);

@@ -1,4 +1,4 @@
-//! Charts Iridium Docs makes and edits (Insert › Chart): the chart type, its data (categories and
+//! Charts Docs makes and edits (Insert › Chart): the chart type, its data (categories and
 //! series), title, legend and data labels.
 //!
 //! A chart object ([`crate::graphic::Graphic`] with `chart` set) keeps this model next to the
@@ -132,7 +132,7 @@ pub struct ChartSeries {
     pub values: Vec<Option<f64>>,
 }
 
-/// A chart Iridium Docs can edit.
+/// A chart Docs can edit.
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ChartSpec {
@@ -154,7 +154,7 @@ pub struct ChartSpec {
 }
 
 impl ChartSpec {
-    /// A new chart of type `kind` with Iridium Docs's sample data: four quarters and three series
+    /// A new chart of type `kind` with Docs's sample data: four quarters and three series
     /// (one for pie and doughnut charts, x values for scatter charts), legend at the bottom.
     pub fn sample(kind: ChartType) -> ChartSpec {
         let (categories, series): (Vec<&str>, Vec<(&str, [f64; 4])>) = match kind {

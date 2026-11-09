@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Build and package WordCraft for FreeBSD:
+# Build and package Docs for FreeBSD:
 #
 #   $DIST/iridium-docs-<version>-freebsd-<arch>.tar.gz   a /usr/local-style tree (<arch> is x86_64, or
 #       aarch64 when CARGO_BUILD_TARGET=aarch64-unknown-freebsd):
 #       iridium-docs-<version>-freebsd-<arch>/{bin, share/applications, share/icons, share/mime,
-#       share/metainfo, share/doc/wordcraft}
+#       share/metainfo, share/doc/iridium-docs}
 #
 # Install by copying the tree's contents into /usr/local, e.g.
-#   tar -xzf wordcraft-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
+#   tar -xzf iridium-docs-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
 #
 # Usage: packaging/freebsd/package.sh [--skip-build] [--dry-run]
 #   --skip-build  package the binaries already in CARGO_TARGET_DIR
@@ -20,7 +20,7 @@ set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 LINUX="$ROOT/packaging/linux"
-APP_ID=ph.iridium.docs
+APP_ID=ph.docs
 
 SKIP_BUILD=0
 DRY_RUN=0
@@ -60,17 +60,17 @@ if [ -n "${CARGO_BUILD_TARGET:-}" ] && [ "$(uname -s)" != FreeBSD ]; then
 fi
 BASENAME="iridium-docs-$VERSION-freebsd-$ARCH"
 
-echo "==> WordCraft $VERSION for FreeBSD $ARCH"
+echo "==> Docs $VERSION for FreeBSD $ARCH"
 
 if [[ "$DRY_RUN" = 1 ]]; then
   echo "dry run: target=${CARGO_BUILD_TARGET:-native} arch=$ARCH"
-  echo "dry run: cargo build --release --locked ${CARGO_BUILD_TARGET:+--target $CARGO_BUILD_TARGET} -p wordcraft -p wordcraft-cli"
+  echo "dry run: cargo build --release --locked ${CARGO_BUILD_TARGET:+--target $CARGO_BUILD_TARGET} -p iridium-docs -p iridium-docs-cli"
   echo "dry run: would write $DIST/$BASENAME.tar.gz"
   exit 0
 fi
 
 if [[ "$SKIP_BUILD" = 0 ]]; then
-  (cd "$ROOT" && cargo build --release --locked ${CARGO_BUILD_TARGET:+--target "$CARGO_BUILD_TARGET"} -p wordcraft -p wordcraft-cli)
+  (cd "$ROOT" && cargo build --release --locked ${CARGO_BUILD_TARGET:+--target "$CARGO_BUILD_TARGET"} -p iridium-docs -p iridium-docs-cli)
 fi
 # Cargo puts a cross build under target/<triple>/release.
 BIN="$CARGO_TARGET_DIR/${CARGO_BUILD_TARGET:+$CARGO_BUILD_TARGET/}release"
@@ -80,16 +80,16 @@ rm -rf "$WORK"
 
 # FreeBSD's install(1) has no -D: create the directories first.
 mkdir -p "$STAGE/bin" "$STAGE/share/applications" "$STAGE/share/mime/packages" "$STAGE/share/metainfo" \
-  "$STAGE/share/icons" "$STAGE/share/doc/wordcraft"
-install -m 755 "$BIN/wordcraft" "$BIN/wordcraft-cli" "$STAGE/bin/"
-strip "$STAGE/bin/wordcraft" "$STAGE/bin/wordcraft-cli" 2>/dev/null || true
+  "$STAGE/share/icons" "$STAGE/share/doc/iridium-docs"
+install -m 755 "$BIN/iridium-docs" "$BIN/iridium-docs-cli" "$STAGE/bin/"
+strip "$STAGE/bin/iridium-docs" "$STAGE/bin/iridium-docs-cli" 2>/dev/null || true
 # The desktop entry, MIME type and metainfo are the freedesktop files the Linux packages use.
 install -m 644 "$LINUX/$APP_ID.desktop" "$STAGE/share/applications/$APP_ID.desktop"
 install -m 644 "$LINUX/$APP_ID.mime.xml" "$STAGE/share/mime/packages/$APP_ID.xml"
-sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$WORDCRAFT_BUILD_DATE/g" \
+sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$IRIDIUM_DOCS_BUILD_DATE/g" \
   "$LINUX/$APP_ID.metainfo.xml.in" >"$STAGE/share/metainfo/$APP_ID.metainfo.xml"
 cp -R "$ROOT/assets/app-icon/hicolor" "$STAGE/share/icons/"
-copy_docs "$STAGE/share/doc/wordcraft"
+copy_docs "$STAGE/share/doc/iridium-docs"
 
 # ---- .tar.gz -------------------------------------------------------------------------------------
 mkdir -p "$DIST"
@@ -97,7 +97,7 @@ tar -C "$WORK" -czf "$DIST/$BASENAME.tar.gz" "$BASENAME"
 echo "wrote $DIST/$BASENAME.tar.gz"
 
 if [ -z "${CARGO_BUILD_TARGET:-}" ] && [ "$ARCH" = "$HOST_ARCH" ]; then
-  "$STAGE/bin/wordcraft-cli" --version
+  "$STAGE/bin/iridium-docs-cli" --version
 else
   # They cannot run here, so check what they are instead: executables, not libraries or objects.
   # An older file(1) calls a PIE a shared object; its interpreter still marks it as a program.

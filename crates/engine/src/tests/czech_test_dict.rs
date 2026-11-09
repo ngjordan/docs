@@ -54,6 +54,8 @@ to
 zqzakázané/F
 ";
 
-pub fn install() {
+pub fn install() -> std::sync::MutexGuard<'static, ()> {
+    let turn = super::dictionaries_turn();
     super::install_dictionary(AFF, DIC).unwrap();
+    turn
 }

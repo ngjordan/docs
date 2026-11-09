@@ -3,10 +3,10 @@
 
 use std::sync::Arc;
 
-use wordcraft_doc::THEME_COLORS;
-use wordcraft_doc::fill::{Fill, Gradient, GradientFlip, GradientKind, PathShape};
-use wordcraft_doc::props::Rgb;
-use wordcraft_doc::wordart::{GradStop, MAX_STOPS};
+use iridium_docs_doc::THEME_COLORS;
+use iridium_docs_doc::fill::{Fill, Gradient, GradientFlip, GradientKind, PathShape};
+use iridium_docs_doc::props::Rgb;
+use iridium_docs_doc::wordart::{GradStop, MAX_STOPS};
 
 use crate::units::int;
 use crate::xml::El;
@@ -242,7 +242,7 @@ pub(crate) fn adjust_lum(c: Rgb, f: impl Fn(f64) -> f64) -> Rgb {
 
 #[cfg(test)]
 mod tests {
-    use wordcraft_doc::THEME_COLORS;
+    use iridium_docs_doc::THEME_COLORS;
 
     use super::*;
 

@@ -4,10 +4,10 @@ use super::*;
 fn a_translucent_shape_fill_is_drawn_translucent() {
     let mut d = Document::from_text("Wash");
     let wash = InlineObject::Shape {
-        kind: wordcraft_doc::para::ShapeKind::Rectangle,
+        kind: iridium_docs_doc::para::ShapeKind::Rectangle,
         w: 100.0,
         h: 50.0,
-        fill: Some(wordcraft_doc::fill::Fill::Solid { color: wordcraft_doc::props::Rgb::WHITE, transparency: 69.0 }),
+        fill: Some(iridium_docs_doc::fill::Fill::Solid { color: iridium_docs_doc::props::Rgb::WHITE, transparency: 69.0 }),
         stroke: None,
         stroke_width: 0.0,
         float: Default::default(),

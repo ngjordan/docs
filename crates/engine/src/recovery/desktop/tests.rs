@@ -1,12 +1,12 @@
 use super::*;
 use crate::Session;
+use iridium_docs_doc::StoryRef;
 use serde_json::json;
-use wordcraft_doc::StoryRef;
 
 struct Temp(PathBuf);
 impl Temp {
     fn new() -> Self {
-        let path = std::env::temp_dir().join(format!("wordcraft-recovery-test-{}", new_id().unwrap()));
+        let path = std::env::temp_dir().join(format!("iridium-docs-recovery-test-{}", new_id().unwrap()));
         private_dir(&path).unwrap();
         Self(path)
     }

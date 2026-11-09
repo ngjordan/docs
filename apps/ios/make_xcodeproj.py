@@ -20,7 +20,7 @@ import uuid
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "apps/ios")
 PROJ = ROOT / "IridiumDocs.xcodeproj"
-BUNDLE_ID = "ph.iridium.docs"
+BUNDLE_ID = "ph.docs"
 TEAM_ID = "5JY6QC2345"
 # The oldest iOS we support. Apple's SDK requirement is about the SDK a build
 # is compiled against, not this: Xcode 26 + the iOS 26 SDK can still deploy to
@@ -60,7 +60,7 @@ SWIFT_VERSION = "5.0"
 # rounded-rect mask. So the iOS icons are full-bleed squares on an opaque
 # background, rendered from the shared SVG with the corner radius removed.
 REPO = ROOT.parent.parent   # ROOT is apps/ios, so the repo root is two up
-ICON_SVG = REPO / "assets" / "app-icon" / "wordcraft.svg"
+ICON_SVG = REPO / "assets" / "app-icon" / "iridium-docs.svg"
 ICON_SET = ROOT / "IridiumDocs" / "Assets.xcassets" / "AppIcon.appiconset"
 
 # (idiom, points, scale)
@@ -274,7 +274,7 @@ obj("XCBuildConfiguration", oid("config:debug:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
+				INFOPLIST_KEY_CFBundleDisplayName = "Docs";
 \t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 \t\t\t\tINFOPLIST_KEY_CFBundleIconName = AppIcon;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -289,7 +289,7 @@ obj("XCBuildConfiguration", oid("config:release:target"), f"""{{
 \t\t\t\t{common}
 \t\t\t\tINFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 \t\t\t\tINFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Iridium Docs";
+				INFOPLIST_KEY_CFBundleDisplayName = "Docs";
 \t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 \t\t\t\tINFOPLIST_KEY_CFBundleIconName = AppIcon;
 \t\t\t\tINFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

@@ -1,6 +1,6 @@
 name: macOS
 
-# Builds, signs and notarizes the macOS artifacts (Iridium Docs.app DMG + the
+# Builds, signs and notarizes the macOS artifacts (Docs.app DMG + the
 # headless CLI) on a macOS runner, and publishes them as a GitHub release
 # asset.
 #
@@ -48,7 +48,7 @@ jobs:
       # manual run ship a different version. `inputs.version` is user-supplied, so
       # it is only ever passed through the environment - never interpolated into
       # a `run:` line, where it would be a command-injection vector.
-      WORDCRAFT_VERSION: ${{ inputs.version }}
+      IRIDIUM_DOCS_VERSION: ${{ inputs.version }}
     steps:
       - name: Check out
         uses: actions/checkout@v4

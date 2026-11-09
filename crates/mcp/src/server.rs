@@ -18,7 +18,7 @@ const INVALID_PARAMS: i64 = -32602;
 const INTERNAL_ERROR: i64 = -32603;
 const RESOURCE_NOT_FOUND: i64 = -32002;
 
-const INSTRUCTIONS: &str = "Iridium Docs is a word processor (a Microsoft Word clone). Every action is a command: find ids and \
+const INSTRUCTIONS: &str = "Docs is a word processor (a Microsoft Word clone). Every action is a command: find ids and \
 parameters with list_commands and run them with execute (or several with batch). Positions are \
 {story:\"body\", path:[block,(row,cell,block)...], off:byteOffset}. Typical flow: new_document → type_text \
 \"Hello\" → execute text.newParagraph → execute para.style {style:\"Heading 1\"} → select_text {text:\"Hello\"} → \
@@ -28,8 +28,8 @@ list_documents gives their ids, and `doc` on execute, batch and the other docume
 without switching.";
 
 /// Resource URIs.
-pub const DOC_URI: &str = "wordcraft://document";
-pub const COMMANDS_URI: &str = "wordcraft://commands";
+pub const DOC_URI: &str = "iridium_docs://document";
+pub const COMMANDS_URI: &str = "iridium_docs://commands";
 
 /// Longest request line accepted on stdin.
 pub const MAX_REQUEST_LINE: usize = 1 << 20;
@@ -183,9 +183,9 @@ impl Server {
                 Ok(json!({
                     "protocolVersion": version,
                     "capabilities": {"tools": {}, "resources": {}},
-                    "serverInfo": {"name": "iridium-docs", "title": "Iridium Docs", "version": env!("CARGO_PKG_VERSION"), "websiteUrl": "https://iridium.ph"},
+                    "serverInfo": {"name": "iridium_docs", "title": "Docs", "version": env!("CARGO_PKG_VERSION"), "websiteUrl": "https://iridium.ph"},
                     "instructions": format!(
-                        "{INSTRUCTIONS} Backend: {}. Community: https://iridium.ph · https://iridium.ph · https://github.com/storytold/wordcraft",
+                        "{INSTRUCTIONS} Backend: {}. Community: https://iridium.ph · https://github.com/ngjordan/iridium-docs",
                         self.backend.describe()
                     ),
                 }))

@@ -1,7 +1,7 @@
 {
   "_comment": "Single source of truth for the app's visual brand. Run `python3 packaging/brand.py` after editing to regenerate icons and propagate the values into the source tree. Product NAME strings in Rust stay literals (they are translatable UI text); this file covers the things that are mechanical: icons, app id, accent colour.",
-  "name": "Iridium Docs",
-  "app_id": "ph.iridium.docs",
+  "name": "Docs",
+  "app_id": "ph.docs",
   "slug": "iridium-docs",
   "developer": "Iridium Technologies, Inc.",
   "website": "https://iridium.ph",

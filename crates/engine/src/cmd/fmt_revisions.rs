@@ -10,13 +10,13 @@
 
 use std::sync::Arc;
 
+use iridium_docs_doc::props::VMerge;
+use iridium_docs_doc::props::{CellProps, CharProps, ParaProps, PropChange, RowProps, TableProps};
+use iridium_docs_doc::section::SectionProps;
+use iridium_docs_doc::table::{Cell, Row, Table};
+use iridium_docs_doc::{Block, Blocks, Document, Paragraph, Revision, RevisionKind};
 use serde::Serialize;
 use serde_json::{Value, json};
-use wordcraft_doc::props::VMerge;
-use wordcraft_doc::props::{CellProps, CharProps, ParaProps, PropChange, RowProps, TableProps};
-use wordcraft_doc::section::SectionProps;
-use wordcraft_doc::table::{Cell, Row, Table};
-use wordcraft_doc::{Block, Blocks, Document, Paragraph, Revision, RevisionKind};
 
 use crate::Session;
 

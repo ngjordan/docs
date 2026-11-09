@@ -144,7 +144,7 @@ pub fn set_backend(backend: Option<Arc<dyn Backend>>) {
     *BACKEND.write().unwrap_or_else(PoisonError::into_inner) = backend;
     set_index(None);
     jobs().errors.clear();
-    wordcraft_proof::packs::set_packs_dir(dir);
+    iridium_docs_proof::packs::set_packs_dir(dir);
 }
 
 /// Use the suite's font store for packs (`<font store>/language-packs`), as the person in the app
@@ -175,7 +175,10 @@ pub fn backend() -> Option<Arc<dyn Backend>> {
 }
 
 fn installed_from_proof() -> Vec<Installed> {
-    wordcraft_proof::packs::installed().into_iter().map(|p| Installed { locale: p.locale, name: p.name, licence: p.licence, path: p.path }).collect()
+    iridium_docs_proof::packs::installed()
+        .into_iter()
+        .map(|p| Installed { locale: p.locale, name: p.name, licence: p.licence, path: p.path })
+        .collect()
 }
 
 /// The test source packs come from instead of the pinned index (`CRAFT_LANGUAGE_PACK_INDEX`):
@@ -261,7 +264,7 @@ fn no_store() -> String {
 }
 
 fn network_off() -> String {
-    "downloading is turned off: turn it on in Iridium Docs (File › Options › Language, or an Install button there)".into()
+    "downloading is turned off: turn it on in Docs (File › Options › Language, or an Install button there)".into()
 }
 
 /// The pack for `locale` in the index.
@@ -501,20 +504,20 @@ fn spawn(_: impl FnOnce() + Send + 'static) -> Result<(), String> {
 
 /// Have proofing look at the packs folder again (its dictionaries are reloaded).
 fn reload(b: &Arc<dyn Backend>) {
-    if wordcraft_proof::packs::packs_dir() == b.packs_dir() {
-        wordcraft_proof::packs::reload();
+    if iridium_docs_proof::packs::packs_dir() == b.packs_dir() {
+        iridium_docs_proof::packs::reload();
     } else {
-        wordcraft_proof::packs::set_packs_dir(b.packs_dir());
+        iridium_docs_proof::packs::set_packs_dir(b.packs_dir());
     }
 }
 
 /// The full licence texts for About › Language data: the embedded English data, then each
 /// installed pack.
 pub fn licence_texts() -> Vec<(String, String)> {
-    let mut texts = wordcraft_proof::packs::licence_texts();
+    let mut texts = iridium_docs_proof::packs::licence_texts();
     // SCOWL's notices (with the Ispell BSD licence of its affix files), when English spells from
     // the embedded SCOWL data; after the Moby and supplement entries.
-    if let Some(notice) = wordcraft_proof::scowl::notice() {
+    if let Some(notice) = iridium_docs_proof::scowl::notice() {
         let at = texts.len().min(2);
         texts.insert(at, (SCOWL_TITLE.into(), notice.into()));
     }
@@ -538,8 +541,8 @@ pub fn pack_for_tag<'a>(tag: &str, packs: &'a [Pack]) -> Option<&'a Pack> {
 /// The languages (`w:lang`, resolved through the styles) of the body text, in first-seen order.
 pub fn document_languages(s: &Session) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
-    for path in s.doc.para_paths(wordcraft_doc::StoryRef::Body).into_iter().take(MAX_PARAGRAPHS_SCANNED) {
-        let Some(p) = s.doc.para(wordcraft_doc::StoryRef::Body, &path) else { continue };
+    for path in s.doc.para_paths(iridium_docs_doc::StoryRef::Body).into_iter().take(MAX_PARAGRAPHS_SCANNED) {
+        let Some(p) = s.doc.para(iridium_docs_doc::StoryRef::Body, &path) else { continue };
         if p.text.trim().is_empty() {
             continue;
         }
@@ -569,16 +572,16 @@ pub fn document_languages(s: &Session) -> Vec<String> {
 /// (Polish…) and any other (`ProofLang::Pack`, read from the pack alone); not `und`, `zxx` or a
 /// malformed tag. The one place the bar's language rule lives.
 pub fn proofable(tag: &str) -> bool {
-    wordcraft_proof::ProofLang::from_tag(Some(tag)) != wordcraft_proof::ProofLang::Other
+    iridium_docs_proof::ProofLang::from_tag(Some(tag)) != iridium_docs_proof::ProofLang::Other
 }
 
 /// The Hunspell dictionary `tag`'s language needs and doesn't have, for the status bar's
-/// "(no dictionary)": craft-proof's [`wordcraft_proof::missing_dictionary`], except for a
+/// "(no dictionary)": craft-proof's [`iridium_docs_proof::missing_dictionary`], except for a
 /// language craft-proof has no rules of its own for (`ProofLang::Pack`: Japanese, Chinese,
 /// Thai…) when no pack for it is available either, as no Hunspell dictionary may exist at all.
 pub fn missing_dictionary(tag: Option<&str>) -> Option<&'static str> {
-    let name = wordcraft_proof::missing_dictionary(tag)?;
-    let lang = wordcraft_proof::ProofLang::from_tag(tag);
+    let name = iridium_docs_proof::missing_dictionary(tag)?;
+    let lang = iridium_docs_proof::ProofLang::from_tag(tag);
     if lang.pack_locale().is_some() && pack_for_tag(tag.unwrap_or(""), &available()).is_none() {
         return None;
     }
@@ -630,7 +633,7 @@ impl FixedBackend {
             locale: locale.into(),
             name: name.into(),
             version: "0000000".into(),
-            url: format!("https://github.com/storytold/craft-i18n/releases/download/language-packs-1/{locale}.tar.zst"),
+            url: format!("https://github.com/ngjordan/craft-i18n/releases/download/language-packs-1/{locale}.tar.zst"),
             source: Some("https://github.com/LibreOffice/dictionaries".into()),
             size,
             licence: licence.into(),
@@ -703,7 +706,7 @@ mod tests {
     #[test]
     fn about_shows_the_scowl_notice_when_scowl_is_embedded() {
         let texts = super::licence_texts();
-        match wordcraft_proof::scowl::notice() {
+        match iridium_docs_proof::scowl::notice() {
             Some(notice) => {
                 let entry = texts.iter().find(|(t, _)| t == super::SCOWL_TITLE).map(|(_, x)| x.as_str());
                 assert_eq!(entry, Some(notice));
@@ -723,7 +726,7 @@ mod tests {
             .filter(|l| !l.is_empty())
             .collect();
         let allowed = |base: &str| base == "en" || if named.is_empty() { CARRY_OVER.contains(&base) } else { named.iter().any(|n| n == base) };
-        let embedded = wordcraft_proof::packs::embedded_locales();
+        let embedded = iridium_docs_proof::packs::embedded_locales();
         let extra: Vec<&&str> = embedded.iter().filter(|l| !allowed(l.split('-').next().unwrap_or(l))).collect();
         assert!(extra.is_empty(), "embedded beyond English and {named:?} (or the carry-over by default): {extra:?}");
     }

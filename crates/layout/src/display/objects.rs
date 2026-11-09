@@ -1,7 +1,7 @@
 use super::options::DisplayOptions;
 use super::paint::{Paint, paint_for};
 use super::{BezPath, Document, Draw, FaceRef, Graphic, GraphicItem, GraphicKind, InlineObject, PathSeg, Rect, Rgb, ShapeKind, Spin, TextAlign};
-use wordcraft_doc::connector::ArrowStyle;
+use iridium_docs_doc::connector::ArrowStyle;
 
 /// The draws of a chart or diagram's items inside `rect` (page coordinates). The items were built
 /// for the size `g.w` × `g.h` (0: `rect`'s own size), so they are scaled to `rect`; strokes and text
@@ -93,12 +93,12 @@ fn page_segs(segs: &[PathSeg], map: impl Fn(f32, f32) -> (f32, f32)) -> Vec<Path
 #[derive(Clone, Copy)]
 pub(super) struct ShapeLook<'a> {
     pub kind: ShapeKind,
-    pub fill: Option<&'a wordcraft_doc::fill::Fill>,
+    pub fill: Option<&'a iridium_docs_doc::fill::Fill>,
     pub stroke: Option<Rgb>,
     pub stroke_width: f32,
-    pub effects: wordcraft_doc::effects::ShapeEffects,
-    pub freeform: Option<&'a wordcraft_doc::freeform::Freeform>,
-    pub extra: &'a wordcraft_doc::connector::ShapeExtra,
+    pub effects: iridium_docs_doc::effects::ShapeEffects,
+    pub freeform: Option<&'a iridium_docs_doc::freeform::Freeform>,
+    pub extra: &'a iridium_docs_doc::connector::ShapeExtra,
 }
 
 /// The draws of a shape at `rect`: a preset outline, or a freeform's paths (an ink stroke left out
@@ -212,11 +212,11 @@ fn line_draws(
     kind: ShapeKind,
     stroke: Option<Rgb>,
     stroke_width: f32,
-    effects: wordcraft_doc::effects::ShapeEffects,
-    extra: &wordcraft_doc::connector::ShapeExtra,
+    effects: iridium_docs_doc::effects::ShapeEffects,
+    extra: &iridium_docs_doc::connector::ShapeExtra,
     out: &mut Vec<Draw>,
 ) {
-    use wordcraft_doc::connector::{connector_segs, end_direction};
+    use iridium_docs_doc::connector::{connector_segs, end_direction};
     match connector_segs(kind, rect.w, rect.h) {
         Some(segs) => {
             let segs = segs
@@ -282,17 +282,17 @@ fn text_glyphs(doc: &Document, r: Rect, it: &GraphicItem, alpha: f32, k: f32) ->
     }
     let family = font.as_deref().filter(|f| !f.is_empty()).unwrap_or(&doc.settings.minor_font);
     let size = size.clamp(1.0, 400.0);
-    let resolved = wordcraft_fonts::word::resolve(family, *bold, false);
+    let resolved = iridium_docs_fonts::word::resolve(family, *bold, false);
     let primary = resolved.face;
     let scale = |f: FaceRef| size / f.upem.max(1.0) as f32;
     let runs: Vec<_> = face_runs(text, primary, *bold)
         .into_iter()
-        .map(|(face, s)| (face, s, wordcraft_fonts::shape(face.get(), s, &[], |c| c)))
+        .map(|(face, s)| (face, s, iridium_docs_fonts::shape(face.get(), s, &[], |c| c)))
         .filter(|(_, _, shaped)| !shaped.is_empty())
         .collect();
     let width: f32 = runs.iter().map(|(f, _, shaped)| shaped.iter().map(|g| g.x_advance as f32).sum::<f32>() * scale(*f)).sum();
     // The font's own line metrics centre the line, whichever faces draw it.
-    let (ascent, descent) = wordcraft_fonts::word::line_metrics(primary.get());
+    let (ascent, descent) = iridium_docs_fonts::word::line_metrics(primary.get());
     let baseline = r.y + r.h / 2.0 + (ascent - descent) as f32 * scale(primary) / 2.0;
     let mut pen = match align {
         TextAlign::Left => r.x,
@@ -332,7 +332,7 @@ fn text_glyphs(doc: &Document, r: Rect, it: &GraphicItem, alpha: f32, k: f32) ->
 /// Chinese label doesn't mix serif and sans glyphs), else each character its own fallback. Spaces
 /// and combining marks stay in the run before them; a character no face has stays in `primary`.
 fn face_runs(text: &str, primary: FaceRef, bold: bool) -> Vec<(FaceRef, &str)> {
-    let joins = |c: char| c.is_whitespace() || wordcraft_doc::math_linear::is_combining(c);
+    let joins = |c: char| c.is_whitespace() || iridium_docs_doc::math_linear::is_combining(c);
     // (start, end, drawn by `primary`)
     let mut spans: Vec<(usize, usize, bool)> = Vec::new();
     for (i, c) in text.char_indices() {
@@ -343,7 +343,7 @@ fn face_runs(text: &str, primary: FaceRef, bold: bool) -> Vec<(FaceRef, &str)> {
             _ => spans.push((i, end, own)),
         }
     }
-    let db = wordcraft_fonts::FontDb::global();
+    let db = iridium_docs_fonts::FontDb::global();
     let mut out: Vec<(FaceRef, &str)> = Vec::with_capacity(spans.len());
     for (start, end, own) in spans {
         let Some(s) = text.get(start..end) else { continue };
@@ -466,12 +466,12 @@ pub(super) fn object_draws(o: &InlineObject, rect: Rect, outer: Spin, alpha: f32
 /// A shape's `effects` as drawn turned by `spin` (all the turns it is drawn inside): glows and
 /// soft edges turn with the shape, and so does a shadow's offset when it rotates with the shape
 /// (`rotWithShape`); one that doesn't keeps its direction on the page, so its angle is turned back.
-pub(crate) fn effects_in(effects: wordcraft_doc::effects::ShapeEffects, spin: Spin) -> wordcraft_doc::effects::ShapeEffects {
+pub(crate) fn effects_in(effects: iridium_docs_doc::effects::ShapeEffects, spin: Spin) -> iridium_docs_doc::effects::ShapeEffects {
     let mut e = effects;
     if let Some(s) = e.shadow.as_mut().filter(|s| !s.rot_with_shape && !spin.is_identity()) {
         let a = s.angle.to_radians();
         let (dx, dy) = spin.unapply(0.0, 0.0, a.cos(), a.sin());
-        s.angle = wordcraft_geom::normalize_degrees(dy.atan2(dx).to_degrees());
+        s.angle = iridium_docs_geom::normalize_degrees(dy.atan2(dx).to_degrees());
     }
     e
 }
@@ -496,7 +496,7 @@ pub(crate) fn inline_rect(obj: Option<&InlineObject>, cx: f32, base: f32, adv: f
     }
     let Some((w, h, float)) = frame.filter(|(_, _, f)| f.rot != 0.0) else { return room };
     // The room is the rotated bounds of the frame: undo the rotation.
-    let (w, h) = (wordcraft_geom::finite(w).clamp(1.0, 4000.0), wordcraft_geom::finite(h).clamp(1.0, 4000.0));
+    let (w, h) = (iridium_docs_geom::finite(w).clamp(1.0, 4000.0), iridium_docs_geom::finite(h).clamp(1.0, 4000.0));
     let (bw, _) = float.spin().extent(w, h);
     let k = if bw > 0.0 { room.w / bw } else { 1.0 };
     let (fw, fh) = (w * k, h * k);
@@ -504,7 +504,7 @@ pub(crate) fn inline_rect(obj: Option<&InlineObject>, cx: f32, base: f32, adv: f
 }
 
 /// A Drawing Canvas's background and outline over its frame `rect`.
-fn canvas_background(rect: Rect, c: &wordcraft_doc::para::CanvasStyle) -> Draw {
+fn canvas_background(rect: Rect, c: &iridium_docs_doc::para::CanvasStyle) -> Draw {
     Draw::Shape {
         rect,
         kind: ShapeKind::Rectangle,

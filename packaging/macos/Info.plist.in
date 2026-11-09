@@ -7,13 +7,13 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>Iridium Docs</string>
+  <string>Docs</string>
   <key>CFBundleName</key>
-  <string>Iridium Docs</string>
+  <string>Docs</string>
   <key>CFBundleExecutable</key>
-  <string>WordCraft</string>
+  <string>Docs</string>
   <key>CFBundleIdentifier</key>
-  <string>ph.iridium.docs</string>
+  <string>ph.docs</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
@@ -29,7 +29,7 @@
   <key>IridiumDocsBuildCommit</key>
   <string>@BUILD_SHA@</string>
   <key>CFBundleIconFile</key>
-  <string>Iridium Docs</string>
+  <string>Docs</string>
   <key>LSApplicationCategoryType</key>
   <string>public.app-category.productivity</string>
   <!-- Must match MACOSX_DEPLOYMENT_TARGET in package.sh. Big Sur is the first release on
@@ -43,9 +43,9 @@
   <key>NSRequiresAquaSystemAppearance</key>
   <false/>
   <key>NSHumanReadableCopyright</key>
-  <string>Copyright © 2026 Iridium Technologies, Inc. Based on WordCraft by the ArtCraft team. MIT OR Apache-2.0.</string>
+  <string>Copyright © 2026 Iridium Technologies, Inc. Based on Docs by the upstream team. MIT OR Apache-2.0.</string>
 
-  <!-- Documents Iridium Docs opens (system type declarations). -->
+  <!-- Documents Docs opens (system type declarations). -->
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>

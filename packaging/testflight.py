@@ -26,8 +26,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import asc_client  # noqa: E402
 
-APP_ID = "6830192857"          # Iridium Docs
-DEFAULT_GROUP = "Iridium Docs Testers"
+APP_ID = "6830192857"          # Docs
+DEFAULT_GROUP = "Docs Testers"
 
 
 def api(path, method="GET", data=None):

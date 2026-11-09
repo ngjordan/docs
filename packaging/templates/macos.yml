@@ -46,7 +46,7 @@ env:
   # `inputs.version` is user-supplied, so it only ever reaches the build
   # through the environment - never interpolated into a `run:` line, where it
   # would be a command-injection vector. packaging/env.sh validates its shape.
-  WORDCRAFT_VERSION: ${{ inputs.version }}
+  IRIDIUM_DOCS_VERSION: ${{ inputs.version }}
 
 jobs:
   build:

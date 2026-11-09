@@ -53,7 +53,7 @@ pub(crate) struct PageBuilder<'a> {
     pub(crate) block_marks: Vec<usize>,
     /// The vertical alignment of the section the current page started in: a page finished when
     /// the next section starts is aligned as its own section asks, not the next one.
-    pub(crate) page_valign: wordcraft_doc::section::PageVAlign,
+    pub(crate) page_valign: iridium_docs_doc::section::PageVAlign,
     /// The document's own footnote separators, laid out for the section's text width.
     pub(crate) seps: NoteSeps,
     /// Where the last paragraph's lines ended: page count, column and y.
@@ -260,10 +260,10 @@ impl PageBuilder<'_> {
     /// blocks out (justified).
     pub(crate) fn apply_valign(&mut self) {
         let k = match self.page_valign {
-            wordcraft_doc::section::PageVAlign::Top => return,
-            wordcraft_doc::section::PageVAlign::Justify => return self.justify_page(),
-            wordcraft_doc::section::PageVAlign::Center => 0.5,
-            wordcraft_doc::section::PageVAlign::Bottom => 1.0,
+            iridium_docs_doc::section::PageVAlign::Top => return,
+            iridium_docs_doc::section::PageVAlign::Justify => return self.justify_page(),
+            iridium_docs_doc::section::PageVAlign::Center => 0.5,
+            iridium_docs_doc::section::PageVAlign::Bottom => 1.0,
         };
         if self.web {
             return;
@@ -307,7 +307,7 @@ impl PageBuilder<'_> {
         self.excl.extend(early.get(&self.pages.len()).into_iter().flatten().map(|(_, _, a)| a.clone()));
         self.seeded = self.excl.len();
         self.float_tables.clear();
-        if self.sect.line_numbers.as_ref().is_some_and(|l| l.restart == wordcraft_doc::section::LineNumberRestart::Page) {
+        if self.sect.line_numbers.as_ref().is_some_and(|l| l.restart == iridium_docs_doc::section::LineNumberRestart::Page) {
             self.line_no = 0;
         }
         let s = self.sect;
@@ -453,7 +453,7 @@ impl PageBuilder<'_> {
 /// order (objects behind the text go first) or place (a floating table of an earlier section can
 /// sit lower).
 fn text_extent(items: &[Placed], first_block: usize) -> Option<(f32, f32)> {
-    let ours = |path: &wordcraft_doc::Path| path.0.first().is_some_and(|b| *b as usize >= first_block);
+    let ours = |path: &iridium_docs_doc::Path| path.0.first().is_some_and(|b| *b as usize >= first_block);
     items
         .iter()
         .filter_map(|it| match it {

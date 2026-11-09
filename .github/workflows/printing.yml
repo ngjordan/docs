@@ -7,8 +7,8 @@ on:
     paths:
       - 'Cargo*'
       - 'craft-i18n.rev'
-      - 'apps/wordcraft/**'
-      - 'apps/wordcraft-web/**'
+      - 'apps/iridium-docs/**'
+      - 'apps/iridium-docs-web/**'
       - 'crates/ui-egui/**'
       - '.github/workflows/printing.yml'
   push:
@@ -16,8 +16,8 @@ on:
     paths:
       - 'Cargo*'
       - 'craft-i18n.rev'
-      - 'apps/wordcraft/**'
-      - 'apps/wordcraft-web/**'
+      - 'apps/iridium-docs/**'
+      - 'apps/iridium-docs-web/**'
       - 'crates/ui-egui/**'
       - '.github/workflows/printing.yml'
   workflow_dispatch:
@@ -49,12 +49,12 @@ jobs:
       # The interface catalogs and craft-proof's Language data come from craft-i18n at the commit in
       # craft-i18n.rev, so these tests build with the same data as the gate (ci.yml).
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: ngjordan/craft-common-actions/actions/checkout-craft-i18n@main
 
       # The catalogs include CJK interface languages, so the UI tests need the suite's fonts, as in
       # the gate (same commit as ci.yml and release.yml).
       - name: Check out craft-fonts
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: ngjordan/craft-common-actions/actions/checkout-craft-fonts@main
         with:
           ref: b076417b5880bd4154bd22f00695b1d28c6bea83
 
@@ -85,11 +85,11 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Native app and UI Clippy
-        run: cargo clippy -p wordcraft -p wordcraft-ui-egui --all-targets --locked -- -D warnings
+        run: cargo clippy -p iridium-docs -p iridium-docs-ui-egui --all-targets --locked -- -D warnings
 
       - name: Native app and UI tests
-        run: cargo test -p wordcraft -p wordcraft-ui-egui --locked
+        run: cargo test -p iridium-docs -p iridium-docs-ui-egui --locked
 
       - name: Browser compatibility
         if: runner.os == 'Linux'
-        run: cargo check -p wordcraft-web --target wasm32-unknown-unknown --locked
+        run: cargo check -p iridium-docs-web --target wasm32-unknown-unknown --locked

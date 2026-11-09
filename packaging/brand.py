@@ -49,7 +49,7 @@ TEXT_SUFFIXES = {
 # ph.iridium.cad.png). Those must not move.
 #
 # The files are found by GLOB, not by a hardcoded path: the packaging files are
-# themselves named after the app id (ph.iridium.docs.desktop), so a hardcoded path
+# themselves named after the app id (ph.docs.desktop), so a hardcoded path
 # would stop matching after the first rebrand and the rule would silently skip them.
 APP_ID_GLOBS = [
     "packaging/linux/*.desktop",
@@ -64,10 +64,10 @@ APP_ID_GLOBS = [
     "packaging/windows/*.ps1",
     "packaging/windows/*.json",
     "packaging/windows/*.wxs",
-    "apps/wordcraft/src/main.rs",
-    "apps/wordcraft/src/default_apps.rs",
-    "apps/wordcraft/src/apple_events.rs",
-    "apps/wordcraft/build.rs",
+    "apps/iridium-docs/src/main.rs",
+    "apps/iridium-docs/src/default_apps.rs",
+    "apps/iridium-docs/src/apple_events.rs",
+    "apps/iridium-docs/build.rs",
     "crates/control-key/src/lib.rs",
     "crates/ui-egui/src/i18n/tests.rs",
 ]
@@ -178,13 +178,13 @@ def find_current_app_id(brand):
     The id is whatever the last rebrand left behind, so it is read from the files
     that carry it rather than hardcoded. Several sources are consulted, because
     different files spell the id differently: main.rs carries the bare id
-    (ph.iridium.docs), the desktop entry is named with the id plus a suffix
-    (ph.iridium.docs.desktop), and the icons are named with the id plus .png.
+    (ph.docs), the desktop entry is named with the id plus a suffix
+    (ph.docs.desktop), and the icons are named with the id plus .png.
 
     The desktop-entry name is preferred: it is the form that has the fewest other
     spellings to reconcile, and it is the file that gets renamed.
     """
-    # The desktop entry file name: ph.iridium.docs.desktop -> ph.iridium.docs
+    # The desktop entry file name: ph.docs.desktop -> ph.docs
     for p in sorted((ROOT / "packaging" / "linux").glob("*.desktop")):
         stem = p.stem
         if stem.endswith(".desktop"):
@@ -194,7 +194,7 @@ def find_current_app_id(brand):
 
     # The app's own with_app_id().
     m = re.search(r'with_app_id\("([^"]+)"\)',
-                  read_text_safe(ROOT / "apps/wordcraft/src/main.rs") or "")
+                  read_text_safe(ROOT / "apps/iridium-docs/src/main.rs") or "")
     if m:
         return m.group(1).strip()
 
@@ -202,13 +202,13 @@ def find_current_app_id(brand):
     for p in sorted((ICON_DIR / "hicolor").rglob("*.png")):
         if p.stem.count(".") >= 2:
             return p.stem
-    return "ai.storyteller.wordcraft"
+    return "ai.storyteller.iridium-docs"
 
 
 def rename_id_files(stale_ids, app_id, check_only=False):
     """Rename the packaging files that are named after the app id.
 
-    ph.iridium.docs.desktop -> com.acme.word.desktop, and so on. Without this the
+    ph.docs.desktop -> com.acme.word.desktop, and so on. Without this the
     next run's glob would not find the file and the id inside it would freeze.
     """
     if not app_id:
@@ -385,14 +385,14 @@ def propagate(brand, check_only=False):
     old_slug = find_current_slug(brand)
 
     # --- app id (reverse-DNS). Every stale spelling has to go: the tree may carry
-    #     more than one (the upstream id ai.storyteller.wordcraft in main.rs, and
+    #     more than one (the upstream id ai.storyteller.iridium-docs in main.rs, and
     #     the id the last rebrand left in the desktop entry and the icons).
     #
     #     The match is exact on a full id, never a loose prefix: a prefix match on
     #     "ph.iridium" would rewrite the sibling apps' ids (ph.iridium.sheets.png).
-    #     The bare word "wordcraft" is NOT an id - it is the crate namespace
-    #     (wordcraft_engine, wordcraft_ui_egui) and must not move.
-    stale_ids = {old_id, "ai.storyteller.wordcraft"}
+    #     The bare word "iridium-docs" is NOT an id - it is the crate namespace
+    #     (iridium-docs_engine, iridium-docs_ui_egui) and must not move.
+    stale_ids = {old_id, "ai.storyteller.iridium-docs"}
     stale_ids |= {s for s in stale_ids if s and s != app_id}
     id_pattern = re.compile(
         "|".join(
@@ -447,7 +447,7 @@ def propagate(brand, check_only=False):
     # --- this app's own icon paths in the docs and the web shell. Scoped to the
     #     icon path, not the bare app id, so the sibling apps' icons in README.md
     #     (ph.iridium.sheets.png, ph.iridium.cad.png, ph.iridium.decks.png) stay.
-    doc_icon_files = find_files("README.md", "apps/wordcraft-web/index.html")
+    doc_icon_files = find_files("README.md", "apps/iridium-docs-web/index.html")
     sub_all(doc_icon_files,
             re.escape(f"app-icon/hicolor/256x256/apps/{old_id}.png"),
             f"app-icon/hicolor/256x256/apps/{app_id}.png", "icon path (readme)", check_only)
@@ -492,13 +492,13 @@ def propagate(brand, check_only=False):
         "MCP identity", check_only=check_only)
 
     # --- Windows version info.
-    sub("apps/wordcraft/build.rs",
+    sub("apps/iridium-docs/build.rs",
         r'\.set\("ProductName", "[^"]*"\)',
         f'.set("ProductName", "{name}")', "Windows product name", check_only=check_only)
-    sub("apps/wordcraft/build.rs",
+    sub("apps/iridium-docs/build.rs",
         r'\.set\("FileDescription", "[^"]*"\)',
         f'.set("FileDescription", "{name} word processor")', "Windows description", check_only=check_only)
-    sub("apps/wordcraft/build.rs",
+    sub("apps/iridium-docs/build.rs",
         r'\.set\("CompanyName", "[^"]*"\)',
         f'.set("CompanyName", "{brand["developer"]}")', "Windows company", check_only=check_only)
 
@@ -506,13 +506,13 @@ def propagate(brand, check_only=False):
     sub("crates/ui-egui/src/lib.rs",
         r'assets/app-icon/hicolor/128x128/apps/[A-Za-z0-9._-]+\.png',
         f'assets/app-icon/hicolor/128x128/apps/{app_id}.png', "icon path (ui-egui)", check_only=check_only)
-    sub("apps/wordcraft/src/main.rs",
+    sub("apps/iridium-docs/src/main.rs",
         r'assets/app-icon/hicolor/256x256/apps/[A-Za-z0-9._-]+\.png',
         f'assets/app-icon/hicolor/256x256/apps/{app_id}.png', "icon path (desktop)", check_only=check_only)
-    sub("apps/wordcraft/src/main.rs",
+    sub("apps/iridium-docs/src/main.rs",
         r'assets/app-icon/[A-Za-z0-9._-]+-macos-512\.png',
         f'assets/app-icon/{slug}-macos-512.png', "icon path (macos)", check_only=check_only)
-    sub("apps/wordcraft/build.rs",
+    sub("apps/iridium-docs/build.rs",
         r'assets/app-icon/[A-Za-z0-9._-]+\.ico',
         f'assets/app-icon/{slug}.ico', "icon path (windows)", check_only=check_only)
 

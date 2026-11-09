@@ -1,7 +1,7 @@
 use super::limits::MAX_NEST;
 
 // ---------------------------------------------------------------------------------------------
-// Equations: Iridium Docs keeps them in the linear format (`x=(-b±√(b^2-4ac))/2a`).
+// Equations: Docs keeps them in the linear format (`x=(-b±√(b^2-4ac))/2a`).
 
 /// Symbols with a LaTeX command: (character, command without the backslash).
 const MATH_SYMBOLS: &[(char, &str)] = &[

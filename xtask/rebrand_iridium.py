@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Rebrand WordCraft -> Iridium Docs.
+"""Rebrand Docs -> Docs.
 
 Deterministic, idempotent, auditable. Every change is an explicit (old, new) pair
 applied to an explicit file list. Prints a change log; exits non-zero if a
 required substitution did not apply.
 
 Naming:
-  product name  : WordCraft  -> Iridium Docs
-  binary/app id : wordcraft   -> iridium-docs
-  reverse-DNS id: ai.storyteller.wordcraft -> ph.iridium.docs
-  settings dir  : wordcraft   -> iridium-docs
+  product name  : Docs  -> Docs
+  binary/app id : iridium-docs   -> iridium-docs
+  reverse-DNS id: ai.storyteller.iridium-docs -> ph.docs
+  settings dir  : iridium-docs   -> iridium-docs
   accent colour : #3B5BDB     -> #0B6E4F  (Iridium green-teal)
 """
 
@@ -79,98 +79,98 @@ def sub_regex(rel, pattern, new, count=None, required=True, note=""):
 
 
 # ---------------------------------------------------------------- 1. brand files
-# ArtCraft marks are trademarks, not open source: docs/brand/LICENSE-brand.txt
+# the upstream project marks are trademarks, not open source: docs/brand/LICENSE-brand.txt
 # requires a fork to remove them. This is mandatory, not cosmetic.
 brand = ROOT / "docs" / "brand"
 if brand.is_dir():
     for f in sorted(brand.iterdir()):
         f.unlink()
     brand.rmdir()
-    CHANGES.append(("docs/brand/", "ArtCraft marks (8 files)", "DELETED", 8,
+    CHANGES.append(("docs/brand/", "the upstream project marks (8 files)", "DELETED", 8,
                     "mandatory: trademark, not covered by MIT/Apache"))
 
 # ---------------------------------------------------------------- 2. product name
 # UI-visible product name. Tests that assert the old name are updated too.
 NAME_SITES = [
-    ("crates/ui-egui/src/chrome.rs", '"WordCraft".to_string()', '"Iridium Docs".to_string()'),
-    ("crates/ui-egui/src/dialogs/chrome.rs", '=> "WordCraft",', '=> "Iridium Docs",'),
-    ("crates/ui-egui/src/dialogs/dispatch.rs", 'tl!("WordCraft")', 'tl!("Iridium Docs")'),
-    ("crates/ui-egui/src/windows.rs", 'return "WordCraft".to_string();', 'return "Iridium Docs".to_string();'),
-    ("crates/ui-egui/src/windows.rs", 'with_title("WordCraft")', 'with_title("Iridium Docs")'),
-    ("crates/pdf/src/metadata.rs", 'creator: "WordCraft".into(), producer: "WordCraft".into()',
-     'creator: "Iridium Docs".into(), producer: "Iridium Docs".into()'),
-    ("crates/engine/src/sample.rs", 'd.core.creator = "WordCraft".into();', 'd.core.creator = "Iridium Docs".into();'),
-    ("crates/docx/src/write/settings.rs", 'w.leaf("Application", &[], "WordCraft");',
-     'w.leaf("Application", &[], "Iridium Docs");'),
-    ("apps/wordcraft/src/main.rs", '.with_title("WordCraft")', '.with_title("Iridium Docs")'),
-    ("apps/wordcraft/build.rs", '.set("ProductName", "WordCraft")', '.set("ProductName", "Iridium Docs")'),
+    ("crates/ui-egui/src/chrome.rs", '"Docs".to_string()', '"Docs".to_string()'),
+    ("crates/ui-egui/src/dialogs/chrome.rs", '=> "Docs",', '=> "Docs",'),
+    ("crates/ui-egui/src/dialogs/dispatch.rs", 'tl!("Docs")', 'tl!("Docs")'),
+    ("crates/ui-egui/src/windows.rs", 'return "Docs".to_string();', 'return "Docs".to_string();'),
+    ("crates/ui-egui/src/windows.rs", 'with_title("Docs")', 'with_title("Docs")'),
+    ("crates/pdf/src/metadata.rs", 'creator: "Docs".into(), producer: "Docs".into()',
+     'creator: "Docs".into(), producer: "Docs".into()'),
+    ("crates/engine/src/sample.rs", 'd.core.creator = "Docs".into();', 'd.core.creator = "Docs".into();'),
+    ("crates/docx/src/write/settings.rs", 'w.leaf("Application", &[], "Docs");',
+     'w.leaf("Application", &[], "Docs");'),
+    ("apps/iridium-docs/src/main.rs", '.with_title("Docs")', '.with_title("Docs")'),
+    ("apps/iridium-docs/build.rs", '.set("ProductName", "Docs")', '.set("ProductName", "Docs")'),
 ]
 for rel, old, new in NAME_SITES:
     sub(rel, old, new, note="product name")
 
 # The i18n allow-list treats the product name as a non-translatable literal.
 sub("crates/ui-egui/src/i18n/audit.rs",
-    'matches!(plain, "WordCraft" | "WordCraft User" |',
-    'matches!(plain, "Iridium Docs" | "Iridium Docs User" |',
+    'matches!(plain, "Docs" | "Docs User" |',
+    'matches!(plain, "Docs" | "Docs User" |',
     note="i18n literal allow-list")
 
 # The default tracked-changes author name.
-sub_regex(r"crates/engine/src/", r'"WordCraft User"', '"Iridium Docs User"',
+sub_regex(r"crates/engine/src/", r'"Docs User"', '"Docs User"',
           note="tracked-change author (all crates/engine/src)")
 
 # ---------------------------------------------------------------- 3. app id / paths
 sub_regex("crates/ui-egui/src/i18n/tests.rs",
-          r"ai\.storyteller\.wordcraft", "ph.iridium.docs", note="app id in i18n test")
+          r"ai\.storyteller\.iridium-docs", "ph.docs", note="app id in i18n test")
 sub_regex("crates/control-key/src/lib.rs",
-          r"ai\.storyteller\.wordcraft", "ph.iridium.docs", note="app id in control-key test")
-sub_regex("apps/wordcraft/src/default_apps.rs",
-          r"ai\.storyteller\.wordcraft", "ph.iridium.docs", note="desktop entry id")
+          r"ai\.storyteller\.iridium-docs", "ph.docs", note="app id in control-key test")
+sub_regex("apps/iridium-docs/src/default_apps.rs",
+          r"ai\.storyteller\.iridium-docs", "ph.docs", note="desktop entry id")
 
 # ---------------------------------------------------------------- 4. settings dir
 sub("crates/control-key/src/lib.rs",
-    'PathBuf::from(h).join("Library/Application Support/WordCraft")',
-    'PathBuf::from(h).join("Library/Application Support/Iridium Docs")',
+    'PathBuf::from(h).join("Library/Application Support/Docs")',
+    'PathBuf::from(h).join("Library/Application Support/Docs")',
     note="macOS settings dir")
 sub("crates/control-key/src/lib.rs",
-    'PathBuf::from(a).join("WordCraft")',
-    'PathBuf::from(a).join("Iridium Docs")',
+    'PathBuf::from(a).join("Docs")',
+    'PathBuf::from(a).join("Docs")',
     note="Windows settings dir")
 sub("crates/control-key/src/lib.rs",
-    '.map(|c| c.join("wordcraft"))',
+    '.map(|c| c.join("iridium-docs"))',
     '.map(|c| c.join("iridium-docs"))',
     note="Linux settings dir")
 sub("crates/control-key/src/lib.rs",
-    'assert!(name == "wordcraft" || name == "WordCraft", "{}"',
-    'assert!(name == "iridium-docs" || name == "Iridium Docs", "{}"',
+    'assert!(name == "iridium-docs" || name == "Docs", "{}"',
+    'assert!(name == "iridium-docs" || name == "Docs", "{}"',
     note="settings dir test")
 sub_regex("crates/control-key/src/lib.rs",
-          r'WORDCRAFT_PROFILE_DIR', 'IRIDIUM_DOCS_PROFILE_DIR',
+          r'IRIDIUM_DOCS_PROFILE_DIR', 'IRIDIUM_DOCS_PROFILE_DIR',
           note="profile dir env var")
 
 # ---------------------------------------------------------------- 5. icon asset paths
 # The PNG files are renamed below; the include_bytes! paths must follow.
 sub_regex("crates/ui-egui/src/lib.rs",
-          r"assets/app-icon/hicolor/128x128/apps/ai\.storyteller\.wordcraft\.png",
-          "assets/app-icon/hicolor/128x128/apps/ph.iridium.docs.png",
+          r"assets/app-icon/hicolor/128x128/apps/ai\.storyteller\.iridium-docs\.png",
+          "assets/app-icon/hicolor/128x128/apps/ph.docs.png",
           note="icon path (ui-egui)")
-sub_regex("apps/wordcraft/src/main.rs",
-          r"assets/app-icon/hicolor/256x256/apps/ai\.storyteller\.wordcraft\.png",
-          "assets/app-icon/hicolor/256x256/apps/ph.iridium.docs.png",
+sub_regex("apps/iridium-docs/src/main.rs",
+          r"assets/app-icon/hicolor/256x256/apps/ai\.storyteller\.iridium-docs\.png",
+          "assets/app-icon/hicolor/256x256/apps/ph.docs.png",
           note="icon path (desktop)")
 # The desktop-file path in default_apps.rs is covered by the app-id rename above.
 # (Keep this rule non-fatal so the script stays idempotent on re-runs.)
 
 # ---------------------------------------------------------------- 6. MCP server info
 sub("crates/mcp/src/server.rs",
-    '"name": "wordcraft", "title": "WordCraft", "version": env!("CARGO_PKG_VERSION"), '
-    '"websiteUrl": "https://getartcraft.com/apps/wordcraft"',
-    '"name": "iridium-docs", "title": "Iridium Docs", "version": env!("CARGO_PKG_VERSION"), '
+    '"name": "iridium-docs", "title": "Docs", "version": env!("CARGO_PKG_VERSION"), '
+    '"websiteUrl": "https://iridium.ph/apps/iridium-docs"',
+    '"name": "iridium-docs", "title": "Docs", "version": env!("CARGO_PKG_VERSION"), '
     '"websiteUrl": "https://iridium.ph"',
     note="MCP server identity")
 sub_regex("crates/mcp/src/server.rs",
           r"discord\.gg/artcraft", "iridium.ph", note="MCP community link")
 sub_regex("crates/mcp/src/server.rs",
-          r"getartcraft\.com/apps/wordcraft", "iridium.ph", note="MCP community link 2")
+          r"getartcraft\.com/apps/iridium-docs", "iridium.ph", note="MCP community link 2")
 
 # ---------------------------------------------------------------- 7. accent colour
 sub("crates/ui-egui/src/theme.rs",
@@ -191,14 +191,14 @@ sub("crates/ui-egui/src/lib.rs",
 # but it is still the upstream artwork. Replace with our own: a white sheet with a
 # green "I" on the Iridium green tile.
 #
-# The raster icons are NOT deleted: apps/wordcraft/build.rs and main.rs
+# The raster icons are NOT deleted: apps/iridium-docs/build.rs and main.rs
 # include_bytes! them, so the build breaks without them. They are regenerated
 # from our SVG by packaging/icons.sh (resvg), which this script calls.
 ICON_DIR = ROOT / "assets" / "app-icon"
 
 # The master SVG: our own mark - a document sheet with an "I" and a fold.
 SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Iridium Docs icon (original artwork; MIT OR Apache-2.0). -->
+  <!-- Docs icon (original artwork; MIT OR Apache-2.0). -->
   <rect width="512" height="512" rx="112" fill="#0B6E4F"/>
   <g transform="rotate(-6 256 256)">
     <path d="M150 92 H322 L384 154 V420 H150 Z" fill="#ffffff" stroke="#062a1f" stroke-width="14" stroke-linejoin="round"/>
@@ -212,14 +212,14 @@ SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 </svg>
 '''
 # Keep the same filename so packaging/icons.sh and the include_bytes! paths stay valid.
-(ICON_DIR / "wordcraft.svg").write_text(SVG, encoding="utf-8")
-CHANGES.append(("assets/app-icon/wordcraft.svg", "upstream placeholder", "Iridium Docs mark", 1, "own icon"))
+(ICON_DIR / "iridium-docs.svg").write_text(SVG, encoding="utf-8")
+CHANGES.append(("assets/app-icon/iridium-docs.svg", "upstream placeholder", "Docs mark", 1, "own icon"))
 
 # The hicolor PNG filenames change with the app id, so the old ones must go.
 HIC = ICON_DIR / "hicolor"
-for p in sorted(HIC.rglob("ai.storyteller.wordcraft.*")):
+for p in sorted(HIC.rglob("ai.storyteller.iridium-docs.*")):
     p.unlink()
-    CHANGES.append((str(p.relative_to(ROOT)), "upstream icon", "removed", 1, "renamed to ph.iridium.docs"))
+    CHANGES.append((str(p.relative_to(ROOT)), "upstream icon", "removed", 1, "renamed to ph.docs"))
 
 # ---------------------------------------------------------------- 9. summary
 print(f"{'FILE':62s} {'N':>3s}  CHANGE")

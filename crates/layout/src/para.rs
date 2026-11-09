@@ -4,14 +4,16 @@
 use std::collections::VecDeque;
 use std::sync::Arc;
 
-use wordcraft_doc::math::MathJc;
-use wordcraft_doc::numbering::{Level, LevelSuffix};
-use wordcraft_doc::para::{COLUMN_BREAK, InlineObject, LINE_BREAK, NoteKind, OBJ, PAGE_BREAK, PTabAlign, PTabBase, RubyAlign, SOFT_HYPHEN, WrapText};
-use wordcraft_doc::props::{Align, CharProps, LineSpacing, ParaProps, TabAlign, TabLeader, TabStop};
-use wordcraft_doc::resolve::{ResolvedChar, ResolvedPara};
-use wordcraft_doc::section::NumFormat;
-use wordcraft_doc::{Document, Paragraph};
-use wordcraft_fonts::FaceRef;
+use iridium_docs_doc::math::MathJc;
+use iridium_docs_doc::numbering::{Level, LevelSuffix};
+use iridium_docs_doc::para::{
+    COLUMN_BREAK, InlineObject, LINE_BREAK, NoteKind, OBJ, PAGE_BREAK, PTabAlign, PTabBase, RubyAlign, SOFT_HYPHEN, WrapText,
+};
+use iridium_docs_doc::props::{Align, CharProps, LineSpacing, ParaProps, TabAlign, TabLeader, TabStop};
+use iridium_docs_doc::resolve::{ResolvedChar, ResolvedPara};
+use iridium_docs_doc::section::NumFormat;
+use iridium_docs_doc::{Document, Paragraph};
+use iridium_docs_fonts::FaceRef;
 
 use crate::NumeralMode;
 use crate::fields::{FIELD_SHADING, FieldCtx, field_code_text, field_text_on, reference_link};
@@ -79,7 +81,7 @@ pub struct ParaLayout {
     /// Ruby (Phonetic Guide) text over base-text clusters, in cluster order.
     pub rubies: Vec<RubyLayout>,
     /// Display equations (on lines of their own): cluster index and justification.
-    pub displays: Vec<(usize, wordcraft_doc::math::MathJc)>,
+    pub displays: Vec<(usize, iridium_docs_doc::math::MathJc)>,
     /// Positional tabs (laid out as tab clusters): cluster index, alignment, base and leader.
     pub ptabs: Vec<(usize, PTabAlign, PTabBase, TabLeader)>,
     /// Byte ranges of the text laid out as nothing ([`left_out`]): hidden text that is not shown,

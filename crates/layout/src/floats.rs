@@ -62,7 +62,7 @@ pub(crate) fn floating(o: &InlineObject) -> Option<(f32, f32, &Float)> {
 /// to the box itself.
 pub(crate) fn float_rect(frame: Option<PageFrame>, col: (f32, f32), y0: f32, w: f32, h: f32, float: &Float) -> Rect {
     // Thinner than a point stays thin (a 0.25 pt rule, a flat line): Word keeps the size.
-    let (w, h) = (wordcraft_geom::finite(w).clamp(0.0, 4000.0), wordcraft_geom::finite(h).clamp(0.0, 4000.0));
+    let (w, h) = (iridium_docs_geom::finite(w).clamp(0.0, 4000.0), iridium_docs_geom::finite(h).clamp(0.0, 4000.0));
     // Each axis: the reference area's start and extent, in page coordinates. Across, as laid out
     // before an even page is mirrored (less the shift it then gets).
     let page_x = |f: &PageFrame| {
@@ -248,7 +248,7 @@ fn float_items(o: &InlineObject, rect: Rect, outer: (Spin, Point), story: StoryR
             vec![Placed::Image { rect, media: media.clone(), crop: *crop, story, path: Path(path.to_vec()), off, spin }]
         }
         InlineObject::Shape { kind, fill, stroke, stroke_width, effects, freeform, extra, .. } => {
-            let object = wordcraft_doc::Pos { story, path: Path(path.to_vec()), off };
+            let object = iridium_docs_doc::Pos { story, path: Path(path.to_vec()), off };
             vec![Placed::Shape {
                 rect,
                 kind: *kind,
@@ -280,7 +280,7 @@ fn float_items(o: &InlineObject, rect: Rect, outer: (Spin, Point), story: StoryR
                     vec![
                         Placed::Shape {
                             rect,
-                            kind: wordcraft_doc::para::ShapeKind::Rectangle,
+                            kind: iridium_docs_doc::para::ShapeKind::Rectangle,
                             fill: c.fill.clone(),
                             stroke: c.stroke,
                             stroke_width: c.stroke_width,
@@ -288,7 +288,7 @@ fn float_items(o: &InlineObject, rect: Rect, outer: (Spin, Point), story: StoryR
                             freeform: None,
                             spin,
                             extra: Default::default(),
-                            object: Some(wordcraft_doc::Pos { story, path: Path(path.to_vec()), off }),
+                            object: Some(iridium_docs_doc::Pos { story, path: Path(path.to_vec()), off }),
                             alt: String::new(),
                         },
                         Placed::Clip { rect, spin, items: members },
@@ -500,7 +500,9 @@ pub(crate) fn place_objects(ctx: &mut Ctx, req: &ObjectPlacement) -> (Vec<Placed
                 layer.extend(float_items(obj, rect, (Spin::default(), Point::default()), story, path, c.start));
             }
             let text_box = match obj {
-                InlineObject::Shape { story: Some(id), .. } if ctx.doc.parts.get(id).is_some_and(|p| p.kind == wordcraft_doc::PartKind::TextBox) => {
+                InlineObject::Shape { story: Some(id), .. }
+                    if ctx.doc.parts.get(id).is_some_and(|p| p.kind == iridium_docs_doc::PartKind::TextBox) =>
+                {
                     Some(*id)
                 }
                 _ => None,
@@ -526,7 +528,7 @@ pub(crate) fn place_objects(ctx: &mut Ctx, req: &ObjectPlacement) -> (Vec<Placed
                     .into_iter()
                     .filter_map(|(r, c)| {
                         c.text_box()
-                            .filter(|id| ctx.doc.parts.get(id).is_some_and(|p| p.kind == wordcraft_doc::PartKind::TextBox))
+                            .filter(|id| ctx.doc.parts.get(id).is_some_and(|p| p.kind == iridium_docs_doc::PartKind::TextBox))
                             .map(|id| (id, carried(r, float.spin(), centre)))
                     })
                     .collect(),

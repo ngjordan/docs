@@ -5,7 +5,7 @@ use egui::{Key, Modifiers};
 use serde_json::{Value, json};
 
 use crate::WordApp;
-use wordcraft_engine::ImeEditOutcome;
+use iridium_docs_engine::ImeEditOutcome;
 
 mod alt_code;
 mod canvas;

@@ -34,10 +34,10 @@ jobs:
       contents: write
       packages: write
     # Intentionally tracked at @main (not SHA-pinned) so org-wide CI improvements, security fixes, and build optimizations propagate without PR churn across all craftapp repos.
-    uses: storytold/craft-common-actions/.github/workflows/release.yml@main
+    uses: ngjordan/craft-common-actions/.github/workflows/release.yml@main
     with:
       app-name: iridium-docs
-      app-title: Iridium Docs
+      app-title: Docs
       craft-fonts-ref: b076417b5880bd4154bd22f00695b1d28c6bea83
       web-craft-fonts: true
       version: ${{ inputs.version }}

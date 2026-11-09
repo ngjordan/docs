@@ -4,42 +4,42 @@ resolver = "3"
 # members glob so cargo does not look for a Cargo.toml there.
 members = ["crates/*", "apps/*", "xtask"]
 exclude = ["apps/ios"]
-default-members = ["crates/*", "apps/wordcraft", "apps/wordcraft-cli", "xtask"]
+default-members = ["crates/*", "apps/iridium-docs", "apps/iridium-docs-cli", "xtask"]
 
 [workspace.package]
 version = "0.15.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 rust-version = "1.95"
-repository = "https://github.com/storytold/wordcraft"
+repository = "https://github.com/ngjordan/iridium-docs"
 
 [workspace.dependencies]
 # internal
-wordcraft-geom = { path = "crates/geom" }
-wordcraft-doc = { path = "crates/doc" }
-wordcraft-fonts = { path = "crates/fonts" }
-wordcraft-layout = { path = "crates/layout" }
-wordcraft-docx = { path = "crates/docx" }
-wordcraft-docbin = { path = "crates/docbin" }
-wordcraft-formats = { path = "crates/formats" }
-wordcraft-render = { path = "crates/render" }
-wordcraft-pdf = { path = "crates/pdf" }
+iridium-docs-geom = { path = "crates/geom" }
+iridium-docs-doc = { path = "crates/doc" }
+iridium-docs-fonts = { path = "crates/fonts" }
+iridium-docs-layout = { path = "crates/layout" }
+iridium-docs-docx = { path = "crates/docx" }
+iridium-docs-docbin = { path = "crates/docbin" }
+iridium-docs-formats = { path = "crates/formats" }
+iridium-docs-render = { path = "crates/render" }
+iridium-docs-pdf = { path = "crates/pdf" }
 # Proofing is craft-libs' craft-proof (it was crates/proof); its Language data is craft-i18n's
 # language-data/, embedded from CRAFT_I18N_DIR (craft-i18n.rev). The package keeps the
-# `wordcraft-proof` name here so `wordcraft_proof::` paths are unchanged.
-# craft-proof is the head of storytold/craft-libs#495 (review fixes), which contains #485 (CP4.2,
+# `iridium-docs-proof` name here so `iridium_docs_proof::` paths are unchanged.
+# craft-proof is the head of ngjordan/craft-libs#495 (review fixes), which contains #485 (CP4.2,
 # Language packs, on #483 SCOWL English and #482); the font store's `language-pack` kind is #486
-# (CP4.1). GitHub serves PR heads from storytold/craft-libs, and merged with merge commits they
+# (CP4.1). GitHub serves PR heads from ngjordan/craft-libs, and merged with merge commits they
 # stay in its main.
-wordcraft-proof = { package = "craft-proof", git = "https://github.com/storytold/craft-libs", rev = "89fa1559e94378ecef85cd7e4681400f4df053e0", version = "=0.1.0" }
-craft-font-store = { git = "https://github.com/storytold/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
-craft-font-catalog = { git = "https://github.com/storytold/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
-wordcraft-engine = { path = "crates/engine" }
-wordcraft-mcp = { path = "crates/mcp" }
-wordcraft-zotero = { path = "crates/zotero" }
-wordcraft-control-key = { path = "crates/control-key" }
-wordcraft-ui-egui = { path = "crates/ui-egui" }
-wordcraft-metafile = { path = "crates/metafile" }
+iridium-docs-proof = { package = "craft-proof", git = "https://github.com/ngjordan/craft-libs", rev = "136c9a7cb818979f80312ecea234a23101348fa8", version = "=0.1.0" }
+craft-font-store = { git = "https://github.com/ngjordan/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
+craft-font-catalog = { git = "https://github.com/ngjordan/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
+iridium-docs-engine = { path = "crates/engine" }
+iridium-docs-mcp = { path = "crates/mcp" }
+iridium-docs-zotero = { path = "crates/zotero" }
+iridium-docs-control-key = { path = "crates/control-key" }
+iridium-docs-ui-egui = { path = "crates/ui-egui" }
+iridium-docs-metafile = { path = "crates/metafile" }
 
 # foundation
 kurbo = { version = "0.13", features = ["serde"] }
@@ -70,9 +70,9 @@ wuff = "0.2.9"
 brotli-decompressor = "5"
 vello_cpu = "0.2"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "gif", "bmp", "tiff"] }
-craft-pdf = { git = "https://github.com/storytold/craft-libs", rev = "92d392cff132eaf53e13afff77f38b5c11b73aa0", version = "=0.1.0", default-features = false, features = ["write"] }
+craft-pdf = { git = "https://github.com/ngjordan/craft-libs", rev = "92d392cff132eaf53e13afff77f38b5c11b73aa0", version = "=0.1.0", default-features = false, features = ["write"] }
 # craft-update: app-specific pretend versions apply to startup and manual checks.
-craft-update = { git = "https://github.com/storytold/craft-libs", version = "=0.1.0", rev = "c5a1cbfb5f9049f9270955caffb5bee5997aebf7", features = ["egui"] }
+craft-update = { git = "https://github.com/ngjordan/craft-libs", version = "=0.1.0", rev = "136c9a7cb818979f80312ecea234a23101348fa8", features = ["egui"] }
 quick-xml = "0.41"
 zip = { version = "3", default-features = false, features = ["deflate"] }
 # zlib streams (compressed metafile pictures in `.doc` drawings); already in the lock as a dependency of other crates.
@@ -135,19 +135,19 @@ debug = 0
 
 # Required by craft-pdf: the backend rejects writers that failed during unwinding.
 [patch.crates-io]
-krilla = { git = "https://github.com/storytold/craft-libs", rev = "92d392cff132eaf53e13afff77f38b5c11b73aa0" }
-ecolor = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-emath = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-epaint = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-epaint_default_fonts = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui-winit = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui-wgpu = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_glow = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_extras = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_kittest = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_system_font_provider = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-eframe = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_demo_lib = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-egui_inspection = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
-winit = { git = "https://github.com/storytold/winit.git", rev = "a517b3846ee8457d84ee4975110bfda6797c44dc" }
+krilla = { git = "https://github.com/ngjordan/craft-libs", rev = "92d392cff132eaf53e13afff77f38b5c11b73aa0" }
+ecolor = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+emath = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+epaint = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+epaint_default_fonts = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui-winit = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui-wgpu = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_glow = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_extras = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_kittest = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_system_font_provider = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+eframe = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_demo_lib = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+egui_inspection = { git = "https://github.com/ngjordan/egui.git", rev = "faf1ced22250c509636bff2578731a0be86a69ac" }
+winit = { git = "https://github.com/ngjordan/winit.git", rev = "a517b3846ee8457d84ee4975110bfda6797c44dc" }

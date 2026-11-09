@@ -3,8 +3,8 @@
 
 use std::io::Write;
 
-use wordcraft_doc::{Block, Document, InlineObject, StoryRef};
-use wordcraft_docx::{AltChunk, ReadOptions, read, read_with};
+use iridium_docs_doc::{Block, Document, InlineObject, StoryRef};
+use iridium_docs_docx::{AltChunk, ReadOptions, read, read_with};
 
 const NS: &str = r#"xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships""#;
 const ROOT_RELS: &str = r#"<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>"#;
@@ -97,7 +97,7 @@ fn a_bookmark_opened_between_a_table_and_a_chunk_starts_the_chunk() {
     let d = read_with(&bytes, &ReadOptions { chunks: Some(&import), ..Default::default() }).unwrap();
     let marks = d.bookmarks();
     assert_eq!(marks.len(), 1);
-    assert_eq!((marks[0].1.path.clone(), marks[0].1.off), (wordcraft_doc::Path::top(1), 0), "not in the table's cell");
+    assert_eq!((marks[0].1.path.clone(), marks[0].1.off), (iridium_docs_doc::Path::top(1), 0), "not in the table's cell");
 }
 
 #[test]
@@ -120,7 +120,7 @@ fn permission_ranges_of_chunks_and_their_host_stay_apart() {
         assert!(ranges.iter().filter(|r| r.editor == "them").all(|r| r.start.path == r.end.path));
     };
     check(&d);
-    check(&read(&wordcraft_docx::write(&d).unwrap()).unwrap());
+    check(&read(&iridium_docs_docx::write(&d).unwrap()).unwrap());
 }
 
 /// A package whose body is `body`, with story parts (relationship type, part name, XML) and the
@@ -259,7 +259,7 @@ fn match_src_gives_each_renamed_style_its_own_id() {
         assert_eq!((ten_size, fourteen_size), (10.0, 14.0));
     };
     check(&d);
-    check(&read(&wordcraft_docx::write(&d).unwrap()).unwrap());
+    check(&read(&iridium_docs_docx::write(&d).unwrap()).unwrap());
 }
 
 #[test]
@@ -316,7 +316,7 @@ fn a_chunks_pictures_come_with_it() {
     let import = |_: &AltChunk| {
         let mut d = Document::new();
         let key = d.add_media(vec![1, 2, 3], "png");
-        let mut para = wordcraft_doc::Paragraph::new();
+        let mut para = iridium_docs_doc::Paragraph::new();
         let image = InlineObject::Image { media: key, w: 10.0, h: 10.0, alt: String::new(), float: Default::default(), crop: [0.0; 4], ole: None };
         para.insert_object(0, image, &Default::default()).unwrap();
         d.body = vec![std::sync::Arc::new(Block::Para(para))];

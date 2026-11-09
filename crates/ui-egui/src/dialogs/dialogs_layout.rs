@@ -14,9 +14,9 @@ use egui::{Ui, vec2};
 use serde::Serialize;
 use serde_json::{Value, json};
 
-use wordcraft_doc::section::LineNumberRestart;
-use wordcraft_engine::cmd::mailings::{ENVELOPE_SIZES, LABEL_PRODUCTS};
-use wordcraft_engine::cmd::objects::fit_size;
+use iridium_docs_doc::section::LineNumberRestart;
+use iridium_docs_engine::cmd::mailings::{ENVELOPE_SIZES, LABEL_PRODUCTS};
+use iridium_docs_engine::cmd::objects::fit_size;
 
 use crate::WordApp;
 use crate::options::MeasureExt;
@@ -173,7 +173,7 @@ fn run(app: &mut WordApp, id: &str, params: Value) -> bool {
     }
 }
 
-fn unit() -> wordcraft_geom::Unit {
+fn unit() -> iridium_docs_geom::Unit {
     crate::options::unit()
 }
 

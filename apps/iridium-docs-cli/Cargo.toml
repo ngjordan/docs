@@ -1,0 +1,23 @@
+[package]
+name = "iridium-docs-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Docs command line: convert, inspect, render, run commands, MCP server"
+
+[[bin]]
+name = "iridium-docs-cli"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+iridium-docs-doc = { workspace = true }
+iridium-docs-engine = { workspace = true }
+iridium-docs-render = { workspace = true }
+iridium-docs-mcp = { workspace = true }
+iridium-docs-zotero = { workspace = true }
+serde_json = { workspace = true }
+sys-locale = "0.3"

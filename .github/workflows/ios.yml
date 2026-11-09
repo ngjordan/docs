@@ -31,12 +31,12 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUNDLE_ID: ph.iridium.docs
+  BUNDLE_ID: ph.docs
   TEAM_ID: 5JY6QC2345
   SCHEME_NAME: IridiumDocs
   # The profile's NAME (not its bundle id): Xcode matches
   # PROVISIONING_PROFILE_SPECIFIER against the name.
-  PROFILE_NAME: Iridium Docs App Store
+  PROFILE_NAME: Docs App Store
   # The workspace root: an Xcode project sits in apps/ios/.
   PROJECT_DIR: apps/ios
 
@@ -301,8 +301,8 @@ jobs:
             echo "::error::no App Store Connect app record exists for bundle id $BUNDLE_ID."
             echo "::error::Apple does not allow creating app records through the API - it is a one-time"
             echo "::error::step in the web UI: https://appstoreconnect.apple.com/apps"
-            echo "::error::  + -> New App -> Name 'Iridium Docs' -> Platform iOS"
-            echo "::error::  -> Bundle ID '$BUNDLE_ID' (the existing one) -> SKU IRIDIUM-DOCS-IOS"
+            echo "::error::  + -> New App -> Name 'Docs' -> Platform iOS"
+            echo "::error::  -> Bundle ID '$BUNDLE_ID' (the existing one) -> SKU IRIDIUM_DOCS-IOS"
             exit 1
           fi
           exit "$UPLOAD_RC"

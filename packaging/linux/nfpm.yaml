@@ -12,7 +12,7 @@ version_schema: semver
 release: 1
 section: graphics
 priority: optional
-maintainer: ${WORDCRAFT_MAINTAINER}
+maintainer: ${IRIDIUM_DOCS_MAINTAINER}
 vendor: Iridium Technologies, Inc.
 homepage: https://iridium.ph
 license: MIT OR Apache-2.0
@@ -20,7 +20,7 @@ description: |-
   Open-source, native word processor that works the way Word users expect.
   The ribbon, styles, tables, track changes, references and mail merge; reads
   and writes .docx, opens .odt, .rtf, .html, .md and .txt, and exports PDF.
-  Includes wordcraft-cli, a headless converter and command runner.
+  Includes iridium-docs-cli, a headless converter and command runner.
 
 # The binaries link only glibc and libgcc_s directly. Windowing (X11/Wayland, xkbcommon) and the
 # GPU (Vulkan, EGL/GL) are loaded at runtime, so they are dependencies/recommendations here
@@ -55,11 +55,11 @@ overrides:
       - xdg-desktop-portal
 
 contents:
-  - src: ${STAGE}/usr/bin/wordcraft
-    dst: /usr/bin/wordcraft
+  - src: ${STAGE}/usr/bin/iridium-docs
+    dst: /usr/bin/iridium-docs
     file_info: { mode: 0755 }
-  - src: ${STAGE}/usr/bin/wordcraft-cli
-    dst: /usr/bin/wordcraft-cli
+  - src: ${STAGE}/usr/bin/iridium-docs-cli
+    dst: /usr/bin/iridium-docs-cli
     file_info: { mode: 0755 }
   - src: ${STAGE}/usr/share/
     dst: /usr/share/

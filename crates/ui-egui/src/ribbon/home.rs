@@ -76,8 +76,10 @@ pub(super) fn home(app: &mut WordApp, ui: &mut Ui) {
                     .and_then(Value::as_f64)
                     .map(|s| if s.fract() == 0.0 { format!("{s:.0}") } else { format!("{s}") })
                     .unwrap_or_default();
-                let sizes: Vec<String> =
-                    wordcraft_engine::cmd::format::SIZES.iter().map(|s| if s.fract() == 0.0 { format!("{s:.0}") } else { s.to_string() }).collect();
+                let sizes: Vec<String> = iridium_docs_engine::cmd::format::SIZES
+                    .iter()
+                    .map(|s| if s.fract() == 0.0 { format!("{s:.0}") } else { s.to_string() })
+                    .collect();
                 if let Some(v) = crate::widgets::combo_hint(ui, "size", 52.0, &size, &sizes, None, tl!("Font Size"))
                     && let Ok(x) = v.trim().parse::<f64>()
                 {
@@ -149,7 +151,7 @@ pub(super) fn home(app: &mut WordApp, ui: &mut Ui) {
                     crate::mini_toolbar::highlight_menu,
                 );
                 let fc = app.canvas.last_font_color.clone();
-                let sw = wordcraft_doc::Rgb::parse(&fc).map(crate::theme::c32);
+                let sw = iridium_docs_doc::Rgb::parse(&fc).map(crate::theme::c32);
                 split(
                     ui,
                     app,
@@ -171,7 +173,7 @@ pub(super) fn home(app: &mut WordApp, ui: &mut Ui) {
         // The buttons show alignment as seen on the page (Align Right is a right-to-left paragraph's start).
         let align = rp.as_ref().map(|r| r.align.visual(r.bidi)).unwrap_or_default();
         let rtl = rp.as_ref().is_some_and(|r| r.bidi);
-        let lists = wordcraft_engine::cmd::para::list_buttons(&app.session.doc, rp.as_ref().and_then(|r| r.numbering));
+        let lists = iridium_docs_engine::cmd::para::list_buttons(&app.session.doc, rp.as_ref().and_then(|r| r.numbering));
         stack(ui, |ui| {
             crate::widgets::row(ui, |ui| {
                 split(ui, app, "bullets", "Bullets", crate::widgets::ButtonAction::new("para.bullets", json!({}), lists.bullets), None, |ui, app| {
@@ -263,7 +265,7 @@ pub(super) fn home(app: &mut WordApp, ui: &mut Ui) {
             });
             ui.add_space(3.0);
             crate::widgets::row(ui, |ui| {
-                use wordcraft_doc::Align as A;
+                use iridium_docs_doc::Align as A;
                 small(ui, app, "alignLeft", None, "Align Left", crate::widgets::ButtonAction::new("para.alignLeft", json!({}), align == A::Left));
                 small(ui, app, "alignCenter", None, "Center", crate::widgets::ButtonAction::new("para.alignCenter", json!({}), align == A::Center));
                 small(ui, app, "alignRight", None, "Align Right", crate::widgets::ButtonAction::new("para.alignRight", json!({}), align == A::Right));
@@ -286,7 +288,7 @@ pub(super) fn home(app: &mut WordApp, ui: &mut Ui) {
                         mi(ui, app, "Line Spacing Options…", "para.dialog", json!({}));
                     },
                 );
-                let sw = wordcraft_doc::Rgb::parse(&app.canvas.last_shading).map(crate::theme::c32);
+                let sw = iridium_docs_doc::Rgb::parse(&app.canvas.last_shading).map(crate::theme::c32);
                 split(
                     ui,
                     app,

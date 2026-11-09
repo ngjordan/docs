@@ -18,9 +18,9 @@
 
 use std::sync::Arc;
 
-use wordcraft_doc::props::LineSpacing;
-use wordcraft_doc::props::VAlign;
-use wordcraft_doc::{Align, Document};
+use iridium_docs_doc::props::LineSpacing;
+use iridium_docs_doc::props::VAlign;
+use iridium_docs_doc::{Align, Document};
 
 use crate::model::{
     self, Cell, FBlock, FTable, Flow, Fmt, Inline, Kind, ListInfo, Meta, Para, Spacing, base64_encode, data_uri, make_img, mime_of, parse_color,

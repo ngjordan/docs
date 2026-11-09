@@ -1,11 +1,11 @@
 //! References tab: table of contents, footnotes/endnotes, captions; field updates.
 
+use iridium_docs_doc::numbering::{Counters, LevelSuffix};
+use iridium_docs_doc::para::{InlineObject, NoteKind, OBJ};
+use iridium_docs_doc::props::{CharProps, TabAlign, TabLeader, TabStop};
+use iridium_docs_doc::section::NumFormat;
+use iridium_docs_doc::{Block, Paragraph, PartKind, Path, Pos, StoryRef, para_block};
 use serde_json::{Value, json};
-use wordcraft_doc::numbering::{Counters, LevelSuffix};
-use wordcraft_doc::para::{InlineObject, NoteKind, OBJ};
-use wordcraft_doc::props::{CharProps, TabAlign, TabLeader, TabStop};
-use wordcraft_doc::section::NumFormat;
-use wordcraft_doc::{Block, Paragraph, PartKind, Path, Pos, StoryRef, para_block};
 
 use super::{delete_selection, sel_result};
 use crate::{CmdError, CmdResult, CommandSpec, Selection, Session, p};

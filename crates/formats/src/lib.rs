@@ -1,4 +1,4 @@
-//! Iridium Docs import/export for the "other" text formats: plain text, Markdown (CommonMark subset
+//! Docs import/export for the "other" text formats: plain text, Markdown (CommonMark subset
 //! plus GFM tables and strikethrough), HTML (and MHT web archives, read-only), RTF, OpenDocument
 //! Text and LaTeX — and, read-only, spreadsheet cells for mail-merge recipient lists ([`sheet`]:
 //! .xlsx/.xlsm/.xls/.ods).
@@ -22,10 +22,10 @@ pub mod rtf;
 pub mod sheet;
 pub mod txt;
 
-use wordcraft_doc::Document;
+use iridium_docs_doc::Document;
 
 /// Most entries an ODT or spreadsheet package may declare, as many as a Word package
-/// (`wordcraft_docx::package::MAX_ENTRIES`); checked before `zip` parses them (#3660).
+/// (`iridium_docs_docx::package::MAX_ENTRIES`); checked before `zip` parses them (#3660).
 pub const MAX_ZIP_ENTRIES: u64 = 20_000;
 
 /// Extensions this crate handles.
@@ -53,7 +53,7 @@ pub fn import(ext: &str, bytes: &[u8]) -> Option<Result<Document, String>> {
 /// [`import`] onto `page` (its size and margins) for the formats whose files give no page size:
 /// plain text, Markdown, HTML and MHT start on it, and their tables size to it (#1381). The other
 /// formats keep the page their file gives.
-pub fn import_on(ext: &str, bytes: &[u8], page: &wordcraft_doc::SectionProps) -> Option<Result<Document, String>> {
+pub fn import_on(ext: &str, bytes: &[u8], page: &iridium_docs_doc::SectionProps) -> Option<Result<Document, String>> {
     let ext = ext.trim_start_matches('.').to_ascii_lowercase();
     let mut doc = match ext.as_str() {
         "txt" | "text" => txt::import_on(bytes, page),

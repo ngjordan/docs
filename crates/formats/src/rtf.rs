@@ -21,8 +21,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use wordcraft_doc::props::VAlign;
-use wordcraft_doc::{Align, Document, Rgb};
+use iridium_docs_doc::props::VAlign;
+use iridium_docs_doc::{Align, Document, Rgb};
 
 use crate::model::{self, Cell, FBlock, FTable, Flow, Fmt, Inline, Kind, ListInfo, Meta, Para, RevMark, make_img};
 

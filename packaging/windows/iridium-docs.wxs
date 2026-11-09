@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <?ifndef HasCraftFontLicences ?>
+  <?define HasCraftFontLicences=0 ?>
+  <?endif?>
+  <Package Name="Docs" Manufacturer="Iridium Technologies, Inc." Version="$(var.Version)" UpgradeCode="283A0877-18F9-5B73-9D61-75EFA29FF097" Scope="perUserOrMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Docs word processor" Manufacturer="Iridium Technologies, Inc." />
+    <?include $(sys.SOURCEFILEDIR)install-policy.wxi?>
+    <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
+         (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Docs is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="WordcraftIcon.ico" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="WordcraftIcon.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="https://iridium.ph" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://iridium.ph" />
+    <Property Id="ARPHELPLINK" Value="https://iridium.ph" />
+
+    <!-- Installer UI (#198): WixUI_Minimal is welcome + license, progress, then a finish page so
+         people can see the install worked. Its dialogs and bitmaps are WiX's own
+         (WixToolset.UI.wixext); package.ps1 builds the license RTF from LICENSE-MIT and
+         LICENSE-APACHE. The finish page offers to launch Docs (ticked by default) through
+         WixShellExec (WixToolset.Util.wixext); silent installs (/qn) never show it. -->
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtf)" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Docs" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#WordcraftExe]" />
+    <CustomAction Id="LaunchWordcraft" BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)" DllEntry="WixShellExec" Impersonate="yes" Return="ignore" />
+    <UI>
+      <ui:WixUI Id="WixUI_Minimal" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchWordcraft" Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 AND NOT Installed" />
+    </UI>
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="CraftSuiteFolder" Name="Iridium">
+        <Directory Id="INSTALLFOLDER" Name="Docs" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+
+    <Feature Id="Main" Title="Docs" Level="1">
+      <ComponentGroupRef Id="AppNotices" />
+      <?if $(var.HasCraftFontLicences) = 1 ?>
+      <ComponentGroupRef Id="CraftFontLicences" />
+      <?endif?>
+      <ComponentGroupRef Id="WordcraftFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppNotices" Directory="INSTALLFOLDER">
+      <Files Include="$(var.AppNoticesDir)\**" />
+    </ComponentGroup>
+    <?if $(var.HasCraftFontLicences) = 1 ?>
+    <ComponentGroup Id="CraftFontLicences" Directory="INSTALLFOLDER">
+      <Files Include="$(var.DocsDir)\**" />
+    </ComponentGroup>
+    <?endif?>
+    <ComponentGroup Id="WordcraftFiles" Directory="INSTALLFOLDER">
+      <Component Id="WordcraftApp" Guid="855DCEC6-9285-444F-9382-9654B83B34F6">
+        <File Id="WordcraftExe" Source="$(var.BinDir)\iridium-docs.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Docs" Description="Docs word processor" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="WordcraftIcon.ico" IconIndex="0" />
+        </File>
+
+        <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\iridium-docs.exe" Value="[#WordcraftExe]" Type="string" />
+      <RegistryValue Root="HKMU" Key="Software\Docs" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
+      </Component>
+
+      <!-- File associations (#295). Each document type gets a Docs ProgId (name, icon, open
+           command) and is listed under the extension's OpenWithProgids, so Docs shows in
+           Explorer's "Open with". The Word, RTF and ODT types are also Docs's Capabilities
+           (RegisteredApplications), so it appears in Settings › Default apps, where the user
+           makes it the default (File › Options › General opens that page). Nothing here sets an
+           extension's default: the installer never takes over .docx from another app. Markdown and
+           plain text are only "Open with" candidates. Removed again on uninstall. -->
+      <Component Id="WordcraftFileTypes" Guid="EFF89E6A-F9B8-49F9-B3AE-E243347484B4">
+        <RegistryValue Root="HKMU" Key="Software\RegisteredApplications" Name="Docs" Value="Software\Docs\Capabilities" Type="string" KeyPath="yes" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities" Name="ApplicationName" Value="Docs" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities" Name="ApplicationDescription" Value="Write and design documents; open and save Word files." Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities" Name="ApplicationIcon" Value="&quot;[#WordcraftExe]&quot;,0" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe" Name="FriendlyAppName" Value="Docs" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+
+        <ProgId Id="Docs.Document" Description="Word Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.Document\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.docx\OpenWithProgids" Name="Docs.Document" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".docx" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".docx" Value="Docs.Document" Type="string" />
+
+        <ProgId Id="Docs.DocumentMacroEnabled" Description="Word Macro-Enabled Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.DocumentMacroEnabled\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.docm\OpenWithProgids" Name="Docs.DocumentMacroEnabled" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".docm" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".docm" Value="Docs.DocumentMacroEnabled" Type="string" />
+
+        <ProgId Id="Docs.Template" Description="Word Template" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.Template\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.dotx\OpenWithProgids" Name="Docs.Template" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".dotx" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".dotx" Value="Docs.Template" Type="string" />
+
+        <ProgId Id="Docs.TemplateMacroEnabled" Description="Word Macro-Enabled Template" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.TemplateMacroEnabled\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.dotm\OpenWithProgids" Name="Docs.TemplateMacroEnabled" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".dotm" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".dotm" Value="Docs.TemplateMacroEnabled" Type="string" />
+
+        <ProgId Id="Docs.LegacyDocument" Description="Legacy Word Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.LegacyDocument\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.doc\OpenWithProgids" Name="Docs.LegacyDocument" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".doc" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".doc" Value="Docs.LegacyDocument" Type="string" />
+
+        <ProgId Id="Docs.LegacyTemplate" Description="Legacy Word Template" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.LegacyTemplate\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.dot\OpenWithProgids" Name="Docs.LegacyTemplate" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".dot" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".dot" Value="Docs.LegacyTemplate" Type="string" />
+
+        <ProgId Id="Docs.RichText" Description="Rich Text Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.RichText\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.rtf\OpenWithProgids" Name="Docs.RichText" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".rtf" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".rtf" Value="Docs.RichText" Type="string" />
+
+        <ProgId Id="Docs.OpenDocumentText" Description="OpenDocument Text" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.OpenDocumentText\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.odt\OpenWithProgids" Name="Docs.OpenDocumentText" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".odt" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Docs\Capabilities\FileAssociations" Name=".odt" Value="Docs.OpenDocumentText" Type="string" />
+
+        <ProgId Id="Docs.Markdown" Description="Markdown Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.Markdown\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.md\OpenWithProgids" Name="Docs.Markdown" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".md" Value="" Type="string" />
+
+        <ProgId Id="Docs.PlainText" Description="Text Document" Icon="WordcraftExe" IconIndex="0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Docs.PlainText\shell\open\command" Value="&quot;[#WordcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.txt\OpenWithProgids" Name="Docs.PlainText" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\iridium-docs.exe\SupportedTypes" Name=".txt" Value="" Type="string" />
+      </Component>
+
+      <Component Id="WordcraftCli">
+        <File Id="WordcraftCliExe" Source="$(var.BinDir)\iridium-docs-cli.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

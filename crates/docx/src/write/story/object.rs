@@ -77,7 +77,7 @@ impl Writer<'_> {
                     if let Some(mark) = self.pending_mark.take() {
                         let mut p = props.clone();
                         if p.style.is_none() && p.vert_align.is_none() {
-                            p.vert_align = Some(wordcraft_doc::props::VertAlign::Superscript);
+                            p.vert_align = Some(iridium_docs_doc::props::VertAlign::Superscript);
                         }
                         self.rev_open(w, props);
                         w.open("w:r", &[]);
@@ -96,7 +96,7 @@ impl Writer<'_> {
                 let nid = self.note_id(*id, foot);
                 let mut p = props.clone();
                 if p.style.is_none() && p.vert_align.is_none() {
-                    p.vert_align = Some(wordcraft_doc::props::VertAlign::Superscript);
+                    p.vert_align = Some(iridium_docs_doc::props::VertAlign::Superscript);
                 }
                 self.rev_open(w, props);
                 w.open("w:r", &[]);
@@ -124,7 +124,7 @@ impl Writer<'_> {
                 // ECMA-376 §17.3.3.25: a run holding w:ruby (properties, ruby text, base text).
                 let t = if self.is_del(props) { "w:delText" } else { "w:t" };
                 let fin = |v: f32, d: f32| if v.is_finite() { v } else { d };
-                let hps = |v: f32, min: f32| n(wordcraft_geom::to_half_points(v.clamp(min, 1584.0)));
+                let hps = |v: f32, min: f32| n(iridium_docs_geom::to_half_points(v.clamp(min, 1584.0)));
                 let size = fin(*size, 5.0).clamp(1.0, 1584.0);
                 let base_size = if base_size.is_finite() && *base_size > 0.0 { *base_size } else { props.size.unwrap_or(10.5) };
                 self.rev_open(w, props);
@@ -180,7 +180,7 @@ impl Writer<'_> {
 
     fn write_graphic(&mut self, w: &mut W, o: &InlineObject, props: &CharProps, rels: &mut PartRels, _depth: usize) {
         let InlineObject::Graphic { w: gw, h: gh, alt, float, graphic } = o else { return };
-        let ink = graphic.kind == wordcraft_doc::graphic::GraphicKind::Ink;
+        let ink = graphic.kind == iridium_docs_doc::graphic::GraphicKind::Ink;
         let root = match (graphic.chart.as_deref(), graphic.smart_art.as_deref(), graphic.source.as_deref()) {
             (Some(spec), _, _) => crate::xml::parse(self.chart_graphic(spec, rels).as_bytes()).ok(),
             (None, Some(spec), _) => crate::xml::parse(self.smart_art_graphic(spec, *gw, *gh, rels).as_bytes()).ok(),
@@ -221,9 +221,9 @@ impl Writer<'_> {
             }
             let docpr = self.next_docpr();
             let name = match graphic.kind {
-                wordcraft_doc::graphic::GraphicKind::Chart => format!("Chart {docpr}"),
-                wordcraft_doc::graphic::GraphicKind::Diagram => format!("Diagram {docpr}"),
-                wordcraft_doc::graphic::GraphicKind::Ink => format!("Ink {docpr}"),
+                iridium_docs_doc::graphic::GraphicKind::Chart => format!("Chart {docpr}"),
+                iridium_docs_doc::graphic::GraphicKind::Diagram => format!("Diagram {docpr}"),
+                iridium_docs_doc::graphic::GraphicKind::Ink => format!("Ink {docpr}"),
             };
             let z = self.z;
             self.graphic_frame(w, DrawingInfo { float, size: (*gw, *gh), docpr: &docpr, name: &name, alt }, native.unwrap_or(&root));
@@ -286,8 +286,8 @@ impl Writer<'_> {
         let InlineObject::Shape { w: sw, h: sh, fill, stroke, stroke_width, extra, float, .. } = o else { return };
         let Some(hr) = extra.hr else { return };
         let align = match hr.align {
-            wordcraft_doc::props::Align::Center => "center",
-            wordcraft_doc::props::Align::Right => "right",
+            iridium_docs_doc::props::Align::Center => "center",
+            iridium_docs_doc::props::Align::Right => "right",
             _ => "left",
         };
         let width = if hr.pct > 0.0 { "0".to_string() } else { format!("{:.2}pt", sw.max(0.0)) };
@@ -335,7 +335,7 @@ impl Writer<'_> {
         w.open("w:pict", &[]);
         // A see-through fill keeps its opacity, which `fillcolor` can't say.
         match fill.as_ref() {
-            Some(wordcraft_doc::fill::Fill::Solid { transparency, .. }) if *transparency > 0.0 => {
+            Some(iridium_docs_doc::fill::Fill::Solid { transparency, .. }) if *transparency > 0.0 => {
                 let opacity = format!("{:.4}", (1.0 - transparency / 100.0).clamp(0.0, 1.0));
                 w.open("v:rect", &attrs);
                 w.empty("v:fill", &[("opacity", &opacity)]);
@@ -360,12 +360,12 @@ impl Writer<'_> {
         // The effect extent leaves room for the shadow and glow.
         let mut float = float.clone();
         for (e, fx) in float.effect.iter_mut().zip(effects.extent()) {
-            *e = wordcraft_geom::finite(*e).max(fx);
+            *e = iridium_docs_geom::finite(*e).max(fx);
         }
         // Tight and Through wrapping need a polygon: the shape's outline unless it has one.
         if matches!(float.wrap, Wrap::Tight | Wrap::Through) && float.wrap_polygon.is_none() {
-            float.wrap_polygon = wordcraft_doc::wrap::shape_outline(*kind, *sw, *sh, extra.corner)
-                .and_then(|pts| wordcraft_doc::wrap::WrapPolygon::from_unit(false, &pts))
+            float.wrap_polygon = iridium_docs_doc::wrap::shape_outline(*kind, *sw, *sh, extra.corner)
+                .and_then(|pts| iridium_docs_doc::wrap::WrapPolygon::from_unit(false, &pts))
                 .map(std::sync::Arc::new);
         }
         let float = &float;
@@ -429,7 +429,7 @@ impl Writer<'_> {
                 "wpg:wgp"
             }
         };
-        for c in children.iter().take(wordcraft_doc::para::MAX_GROUP_CHILDREN) {
+        for c in children.iter().take(iridium_docs_doc::para::MAX_GROUP_CHILDREN) {
             let at = (c.x, c.y);
             match &c.obj {
                 InlineObject::Image { media, .. } => {
@@ -442,7 +442,7 @@ impl Writer<'_> {
                     self.wsp(w, &c.obj, Some(&id), at, rels, depth);
                 }
                 // Native ink kept from the file, with its fallback, at the member's place.
-                InlineObject::Graphic { w: iw, h: ih, float, graphic, .. } if graphic.kind == wordcraft_doc::graphic::GraphicKind::Ink => {
+                InlineObject::Graphic { w: iw, h: ih, float, graphic, .. } if graphic.kind == iridium_docs_doc::graphic::GraphicKind::Ink => {
                     if let Some(src) = graphic.source.as_deref()
                         && let Some(mut root) = self.embedded_tree(src, rels, None)
                     {
@@ -453,7 +453,7 @@ impl Writer<'_> {
                 _ => {}
             }
         }
-        if canvas.is_some() && float.spin() != wordcraft_geom::Spin::default() {
+        if canvas.is_some() && float.spin() != iridium_docs_geom::Spin::default() {
             // The canvas schema has no transform of its own: keep its turn in our
             // extension (Word draws it unturned, as it can't turn a canvas).
             w.open("wpc:extLst", &[]);
@@ -472,18 +472,18 @@ impl Writer<'_> {
     }
 }
 
-pub(super) fn ink_name(tool: wordcraft_doc::freeform::InkTool) -> &'static str {
+pub(super) fn ink_name(tool: iridium_docs_doc::freeform::InkTool) -> &'static str {
     match tool {
-        wordcraft_doc::freeform::InkTool::Pen => "Pen",
-        wordcraft_doc::freeform::InkTool::Pencil => "Pencil",
-        wordcraft_doc::freeform::InkTool::Highlighter => "Highlighter",
+        iridium_docs_doc::freeform::InkTool::Pen => "Pen",
+        iridium_docs_doc::freeform::InkTool::Pencil => "Pencil",
+        iridium_docs_doc::freeform::InkTool::Highlighter => "Highlighter",
     }
 }
 
 /// Is kept ink `src` in a form the drawing-level writer writes: its `a:graphic`, a direct run-level
 /// `w:contentPart`, or an `mc:AlternateContent` whose choice holds a drawing (not a group member's
 /// bare `w14:contentPart`, nor one in `mc:AlternateContent` with a `pic:pic` fallback)?
-fn standalone_ink(src: &wordcraft_doc::graphic::Embedded) -> bool {
+fn standalone_ink(src: &iridium_docs_doc::graphic::Embedded) -> bool {
     match crate::xml::parse(src.xml.as_bytes()) {
         Ok(root) => match root.name.as_str() {
             "a:graphic" | "w:contentPart" => true,
@@ -497,7 +497,7 @@ fn standalone_ink(src: &wordcraft_doc::graphic::Embedded) -> bool {
 #[cfg(test)]
 mod standalone_ink_tests {
     use super::standalone_ink;
-    use wordcraft_doc::graphic::Embedded;
+    use iridium_docs_doc::graphic::Embedded;
 
     fn emb(xml: &str) -> Embedded {
         Embedded { xml: xml.into(), ..Default::default() }

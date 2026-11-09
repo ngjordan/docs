@@ -3,12 +3,12 @@
 //! The selected object is the first picture/shape inside the selection (or right before the
 //! caret). Picture adjustments re-encode the bitmap (originals are kept for Reset Picture).
 
+use iridium_docs_doc::graphic::GraphicKind;
+use iridium_docs_doc::para::{Float, InlineObject, Wrap, WrapText};
+use iridium_docs_doc::props::{Rgb, TextVert, VAlign};
+use iridium_docs_doc::{Pos, StoryRef, TextBody};
+use iridium_docs_geom::Spin;
 use serde_json::{Value, json};
-use wordcraft_doc::graphic::GraphicKind;
-use wordcraft_doc::para::{Float, InlineObject, Wrap, WrapText};
-use wordcraft_doc::props::{Rgb, TextVert, VAlign};
-use wordcraft_doc::{Pos, StoryRef, TextBody};
-use wordcraft_geom::Spin;
 
 use super::sel_result;
 use crate::{CmdError, CmdResult, CommandSpec, Selection, Session, p};

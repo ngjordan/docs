@@ -2,10 +2,10 @@
 //! samples (never files produced by Word).
 
 use base64::Engine as _;
-use wordcraft_doc::props::Align;
-use wordcraft_doc::section::NumFormat;
-use wordcraft_doc::{Block, Document, InlineObject, Paragraph};
-use wordcraft_docx::{DocxError, XmlKind, read_xml, sniff_xml};
+use iridium_docs_doc::props::Align;
+use iridium_docs_doc::section::NumFormat;
+use iridium_docs_doc::{Block, Document, InlineObject, Paragraph};
+use iridium_docs_docx::{DocxError, XmlKind, read_xml, sniff_xml};
 
 fn paras(doc: &Document) -> Vec<&Paragraph> {
     doc.body.iter().filter_map(|b| b.as_para()).collect()

@@ -1,4 +1,4 @@
-//! Iridium Docs engine: the editing session and its commands.
+//! Docs engine: the editing session and its commands.
 //!
 //! **Everything is a command.** Each user-visible action is a [`CommandSpec`] with a stable id
 //! (`format.bold`, `insert.table`), a label, the ribbon/menu location, a default shortcut, a
@@ -67,11 +67,11 @@ pub const MAX_EQUATION_TYPE_CHARS: usize = 10_000;
 /// side of the caret. A hostile IME count must not become an unbounded command.
 pub const MAX_EQUATION_DELETE_UNITS: usize = 64;
 
-pub use wordcraft_doc as doc;
-pub use wordcraft_geom::Region;
-pub use wordcraft_layout as layout;
-pub use wordcraft_proof as proof;
-pub use wordcraft_render as render;
+pub use iridium_docs_doc as doc;
+pub use iridium_docs_geom::Region;
+pub use iridium_docs_layout as layout;
+pub use iridium_docs_proof as proof;
+pub use iridium_docs_render as render;
 
 #[derive(Debug, thiserror::Error, Clone, PartialEq)]
 pub enum CmdError {
@@ -85,8 +85,8 @@ pub enum CmdError {
     Failed(String),
 }
 
-impl From<wordcraft_doc::DocError> for CmdError {
-    fn from(e: wordcraft_doc::DocError) -> Self {
+impl From<iridium_docs_doc::DocError> for CmdError {
+    fn from(e: iridium_docs_doc::DocError) -> Self {
         CmdError::Failed(e.to_string())
     }
 }
@@ -209,3 +209,16 @@ pub mod p {
 
 #[cfg(test)]
 mod tests;
+
+/// The proofing dictionaries' generation is process-wide, and every layout is keyed on it, so a
+/// test that installs a dictionary changes what another test's layout looks like. The tests that
+/// install one, and the tests that check a layout stays the same, take turns on this.
+#[cfg(test)]
+static DICTIONARIES_TURN: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+/// Take the dictionaries' turn; see [`DICTIONARIES_TURN`]. The guard is held for as long as the
+/// caller keeps it, so a test that checks a layout holds it for the whole test.
+#[cfg(test)]
+pub(crate) fn dictionaries_turn() -> std::sync::MutexGuard<'static, ()> {
+    DICTIONARIES_TURN.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+}

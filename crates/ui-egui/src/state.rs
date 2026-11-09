@@ -13,9 +13,9 @@ pub(crate) enum PromptSave {
 /// What [`Services::make_default_app`] did.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DefaultApp {
-    /// The system's default-apps settings opened; the user picks Iridium Docs there (Windows).
+    /// The system's default-apps settings opened; the user picks Docs there (Windows).
     SettingsOpened,
-    /// Iridium Docs is now the default app for Word documents (Linux, BSD).
+    /// Docs is now the default app for Word documents (Linux, BSD).
     MadeDefault,
 }
 

@@ -31,14 +31,14 @@ use std::collections::HashMap;
 
 use craft_window::{Document, Frame, Viewports, WindowEvent, WindowId, WindowList, WindowMenu};
 use egui::{ViewportCommand, ViewportId};
+use iridium_docs_engine::WindowView;
 use serde_json::{Value, json};
-use wordcraft_engine::WindowView;
 
 use crate::{WordApp, documents, window_ui::WindowUi};
 
 /// The window title for a document called `name`.
 pub(crate) fn title(name: &str, dirty: bool) -> String {
-    format!("{name}{} - Iridium Docs", if dirty { " •" } else { "" })
+    format!("{name}{} - Docs", if dirty { " •" } else { "" })
 }
 
 /// An open window.
@@ -244,7 +244,7 @@ pub(crate) struct ViewportInput {
 
 impl egui::Plugin for ViewportInput {
     fn debug_name(&self) -> &'static str {
-        "wordcraft_viewport_input"
+        "iridium_docs_viewport_input"
     }
 
     fn input_hook(&mut self, _ctx: &egui::Context, input: &mut egui::RawInput) {
@@ -569,7 +569,7 @@ impl WordApp {
     /// The drawn window's title: its document's name as View › Window › Switch Windows gives it.
     pub(crate) fn window_title(&self) -> String {
         if !self.has_document() {
-            return "Iridium Docs".to_string();
+            return "Docs".to_string();
         }
         let mut name = self.windows.menu_title(self.windows.shown).map(str::to_string).unwrap_or_else(|| self.title_stem());
         // X11 converts window titles to C strings, which cannot contain NUL (#3634).
@@ -604,7 +604,7 @@ impl WordApp {
             &mut list,
             |_, key| match titles.get(key).filter(|t| !t.is_empty()) {
                 Some(t) => base.clone().with_title(t.clone()),
-                None => base.clone().with_title("Iridium Docs"),
+                None => base.clone().with_title("Docs"),
             },
             |ui, _, key| self.draw_window(ui, *key),
         );

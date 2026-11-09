@@ -2,10 +2,10 @@
 
 use std::collections::HashMap;
 
-use wordcraft_doc::para::Wrap;
-use wordcraft_doc::props::TextDirection;
-use wordcraft_doc::{Document, Path, Pos, StoryRef};
-use wordcraft_geom::{Point, Rect};
+use iridium_docs_doc::para::Wrap;
+use iridium_docs_doc::props::TextDirection;
+use iridium_docs_doc::{Document, Path, Pos, StoryRef};
+use iridium_docs_geom::{Point, Rect};
 
 use crate::para::{PARA_MARK_WIDTH, ParaLayout};
 use crate::{DocLayout, Page, Placed};
@@ -64,7 +64,7 @@ pub struct ObjectHit {
     pub page: usize,
     /// Its unrotated frame; `spin` turns it about the centre.
     pub rect: Rect,
-    pub spin: wordcraft_geom::Spin,
+    pub spin: iridium_docs_geom::Spin,
     pub story: StoryRef,
     pub path: Path,
     pub off: usize,
@@ -913,7 +913,7 @@ impl DocLayout {
     }
 
     /// The equation under (x, y) on `page` and the caret position inside it nearest the point.
-    pub fn equation_hit(&self, page: usize, x: f32, y: f32, story: StoryRef) -> Option<(Pos, wordcraft_doc::math_edit::MathPos)> {
+    pub fn equation_hit(&self, page: usize, x: f32, y: f32, story: StoryRef) -> Option<(Pos, iridium_docs_doc::math_edit::MathPos)> {
         let p = self.pages.get(page)?;
         for l in page_lines(p, story) {
             let Some(line) = l.para.lines.get(l.li) else { continue };
@@ -929,7 +929,7 @@ impl DocLayout {
                 }
                 let slot = ml.hit(x - x0, base - y)?;
                 let pos = Pos { story: l.story, path: l.path.clone(), off: c.start };
-                return Some((pos, wordcraft_doc::math_edit::MathPos { path: slot.path.clone(), off: slot.off }));
+                return Some((pos, iridium_docs_doc::math_edit::MathPos { path: slot.path.clone(), off: slot.off }));
             }
         }
         None
@@ -944,7 +944,7 @@ impl DocLayout {
     pub fn cell_at(&self, page: usize, x: f32, y: f32) -> Option<(StoryRef, Path, usize, usize)> {
         let p = self.pages.get(page)?;
         p.items.iter().rev().find_map(|it| match it {
-            Placed::Cell { rect, table, row, cell, story, covered: false, .. } if rect.contains(wordcraft_geom::Point::new(x, y)) => {
+            Placed::Cell { rect, table, row, cell, story, covered: false, .. } if rect.contains(iridium_docs_geom::Point::new(x, y)) => {
                 Some((*story, table.clone(), *row, *cell))
             }
             _ => None,
@@ -982,7 +982,7 @@ mod object_index_tests {
         let footer = Pos::new(StoryRef::Part(8), Path(vec![0]), 0);
         let object = |pos: &Pos, x| Placed::Object {
             rect: Rect::new(x, 20.0, 40.0, 30.0),
-            spin: wordcraft_geom::Spin::default(),
+            spin: iridium_docs_geom::Spin::default(),
             story: pos.story,
             path: pos.path.clone(),
             off: pos.off,

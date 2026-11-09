@@ -236,7 +236,7 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, tracked: bool) -> Vec<Para> {
                     }
                     // The linear format is the shared form; an equation known only by its
                     // structure gets it from there.
-                    let linear = if linear.is_empty() { wordcraft_doc::math::to_linear(&math.nodes) } else { linear.clone() };
+                    let linear = if linear.is_empty() { iridium_docs_doc::math::to_linear(&math.nodes) } else { linear.clone() };
                     out.inlines.push(Inline::Equation { linear, display: *display });
                 }
                 Some(InlineObject::Ruby { base, ruby, .. }) => {
@@ -328,7 +328,7 @@ fn flow_table(doc: &Document, t: &Table, depth: usize, tracked: bool) -> FTable 
         rows.push(cells);
     }
     // Without a table style and without visible table or cell borders the table shows no grid.
-    let visible = |b: &Option<wordcraft_doc::props::Borders>| b.as_ref().is_some_and(|b| b.any_visible());
+    let visible = |b: &Option<iridium_docs_doc::props::Borders>| b.as_ref().is_some_and(|b| b.any_visible());
     let borderless =
         t.props.style.is_none() && !visible(&t.props.borders) && t.rows.iter().flat_map(|r| &r.cells).all(|c| !visible(&c.props.borders));
     FTable { rows, widths: t.grid.clone(), borderless }
@@ -403,8 +403,8 @@ impl ListCounter {
         }
         match li.level % 3 {
             0 => format!("{n}."),
-            1 => format!("{}.", wordcraft_doc::section::letters(n)),
-            _ => format!("{}.", wordcraft_doc::section::roman(n)),
+            1 => format!("{}.", iridium_docs_doc::section::letters(n)),
+            _ => format!("{}.", iridium_docs_doc::section::roman(n)),
         }
     }
 }

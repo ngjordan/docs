@@ -40,14 +40,14 @@ print("app-id matching")
 pat = brand.re.compile(
     "|".join(
         re.escape(s) + r"(?=\b|\.(?:desktop|png|svg|yml|yaml|xml|ini|json|sh|ps1|wxs|in|mime|bundle)\b)"
-        for s in ("ph.iridium.docs", "ai.storyteller.wordcraft")
+        for s in ("ph.docs", "ai.storyteller.iridium-docs")
     ),
     re.IGNORECASE,
 )
-check("bare id", pat.sub("com.acme.word", "ph.iridium.docs") == "com.acme.word")
-check("id + .desktop", pat.sub("com.acme.word", "ph.iridium.docs.desktop") == "com.acme.word.desktop")
-check("id + .png", pat.sub("com.acme.word", "ph.iridium.docs.png") == "com.acme.word.png")
-check("upstream id", pat.sub("com.acme.word", "ai.storyteller.wordcraft") == "com.acme.word")
+check("bare id", pat.sub("com.acme.word", "ph.docs") == "com.acme.word")
+check("id + .desktop", pat.sub("com.acme.word", "ph.docs.desktop") == "com.acme.word.desktop")
+check("id + .png", pat.sub("com.acme.word", "ph.docs.png") == "com.acme.word.png")
+check("upstream id", pat.sub("com.acme.word", "ai.storyteller.iridium-docs") == "com.acme.word")
 
 # ...and must NOT touch anything else.
 check("sibling app id survives",
@@ -60,7 +60,7 @@ check("openxml namespace survives",
       pat.sub("com.acme.word", "org.openxmlformats.wordprocessingml.document")
       == "org.openxmlformats.wordprocessingml.document")
 check("crate namespace survives",
-      pat.sub("com.acme.word", "wordcraft_engine::Session") == "wordcraft_engine::Session")
+      pat.sub("com.acme.word", "iridium-docs_engine::Session") == "iridium-docs_engine::Session")
 check("microsoft doc type survives",
       pat.sub("com.acme.word", "com.microsoft.word.doc") == "com.microsoft.word.doc")
 
@@ -77,7 +77,7 @@ with tempfile.TemporaryDirectory() as td:
     (icon_dir / "newbrand-1024.png").write_bytes(b"x")               # new generated
     (icon_dir / "iridium-docs.ico").write_bytes(b"x")                # old generated
     (icon_dir / "newbrand.ico").write_bytes(b"x")                    # new generated
-    (icon_dir / "hicolor" / "256x256" / "apps" / "ph.iridium.docs.png").write_bytes(b"x")
+    (icon_dir / "hicolor" / "256x256" / "apps" / "ph.docs.png").write_bytes(b"x")
     (icon_dir / "hicolor" / "256x256" / "apps" / "com.newbrand.app.png").write_bytes(b"x")
 
     saved_dir, saved_brand = brand.ICON_DIR, brand.BRAND
@@ -115,7 +115,7 @@ with tempfile.TemporaryDirectory() as td:
     check("new generated png kept", (icon_dir / "newbrand-1024.png").exists())
     check("new generated ico kept", (icon_dir / "newbrand.ico").exists())
     check("old hicolor removed",
-          not (icon_dir / "hicolor" / "256x256" / "apps" / "ph.iridium.docs.png").exists())
+          not (icon_dir / "hicolor" / "256x256" / "apps" / "ph.docs.png").exists())
     check("new hicolor kept",
           (icon_dir / "hicolor" / "256x256" / "apps" / "com.newbrand.app.png").exists())
 

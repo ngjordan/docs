@@ -3,12 +3,12 @@
 
 use std::sync::Arc;
 
-use wordcraft_doc::numbering::ListKind;
-use wordcraft_doc::para::NoteKind;
-use wordcraft_doc::props::{Align, CharProps, NumRef, Rgb, TextColor};
-use wordcraft_doc::table::{Cell, Table};
-use wordcraft_doc::{Block, Comment, Document, InlineObject, Paragraph, PartKind, Revision, RevisionKind, para_block};
-use wordcraft_docx::{XmlKind, read_xml, sniff_xml, write_wordml2003};
+use iridium_docs_doc::numbering::ListKind;
+use iridium_docs_doc::para::NoteKind;
+use iridium_docs_doc::props::{Align, CharProps, NumRef, Rgb, TextColor};
+use iridium_docs_doc::table::{Cell, Table};
+use iridium_docs_doc::{Block, Comment, Document, InlineObject, Paragraph, PartKind, Revision, RevisionKind, para_block};
+use iridium_docs_docx::{XmlKind, read_xml, sniff_xml, write_wordml2003};
 
 fn tiny_png() -> Vec<u8> {
     let img = image::RgbaImage::from_fn(3, 2, |x, y| image::Rgba([x as u8 * 80, y as u8 * 120, 200, 255]));
@@ -225,5 +225,5 @@ fn headers_past_the_inlined_byte_budget_fail_the_export() {
     }
     d.body = blocks;
     let out = write_wordml2003(&d);
-    assert!(matches!(out, Err(wordcraft_docx::DocxError::Limit(_))), "expected a limit error, got {:?}", out.map(|x| x.len()));
+    assert!(matches!(out, Err(iridium_docs_docx::DocxError::Limit(_))), "expected a limit error, got {:?}", out.map(|x| x.len()));
 }

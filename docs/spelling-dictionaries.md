@@ -1,10 +1,10 @@
 # Installing languages and spelling dictionaries
 
-> **Last reviewed:** 2026-10-16 · **Last updated:** 2026-11-02 · **Change:** trivial (Language packs: the first set, language-packs-1, is published and pinned: 61 languages, and which aren't packs yet); previously minor (Language packs: install a language's spelling and hyphenation from File › Options › Language, or from the bar a document in that language shows; they are searched after the dictionaries folder and before the system's dictionaries; previously trivial: the Flatpak's own dictionaries folder; previously trivial: WordCraft's own dictionaries folder is searched on macOS and Linux too, as on Windows, so a dictionary dropped there works without a setting; previously minor: ISO 8859-9 Turkish dictionaries are read, #3692; previously minor: Spanish: `es_ES`, `es_MX`, `es_419` and `es_UY` with their fallbacks, #3360, #3553; previously trivial: every Hunspell language shows (no dictionary), not only Polish and Portuguese, and Indonesian is listed, #3150; previously trivial: ISO 8859-1 dictionaries are read, #2824)
+> **Last reviewed:** 2026-10-16 · **Last updated:** 2026-11-02 · **Change:** trivial (Language packs: the first set, language-packs-1, is published and pinned: 61 languages, and which aren't packs yet); previously minor (Language packs: install a language's spelling and hyphenation from File › Options › Language, or from the bar a document in that language shows; they are searched after the dictionaries folder and before the system's dictionaries; previously trivial: the Flatpak's own dictionaries folder; previously trivial: Docs's own dictionaries folder is searched on macOS and Linux too, as on Windows, so a dictionary dropped there works without a setting; previously minor: ISO 8859-9 Turkish dictionaries are read, #3692; previously minor: Spanish: `es_ES`, `es_MX`, `es_419` and `es_UY` with their fallbacks, #3360, #3553; previously trivial: every Hunspell language shows (no dictionary), not only Polish and Portuguese, and Indonesian is listed, #3150; previously trivial: ISO 8859-1 dictionaries are read, #2824)
 
 English spelling works out of the box. Polish, Russian, Portuguese, Czech, Italian, Croatian,
 Turkish, Indonesian and Spanish spelling use a standard **Hunspell** dictionary (an `.aff` and a `.dic` file) that
-WordCraft reads at runtime. These dictionaries are not bundled: they are large, and several are
+Docs reads at runtime. These dictionaries are not bundled: they are large, and several are
 GPL or LGPL licensed. Without one, the language isn't checked. The status bar then shows the
 language with **(no dictionary)**, for example *Português (Brasil) (no dictionary)*.
 
@@ -13,7 +13,7 @@ size limit, a parse error), the language isn't checked either, and the status ba
 **(dictionary unreadable)** instead. Its tooltip gives the `.dic` file and the reason, and
 **File › Options › Proofing** lists the same reason next to the file.
 
-Install a dictionary once, restart WordCraft, and the language is checked as you type.
+Install a dictionary once, restart Docs, and the language is checked as you type.
 
 ## Language packs
 
@@ -32,9 +32,9 @@ built in; every other language is a pack.
 - When a document has text in a language whose pack isn't installed, a bar under the ribbon says
   *Dutch proofing isn't installed.* with an **Install** button showing the download size. ✕ hides
   it for that document. It never shows for a language that has no pack.
-- Installing needs **downloading** on: the same single setting as WordCraft's font downloads
+- Installing needs **downloading** on: the same single setting as Docs's font downloads
   (the font store). Clicking Install, Show available languages or Refresh turns it on; nothing is
-  downloaded before. Each pack is checked against the sha256 in WordCraft's pinned list before it
+  downloaded before. Each pack is checked against the sha256 in Docs's pinned list before it
   is used.
 - Text in that language is checked and hyphenated as soon as the pack is installed: no restart.
 - **Help › About › Language data** shows the full licence text of the built-in English data and
@@ -46,12 +46,12 @@ built in; every other language is a pack.
   downloading is on; only you can turn it on, with your own click in the app.
 - The web version has no Language packs; it proofs English.
 
-A dictionary you install yourself (below) still wins: WordCraft looks in the dictionaries folder,
+A dictionary you install yourself (below) still wins: Docs looks in the dictionaries folder,
 then the installed pack, then the system's dictionaries.
 
 ## Which files each language needs
 
-WordCraft looks for the first of these file names (each name means a `<name>.aff` and
+Docs looks for the first of these file names (each name means a `<name>.aff` and
 `<name>.dic` pair in the same folder):
 
 | Language | File names | Common source |
@@ -82,27 +82,27 @@ The files may be UTF-8 or the encoding named on the `.aff`'s `SET` line (ISO 885
 ISO 8859-9, KOI8-R and Windows-1251 are read as well; the original VERO `pt_BR` is ISO 8859-1, older
 Turkish `tr_TR` dictionaries ISO 8859-9).
 
-## Where WordCraft looks
+## Where Docs looks
 
 The first folder holding a matching pair wins:
 
 1. The folder set in **File › Options › Proofing › Dictionaries folder**. This is the easiest
    way on every system, and it works for an app started from the Start menu, Finder or the Dock.
    The same pane lists the dictionary file each language found.
-2. The folder in the `WORDCRAFT_DICTIONARIES` environment variable, and WordCraft's own
+2. The folder in the `IRIDIUM_DOCS_DICTIONARIES` environment variable, and Docs's own
    `dictionaries` folder (the first row of each system below).
 3. An installed [Language pack](#language-packs) for the language.
 4. The system's usual places:
 
 | System | Folders |
 |---|---|
-| Windows | `%LOCALAPPDATA%\WordCraft\dictionaries`, `%LOCALAPPDATA%\hunspell`, `%APPDATA%\WordCraft\dictionaries`, `%APPDATA%\hunspell`, LibreOffice's `share\extensions\dict-*` under `Program Files` (on any drive) |
-| macOS | `~/Library/Application Support/WordCraft/dictionaries`, `~/Library/Spelling`, `/Library/Spelling`, `/opt/homebrew/share/hunspell`, `/usr/local/share/hunspell`, `/Applications/LibreOffice.app/Contents/Resources/extensions/dict-*` |
-| Linux and BSD | `$XDG_DATA_HOME/wordcraft/dictionaries` (default `~/.local/share/wordcraft/dictionaries`), `~/.local/share/hunspell`, `/usr/share/hunspell`, `/usr/share/myspell`, `/usr/share/myspell/dicts`, `/usr/local/share/hunspell`, `/usr/local/share/myspell`, LibreOffice's `share/extensions/dict-*` under `/usr/lib/libreoffice` or `/opt/libreoffice` |
+| Windows | `%LOCALAPPDATA%\Docs\dictionaries`, `%LOCALAPPDATA%\hunspell`, `%APPDATA%\Docs\dictionaries`, `%APPDATA%\hunspell`, LibreOffice's `share\extensions\dict-*` under `Program Files` (on any drive) |
+| macOS | `~/Library/Application Support/Docs/dictionaries`, `~/Library/Spelling`, `/Library/Spelling`, `/opt/homebrew/share/hunspell`, `/usr/local/share/hunspell`, `/Applications/LibreOffice.app/Contents/Resources/extensions/dict-*` |
+| Linux and BSD | `$XDG_DATA_HOME/iridium-docs/dictionaries` (default `~/.local/share/iridium-docs/dictionaries`), `~/.local/share/hunspell`, `/usr/share/hunspell`, `/usr/share/myspell`, `/usr/share/myspell/dicts`, `/usr/local/share/hunspell`, `/usr/local/share/myspell`, LibreOffice's `share/extensions/dict-*` under `/usr/lib/libreoffice` or `/opt/libreoffice` |
 
 The Flatpak runs in a sandbox: its `$XDG_DATA_HOME` is
-`~/.var/app/ai.storyteller.wordcraft/data`, so its own folder is
-`~/.var/app/ai.storyteller.wordcraft/data/wordcraft/dictionaries`, and it can't see the host's
+`~/.var/app/ai.storyteller.iridium-docs/data`, so its own folder is
+`~/.var/app/ai.storyteller.iridium-docs/data/iridium-docs/dictionaries`, and it can't see the host's
 `/usr/share/hunspell` or `~/.local/share/hunspell` (the paths above are for the other builds).
 Put dictionaries in that folder.
 
@@ -116,15 +116,15 @@ VERO, the Brazilian Portuguese dictionary LibreOffice ships, is available from t
 
 ### If LibreOffice is installed
 
-Nothing to do: WordCraft finds LibreOffice's `dict-pt-BR` extension on its own. Restart
-WordCraft after installing LibreOffice.
+Nothing to do: Docs finds LibreOffice's `dict-pt-BR` extension on its own. Restart
+Docs after installing LibreOffice.
 
 ### Windows
 
 In PowerShell:
 
 ```powershell
-$d = "$env:LOCALAPPDATA\WordCraft\dictionaries"
+$d = "$env:LOCALAPPDATA\Docs\dictionaries"
 New-Item -ItemType Directory -Force $d | Out-Null
 $base = "https://raw.githubusercontent.com/LibreOffice/dictionaries/master/pt_BR"
 Invoke-WebRequest "$base/pt_BR.aff" -OutFile "$d\pt_BR.aff" -UseBasicParsing
@@ -163,17 +163,17 @@ from the LibreOffice repository (for example `it_IT/it_IT.aff`; the Spanish ones
 
 ## Checking that it works
 
-- Restart WordCraft. The status bar no longer says **(no dictionary)**, and a misspelled word
+- Restart Docs. The status bar no longer says **(no dictionary)**, and a misspelled word
   such as `impramir` is underlined, with `imprimir` among its suggestions.
 - **File › Options › Proofing** lists the file each language found.
 - From the command line:
 
   ```sh
-  wordcraft-cli run --cmd 'text.insert={"text":"Vou impramir o documento."}' --cmd select.all --cmd 'review.language={"lang":"pt-BR"}' --cmd review.issues --print
+  iridium-docs-cli run --cmd 'text.insert={"text":"Vou impramir o documento."}' --cmd select.all --cmd 'review.language={"lang":"pt-BR"}' --cmd review.issues --print
   ```
 
   The `review.issues` line lists `impramir` as a spelling issue with its suggestions.
-- The log file (`%APPDATA%\WordCraft\logs\wordcraft.log` on Windows) says
+- The log file (`%APPDATA%\Docs\logs\iridium-docs.log` on Windows) says
   `Portuguese spelling: no Hunspell pt_BR dictionary installed` when none was found.
 
 Never commit dictionary files to this repository: they stay on the user's system.
@@ -183,11 +183,11 @@ Never commit dictionary files to this repository: they stay on the user's system
 | Date | Change | Summary |
 |---|---|---|
 | 2026-11-02 | trivial | Language packs: language-packs-1 is published and pinned (61 languages); which languages aren't packs yet and why (CP4.4) |
-| 2026-11-02 | trivial | The Flatpak's own dictionaries folder (`~/.var/app/ai.storyteller.wordcraft/data/wordcraft/dictionaries`); the host's folders are outside its sandbox |
+| 2026-11-02 | trivial | The Flatpak's own dictionaries folder (`~/.var/app/ai.storyteller.iridium-docs/data/iridium-docs/dictionaries`); the host's folders are outside its sandbox |
 | 2026-11-01 | minor | Language packs (CP4.3): installing a language from File › Options › Language or the missing-pack bar, the download consent, About › Language data, the commands; an installed pack is searched after the dictionaries folders and before the system's |
 | 2026-10-22 | minor | Spanish (#3360, #3553): the file names for Spain, Mexico, Latin America and Uruguay and their fallbacks |
 | 2026-10-22 | trivial | Italian, Croatian, Turkish, Russian, Czech and Indonesian without a dictionary now show **(no dictionary)** (or **(dictionary unreadable)**) too, as this page already said; before, only Polish and Portuguese did. Indonesian is listed with its file names (#3150) |
-| 2026-11-01 | trivial | WordCraft's own `dictionaries` folder under the user's application data is searched on macOS (`~/Library/Application Support/WordCraft/dictionaries`) and Linux/BSD (`$XDG_DATA_HOME/wordcraft/dictionaries`) too, before the system folders, as it was on Windows (craft-proof; ported from storytold/craft-libs#31 by brzuchal) |
+| 2026-11-01 | trivial | Docs's own `dictionaries` folder under the user's application data is searched on macOS (`~/Library/Application Support/Docs/dictionaries`) and Linux/BSD (`$XDG_DATA_HOME/iridium-docs/dictionaries`) too, before the system folders, as it was on Windows (craft-proof; ported from ngjordan/craft-libs#31 by brzuchal) |
 | 2026-10-23 | trivial | ISO 8859-9 (`SET ISO8859-9`) dictionaries are read, so an older Turkish `tr_TR` loads without converting it to UTF-8; the Turkish dictionary is read through the same size-capped reader and `SET` decoding as the others (#3692) |
 | 2026-10-18 | trivial | ISO 8859-1 (`SET ISO8859-1`) dictionaries are read, so the original VERO `pt_BR` works without converting it to UTF-8 (#2824) |
 | 2026-10-18 | minor | An installed dictionary that can't be read shows **(dictionary unreadable)** in the status bar, with the file and reason in its tooltip and in File › Options › Proofing (#2830) |

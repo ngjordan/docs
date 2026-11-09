@@ -40,7 +40,7 @@ render() {
 }
 
 render "$SVG" 1024 "$DIR/$SLUG-1024.png"
-# Runtime window/Dock icon on macOS (embedded by apps/wordcraft); other platforms use hicolor 256.
+# Runtime window/Dock icon on macOS (embedded by apps/iridium-docs); other platforms use hicolor 256.
 render "$MAC" 512 "$DIR/$SLUG-macos-512.png"
 
 # Linux hicolor theme.

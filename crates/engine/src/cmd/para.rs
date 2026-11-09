@@ -1,11 +1,11 @@
 //! Paragraph formatting, lists and styles (Home › Paragraph, Home › Styles).
 
+use iridium_docs_doc::collate::{SortKey, sort_key};
+use iridium_docs_doc::numbering::ListKind;
+use iridium_docs_doc::props::{Align, Border, BorderStyle, Borders, LineSpacing, NumRef, ParaProps, Rgb, TabAlign, TabLeader, TabStop};
+use iridium_docs_doc::styles::{Style, StyleKind};
+use iridium_docs_doc::{Block, CharProps, Pos};
 use serde_json::{Value, json};
-use wordcraft_doc::collate::{SortKey, sort_key};
-use wordcraft_doc::numbering::ListKind;
-use wordcraft_doc::props::{Align, Border, BorderStyle, Borders, LineSpacing, NumRef, ParaProps, Rgb, TabAlign, TabLeader, TabStop};
-use wordcraft_doc::styles::{Style, StyleKind};
-use wordcraft_doc::{Block, CharProps, Pos};
 
 use super::sel_result;
 use crate::{CmdError, CmdResult, CommandSpec, Session, p};

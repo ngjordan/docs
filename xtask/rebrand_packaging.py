@@ -55,55 +55,55 @@ def sub_regex(rel, pattern, new, count=None, required=True, note=""):
 
 
 # ---- 1. Linux desktop entry -------------------------------------------------
-sub("packaging/linux/ph.iridium.docs.desktop",
-    "Icon=ai.storyteller.wordcraft", "Icon=ph.iridium.docs", required=False, note="desktop Icon")
-sub("packaging/linux/ph.iridium.docs.desktop",
-    "StartupWMClass=ai.storyteller.wordcraft", "StartupWMClass=ph.iridium.docs",
+sub("packaging/linux/ph.docs.desktop",
+    "Icon=ai.storyteller.iridium-docs", "Icon=ph.docs", required=False, note="desktop Icon")
+sub("packaging/linux/ph.docs.desktop",
+    "StartupWMClass=ai.storyteller.iridium-docs", "StartupWMClass=ph.docs",
     required=False, note="desktop StartupWMClass")
-sub("packaging/linux/ph.iridium.docs.desktop",
-    "Name=WordCraft", "Name=Iridium Docs", required=False, note="desktop Name")
-sub("packaging/linux/ph.iridium.docs.desktop",
+sub("packaging/linux/ph.docs.desktop",
+    "Name=Docs", "Name=Docs", required=False, note="desktop Name")
+sub("packaging/linux/ph.docs.desktop",
     "Comment=Write and design documents; open and save Word files",
     "Comment=Write and design documents; open and save Word files", required=False, note="desktop Comment")
 
 # ---- 2. Linux packaging scripts ---------------------------------------------
 for f in ["packaging/linux/package.sh", "packaging/linux/flatpak-bundle.sh"]:
-    sub_regex(f, r"ai\.storyteller\.wordcraft", "ph.iridium.docs", required=False, note="app id")
-    sub_regex(f, r"WORDCRAFT_MAINTAINER", "IRIDIUM_DOCS_MAINTAINER",
+    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.docs", required=False, note="app id")
+    sub_regex(f, r"IRIDIUM_DOCS_MAINTAINER", "IRIDIUM_DOCS_MAINTAINER",
               required=False, note="maintainer var")
-    sub_regex(f, r'WordCraft maintainers <wordcraft@storyteller\.ai>',
+    sub_regex(f, r'Docs maintainers <iridium-docs@storyteller\.ai>',
               "Iridium maintainers <docs@iridium.ph>", required=False, note="maintainer")
 
-sub("packaging/linux/nfpm.yaml", "name: wordcraft", "name: iridium-docs", required=False, note="pkg name")
+sub("packaging/linux/nfpm.yaml", "name: iridium-docs", "name: iridium-docs", required=False, note="pkg name")
 sub("packaging/linux/nfpm.yaml",
-    "homepage: https://getartcraft.com/apps/wordcraft",
+    "homepage: https://iridium.ph/apps/iridium-docs",
     "homepage: https://iridium.ph", required=False, note="pkg homepage")
 
 # ---- 3. flatpak manifests ---------------------------------------------------
-for f in ["packaging/linux/flatpak/ph.iridium.docs.yml",
-          "packaging/linux/flatpak/ph.iridium.docs.bundle.yml"]:
-    sub_regex(f, r"ai\.storyteller\.wordcraft", "ph.iridium.docs", required=False, note="app id")
+for f in ["packaging/linux/flatpak/ph.docs.yml",
+          "packaging/linux/flatpak/ph.docs.bundle.yml"]:
+    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.docs", required=False, note="app id")
 
 # ---- 4. icon pipeline -------------------------------------------------------
-sub("packaging/icons.sh", 'ID="ai.storyteller.wordcraft"', 'ID="ph.iridium.docs"',
+sub("packaging/icons.sh", 'ID="ai.storyteller.iridium-docs"', 'ID="ph.docs"',
     required=False, note="icon app id")
 
 # ---- 5. macOS packaging -----------------------------------------------------
-sub_regex("packaging/macos/package.sh", r'WordCraft\.icns', "Iridium Docs.icns",
+sub_regex("packaging/macos/package.sh", r'Docs\.icns', "Docs.icns",
           required=False, note="macOS icns name")
 
 # ---- 6. NOTICE / attribution ------------------------------------------------
-sub("NOTICE", "WordCraft\nCopyright (c) 2026 ArtCraft Team and the WordCraft contributors.",
-    "Iridium Docs\nCopyright (c) 2026 Iridium Technologies, Inc.\n"
-    "Based on WordCraft (https://github.com/storytold/wordcraft), Copyright (c) 2026 ArtCraft Team\n"
-    "and the WordCraft contributors.", required=False, note="NOTICE header")
+sub("NOTICE", "Docs\nCopyright (c) 2026 the upstream project Team and the Docs contributors.",
+    "Docs\nCopyright (c) 2026 Iridium Technologies, Inc.\n"
+    "Based on Docs (https://github.com/ngjordan/iridium-docs), Copyright (c) 2026 the upstream project Team\n"
+    "and the Docs contributors.", required=False, note="NOTICE header")
 sub("NOTICE",
-    "The ArtCraft name, wordmark and logos in docs/brand/ are trademarks of the ArtCraft Team. They are\n"
+    "The the upstream project name, wordmark and logos in docs/brand/ are trademarks of the the upstream project Team. They are\n"
     "not open source and are not covered by the license above; their terms are in\n"
     "docs/brand/LICENSE-brand.txt.",
-    "This is a modified distribution. The ArtCraft name, wordmark and logos (docs/brand/) have been\n"
+    "This is a modified distribution. The the upstream project name, wordmark and logos (docs/brand/) have been\n"
     "removed, as docs/brand/LICENSE-brand.txt requires for forks and modified versions. The\n"
-    "WordCraft source code remains under the MIT License or the Apache License, Version 2.0.",
+    "Docs source code remains under the MIT License or the Apache License, Version 2.0.",
     required=False, note="NOTICE brand paragraph")
 
 print(f"{'FILE':58s} {'N':>3s}  NOTE")

@@ -35,7 +35,7 @@ final class Document: ObservableObject, FileDocument {
     static var readableContentTypes: [UTType] { [.plainText] }
 
     init() {
-        text = "Iridium Docs"
+        text = "Docs"
     }
 
     init(configuration: ReadConfiguration) throws {
@@ -58,7 +58,7 @@ struct DocumentView: View {
         VStack(alignment: .leading, spacing: 0) {
             // The ribbon-strip: a compact toolbar row, in the Iridium green.
             HStack(spacing: 16) {
-                Label("Iridium Docs", systemImage: "doc.text")
+                Label("Docs", systemImage: "doc.text")
                     .font(.headline)
                     .foregroundStyle(Color(red: 0.043, green: 0.431, blue: 0.310))
                 Divider()
@@ -85,14 +85,14 @@ struct DocumentView: View {
             }
             .background(Color(.systemGroupedBackground))
         }
-        .navigationTitle("Iridium Docs")
+        .navigationTitle("Docs")
     }
 }
 
 struct AboutView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Iridium Docs")
+            Text("Docs")
                 .font(.title2.bold())
             Text("A word processor by Iridium Technologies, Inc.")
                 .font(.subheadline)

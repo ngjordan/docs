@@ -3,7 +3,7 @@
 
 Replaces the product name inside user-facing message strings and the About dialog.
 Internal identifiers (crate names, log targets, egui Ids, file paths) keep the
-lowercase `wordcraft` token: they are not user-visible and renaming them would
+lowercase `iridium-docs` token: they are not user-visible and renaming them would
 churn tests and config paths for no benefit.
 """
 
@@ -14,7 +14,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHANGES = []
 
-# Files where a "WordCraft" inside a string literal is shown to the user.
+# Files where a "Docs" inside a string literal is shown to the user.
 # Test files are excluded: their assertions are updated by the same rule, so
 # sweeping them too keeps the suite green.
 TARGETS = [
@@ -32,9 +32,9 @@ TARGETS = [
     "crates/mcp/src/server.rs",
 ]
 
-# The product name inside string literals -> "Iridium Docs".
-# WORDCRAFT_DICTIONARIES is an env var name: handled separately, below.
-NAME_RE = re.compile(r'(?<![\w/-])WordCraft(?![\w])')
+# The product name inside string literals -> "Docs".
+# IRIDIUM_DOCS_DICTIONARIES is an env var name: handled separately, below.
+NAME_RE = re.compile(r'(?<![\w/-])Docs(?![\w])')
 
 for rel in TARGETS:
     p = ROOT / rel
@@ -44,10 +44,10 @@ for rel in TARGETS:
     text = p.read_text(encoding="utf-8")
 
     # Protect the env var name and the dictionary folder name.
-    text = text.replace("WORDCRAFT_DICTIONARIES", "\x00DICTVAR\x00")
-    text = text.replace("WORDCRAFT_PROFILE_DIR", "\x00PROFILEVAR\x00")
+    text = text.replace("IRIDIUM_DOCS_DICTIONARIES", "\x00DICTVAR\x00")
+    text = text.replace("IRIDIUM_DOCS_PROFILE_DIR", "\x00PROFILEVAR\x00")
 
-    text2, n = NAME_RE.subn("Iridium Docs", text)
+    text2, n = NAME_RE.subn("Docs", text)
 
     # Restore, renamed to our own env vars.
     text2 = text2.replace("\x00DICTVAR\x00", "IRIDIUM_DOCS_DICTIONARIES")
@@ -57,12 +57,12 @@ for rel in TARGETS:
         p.write_text(text2, encoding="utf-8")
         CHANGES.append((rel, n))
 
-# The About dialog copyright line: we are not ArtCraft, and we must credit them.
+# The About dialog copyright line: we are not the upstream project, and we must credit them.
 about = ROOT / "crates/ui-egui/src/dialogs/dispatch.rs"
 t = about.read_text(encoding="utf-8")
-old = ('tl!("MIT OR Apache-2.0. Copyright (c) 2026 ArtCraft Team and the WordCraft contributors.")')
+old = ('tl!("MIT OR Apache-2.0. Copyright (c) 2026 the upstream project Team and the Docs contributors.")')
 new = ('tl!("MIT OR Apache-2.0. Copyright (c) 2026 Iridium Technologies, Inc. '
-       'Based on WordCraft (c) 2026 ArtCraft Team and the WordCraft contributors.")')
+       'Based on Docs (c) 2026 the upstream project Team and the Docs contributors.")')
 if old in t:
     about.write_text(t.replace(old, new), encoding="utf-8")
     CHANGES.append((about.relative_to(ROOT).as_posix(), 1))
@@ -75,8 +75,8 @@ for p in ROOT.rglob("*.rs"):
     if "target" in p.parts:
         continue
     t = p.read_text(encoding="utf-8")
-    if "WORDCRAFT_DICTIONARIES" in t:
-        p.write_text(t.replace("WORDCRAFT_DICTIONARIES", "IRIDIUM_DOCS_DICTIONARIES"), encoding="utf-8")
+    if "IRIDIUM_DOCS_DICTIONARIES" in t:
+        p.write_text(t.replace("IRIDIUM_DOCS_DICTIONARIES", "IRIDIUM_DOCS_DICTIONARIES"), encoding="utf-8")
         CHANGES.append((p.relative_to(ROOT).as_posix(), 1))
 
 print()

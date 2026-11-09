@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Repackage a WordCraft Linux tarball as a single-file Flatpak bundle:
+# Repackage a Docs Linux tarball as a single-file Flatpak bundle:
 #
 #   $DIST/iridium-docs-<version>-linux-<arch>.flatpak
 #
@@ -10,13 +10,13 @@
 # Needs flatpak, flatpak-builder and the SVG pixbuf loader (librsvg2-common) for the host's
 # `appstreamcli compose`; the freedesktop runtime and SDK named in the manifest are
 # installed per-user from Flathub. Unless --no-test, the bundle is then installed per-user and
-# `wordcraft-cli --version` is run inside the sandbox as a smoke test.
-# Manifest: packaging/linux/flatpak/ph.iridium.docs.bundle.yml.
+# `iridium-docs-cli --version` is run inside the sandbox as a smoke test.
+# Manifest: packaging/linux/flatpak/ph.docs.bundle.yml.
 set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 HERE="$ROOT/packaging/linux"
-APP_ID=ph.iridium.docs
+APP_ID=ph.docs
 FLATHUB=https://dl.flathub.org/repo/flathub.flatpakrepo
 
 TEST=1
@@ -45,13 +45,13 @@ for tool in flatpak flatpak-builder; do
   command -v "$tool" >/dev/null || { echo "error: $tool not found (apt install flatpak flatpak-builder librsvg2-common)" >&2; exit 1; }
 done
 
-echo "==> WordCraft $VERSION Flatpak bundle for $ARCH from $(basename "$TARBALL")"
+echo "==> Docs $VERSION Flatpak bundle for $ARCH from $(basename "$TARBALL")"
 
 WORK="$CARGO_TARGET_DIR/flatpak-bundle"
 rm -rf "$WORK"
 mkdir -p "$WORK/stage"
 tar -xzf "$TARBALL" -C "$WORK/stage" --strip-components=1
-[[ -x "$WORK/stage/bin/wordcraft" ]] || { echo "error: $TARBALL has no bin/wordcraft" >&2; exit 1; }
+[[ -x "$WORK/stage/bin/iridium-docs" ]] || { echo "error: $TARBALL has no bin/iridium-docs" >&2; exit 1; }
 cp "$HERE/flatpak/$APP_ID.bundle.yml" "$WORK/$APP_ID.yml"
 
 flatpak remote-add --user --if-not-exists flathub "$FLATHUB"
@@ -73,7 +73,7 @@ fi
 if [[ "$TEST" = 1 ]]; then
   flatpak install --user -y --noninteractive --reinstall "$OUT"
   flatpak info --user "$APP_ID"
-  flatpak run --command=wordcraft-cli "$APP_ID" --version
+  flatpak run --command=iridium-docs-cli "$APP_ID" --version
   flatpak run --command=sh "$APP_ID" -c 'ls /app/share/applications /app/share/metainfo /app/share/mime/packages /app/share/icons/hicolor/scalable/apps'
 fi
 echo "==> done"
