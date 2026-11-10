@@ -48,6 +48,10 @@ pub struct Launch {
 /// exit), the file dialogs the app asked for and this frame's raw host window state.
 pub struct Shell {
     app: WordApp,
+    // The look the app installed at construction (`new_for_host`).
+    fonts: egui::FontDefinitions,
+    style: egui::Style,
+    zoom: f32,
     geometry: Option<WindowGeometry>,
     key_file: Option<control_server::KeyFile>,
     dialogs: file_dialogs::Launcher,
@@ -64,6 +68,13 @@ impl Shell {
     /// Build the shell: a blank (or sample) document, the saved preferences, recovery, the
     /// control server, then the documents named at launch, or the Start screen.
     pub fn new(cc: &eframe::CreationContext<'_>, launch: Launch) -> Self {
+        // Docs has no platform extra that needs the real window: all of it goes through `ctx`.
+        Self::new_for_host(&cc.egui_ctx, cc.storage, launch)
+    }
+
+    /// Host-facing constructor: no `CreationContext`, so a host can build this module later.
+    /// `storage` is unused (Docs keeps its preferences in its own settings folder).
+    pub fn new_for_host(ctx: &egui::Context, _storage: Option<&dyn eframe::Storage>, launch: Launch) -> Self {
         let Launch {
             files,
             other_files,
@@ -78,10 +89,10 @@ impl Shell {
         // separator (#838).
         let region = region::system();
         let doc = if sample { iridium_docs_engine::sample::sample_document() } else { iridium_docs_engine::blank_document(&region) };
-        let (file_dialog, dialogs) = file_dialogs::hook(&cc.egui_ctx);
+        let (file_dialog, dialogs) = file_dialogs::hook(ctx);
         let mut session = Session::new(doc);
         session.system_region = region;
-        let mut app = WordApp::new(session, services(file_dialog, &cc.egui_ctx));
+        let mut app = WordApp::new(session, services(file_dialog, ctx));
         app.set_startup_update_check(true);
         load_prefs(&mut app);
         load_user_dictionary(&mut app);
@@ -93,11 +104,11 @@ impl Shell {
             let doc = app.session.blank_document();
             app.session.set_document(doc);
         }
-        app.watch_desktop_theme(&cc.egui_ctx);
+        app.watch_desktop_theme(ctx);
         if prefs_enabled()
             && let Some(dir) = iridium_docs_control_key::settings_dir()
         {
-            let ctx = cc.egui_ctx.clone();
+            let ctx = ctx.clone();
             if let Err(e) = app.session.enable_recovery(dir.join("recovery"), std::sync::Arc::new(move || ctx.request_repaint())) {
                 log::warn!("local recovery unavailable: {e}");
             }
@@ -112,7 +123,7 @@ impl Shell {
         }
         let mut key_file = None;
         if let Some(port) = control_port
-            && let Some((rx, file)) = control_server::start(port, cc.egui_ctx.clone(), iridium_docs_control_key::settings_dir().as_deref())
+            && let Some((rx, file)) = control_server::start(port, ctx.clone(), iridium_docs_control_key::settings_dir().as_deref())
         {
             app = app.with_control(rx);
             key_file = file;
@@ -123,8 +134,14 @@ impl Shell {
         if files.is_empty() && other_files.is_empty() && !sample && control_port.is_none() {
             app.start_screen();
         }
+        // Install Docs' own look now (it would otherwise wait for the first frame), then capture
+        // it. Fonts come from what the app installed: `Context::fonts` panics before egui's first pass.
+        let fonts = app.install_look(ctx).unwrap_or_default();
         let mut shell = Self {
             app,
+            fonts,
+            style: (*ctx.global_style()).clone(),
+            zoom: ctx.zoom_factor(),
             // With nothing restored, the window the system placed is checked all the same.
             geometry: Some(window.unwrap_or_default()),
             key_file,
@@ -143,6 +160,25 @@ impl Shell {
         }
         shell
     }
+
+    /// The font set the app had installed when construction finished.
+    pub fn fonts(&self) -> egui::FontDefinitions {
+        self.fonts.clone()
+    }
+
+    /// The style the app had installed when construction finished.
+    pub fn style(&self) -> egui::Style {
+        self.style.clone()
+    }
+
+    /// The zoom factor in force when construction finished.
+    pub fn zoom(&self) -> f32 {
+        self.zoom
+    }
+
+    /// macOS: re-install the native menu. Docs builds its menu in the egui ribbon, so there is
+    /// nothing to do; present so every module's shell has the same surface.
+    pub fn install_native_menu(&self) {}
 
     /// Advances one frame: polls Finder events on macOS, runs the app, fits or rescues the window
     /// and maximizes it after opening, then gates a close or quit request on unsaved changes and

@@ -217,39 +217,13 @@ impl WordApp {
         self.print_feedback();
     }
 
-    /// Per-frame logic before layout: control requests, screenshots, shortcuts, file drops.
-    pub fn logic(&mut self, ctx: &egui::Context) {
-        updates_ui::tick(self, ctx);
-        crate::language_packs::tick(self);
+    /// Install Docs' own look into `ctx`: the interface fonts, the theme, the zoom factor and the
+    /// animation switch. `logic` runs it every frame (each part is change-gated); a host calls it
+    /// at construction so what it captures from `ctx` is Docs' look, not egui's defaults. Returns
+    /// the font definitions when this call installed them (always on the first call).
+    pub fn install_look(&mut self, ctx: &egui::Context) -> Option<egui::FontDefinitions> {
         let lang = i18n::Lang::from_pref(&self.ui.language);
-        i18n::set_current(lang);
-        // New documents are written in the interface's language when Docs can proof it
-        // (a Polish interface: Polish spelling, grammar and hyphenation from the first word).
-        // An English interface writes the region's English (English (UK) on a British system,
-        // #1045), a Spanish one the region's Spanish (Spanish (Uruguay) on a Uruguayan system,
-        // Spain's elsewhere, #3360).
-        let editing = match lang.editing_lang() {
-            Some(t) => Some(t.to_string()),
-            None if lang.code() == "en" => self.session.region_english(),
-            None if lang.code() == "es" => Some(self.session.region_spanish()),
-            None => None,
-        };
-        if self.applied_editing.as_ref().is_none_or(|(l, e)| *l != lang || *e != editing) {
-            self.session.set_editing_language(editing.as_deref());
-            self.applied_editing = Some((lang, editing));
-        }
-        options::sync(self);
-        self.settle_async_saves();
-        // Chinese text wants the Chinese face before the Japanese one (one glyph style per line).
-        // An installed CJK font is read only once CJK text is shown (#241): a CJK interface, the
-        // language names in Options, or a file name the caption is drawing. A file opened later
-        // in this frame (dialog, drop, control channel) is picked up again at the end.
-        self.ensure_caption_fonts();
-        self.ensure_comment_fonts();
-        self.ensure_recover_fonts();
-        self.ensure_recent_fonts();
-        self.ensure_find_fonts();
-        self.install_ui_fonts(ctx, lang);
+        let fonts = self.install_ui_fonts(ctx, lang);
         if let Some(answer) = self.desktop_theme.take_change() {
             self.desktop_dark = Some(answer);
         }
@@ -293,6 +267,42 @@ impl WordApp {
             theme::apply_animations(ctx, animate);
             self.applied_animations = Some(animate);
         }
+        fonts
+    }
+
+    /// Per-frame logic before layout: control requests, screenshots, shortcuts, file drops.
+    pub fn logic(&mut self, ctx: &egui::Context) {
+        updates_ui::tick(self, ctx);
+        crate::language_packs::tick(self);
+        let lang = i18n::Lang::from_pref(&self.ui.language);
+        i18n::set_current(lang);
+        // New documents are written in the interface's language when Docs can proof it
+        // (a Polish interface: Polish spelling, grammar and hyphenation from the first word).
+        // An English interface writes the region's English (English (UK) on a British system,
+        // #1045), a Spanish one the region's Spanish (Spanish (Uruguay) on a Uruguayan system,
+        // Spain's elsewhere, #3360).
+        let editing = match lang.editing_lang() {
+            Some(t) => Some(t.to_string()),
+            None if lang.code() == "en" => self.session.region_english(),
+            None if lang.code() == "es" => Some(self.session.region_spanish()),
+            None => None,
+        };
+        if self.applied_editing.as_ref().is_none_or(|(l, e)| *l != lang || *e != editing) {
+            self.session.set_editing_language(editing.as_deref());
+            self.applied_editing = Some((lang, editing));
+        }
+        options::sync(self);
+        self.settle_async_saves();
+        // Chinese text wants the Chinese face before the Japanese one (one glyph style per line).
+        // An installed CJK font is read only once CJK text is shown (#241): a CJK interface, the
+        // language names in Options, or a file name the caption is drawing. A file opened later
+        // in this frame (dialog, drop, control channel) is picked up again at the end.
+        self.ensure_caption_fonts();
+        self.ensure_comment_fonts();
+        self.ensure_recover_fonts();
+        self.ensure_recent_fonts();
+        self.ensure_find_fonts();
+        self.install_look(ctx);
         if self.ctx.is_none() {
             self.ctx = Some(ctx.clone());
         }

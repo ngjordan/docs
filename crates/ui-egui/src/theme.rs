@@ -476,7 +476,8 @@ pub fn install_fonts_extra(ctx: &egui::Context, prefer_hans: bool, system_cjk: b
     install_fonts_language_extra(ctx, prefer_hans, false, false, system_cjk, faces);
 }
 
-/// [`install_fonts_extra`] with the CJK font order selected for the interface language.
+/// [`install_fonts_extra`] with the CJK font order selected for the interface language. Returns
+/// the definitions it installed (a host captures them: `Context::fonts` panics before the first pass).
 pub fn install_fonts_language_extra(
     ctx: &egui::Context,
     prefer_hans: bool,
@@ -484,10 +485,11 @@ pub fn install_fonts_language_extra(
     prefer_hant: bool,
     system_cjk: bool,
     faces: &[Arc<iridium_docs_fonts::FontFace>],
-) {
+) -> FontDefinitions {
     let mut fonts = font_definitions_language(prefer_hans, prefer_korean, prefer_hant, system_cjk);
     add_fallback_faces(&mut fonts, faces);
-    ctx.set_fonts(fonts);
+    ctx.set_fonts(fonts.clone());
+    fonts
 }
 
 /// Add `faces` after every other font of the interface families.

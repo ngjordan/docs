@@ -153,7 +153,7 @@ impl WordApp {
 
     /// Install the interface fonts when the language, the CJK fallback, or a caption fallback
     /// face has changed since the last install.
-    pub(super) fn install_ui_fonts(&mut self, ctx: &egui::Context, lang: i18n::Lang) {
+    pub(super) fn install_ui_fonts(&mut self, ctx: &egui::Context, lang: i18n::Lang) -> Option<egui::FontDefinitions> {
         let system_cjk = self.fonts_system_cjk || self.want_system_cjk || lang.uses_cjk();
         if !self.styled
             || lang.prefers_hans() != self.fonts_hans
@@ -170,7 +170,7 @@ impl WordApp {
                     }
                 }
             }
-            theme::install_fonts_language_extra(ctx, lang.prefers_hans(), lang.prefers_korean(), lang.prefers_hant(), system_cjk, &faces);
+            let fonts = theme::install_fonts_language_extra(ctx, lang.prefers_hans(), lang.prefers_korean(), lang.prefers_hant(), system_cjk, &faces);
             self.fonts_hans = lang.prefers_hans();
             self.fonts_korean = lang.prefers_korean();
             self.fonts_hant = lang.prefers_hant();
@@ -187,6 +187,32 @@ impl WordApp {
                 o.quit_shortcuts = quit;
             });
             self.styled = true;
+            return Some(fonts);
         }
+        None
+    }
+}
+
+#[cfg(test)]
+mod look_tests {
+    use super::*;
+    use iridium_docs_doc::Document;
+    use iridium_docs_engine::Session;
+
+    /// A host captures `install_look`'s result at construction: it must be Docs' own look
+    /// (Inter families, Docs' visuals), not egui's defaults.
+    #[test]
+    fn install_look_installs_docs_own_fonts_and_visuals_before_the_first_frame() {
+        let ctx = egui::Context::default();
+        let defaults = (egui::FontDefinitions::default(), ctx.global_style().visuals.clone());
+        let mut app = WordApp::new(Session::new(Document::new()), Default::default());
+        let fonts = app.install_look(&ctx).expect("first call installs the fonts");
+        assert_ne!(fonts, defaults.0);
+        assert!(fonts.font_data.contains_key("Inter"));
+        assert!(fonts.families.contains_key(&egui::FontFamily::Name("medium".into())));
+        assert!(fonts.families.contains_key(&egui::FontFamily::Name("semibold".into())));
+        assert_ne!(ctx.global_style().visuals, defaults.1);
+        // The frame's own gate then has nothing left to install.
+        assert!(app.install_look(&ctx).is_none());
     }
 }
