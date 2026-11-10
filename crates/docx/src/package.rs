@@ -232,7 +232,12 @@ impl Package {
             if f.is_dir() {
                 continue;
             }
-            let name = f.name().trim_start_matches('/').to_string();
+            // zip 9 reports a name that is not valid UTF-8 as an error.
+            let Ok(raw_name) = f.name() else {
+                log::warn!("docx: skipping an entry whose name is not valid UTF-8");
+                continue;
+            };
+            let name = raw_name.trim_start_matches('/').to_string();
             if f.size() > max_part {
                 return Err(DocxError::Limit(format!("part {name} declares {} bytes", f.size())));
             }
