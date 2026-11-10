@@ -2788,35 +2788,19 @@ checksum = "791930b43c0d5973160d90a8f3894509f2b273430f5c5c73b668636d0287c5c0"
 name = "iridium-docs"
 version = "0.15.0"
 dependencies = [
- "arboard",
  "chrono",
- "clipboard-win",
- "craft-print",
- "craft-proof",
  "craft-update",
  "dispatch2",
  "eframe",
  "egui",
- "fmv-macos-events",
- "getrandom 0.3.4",
- "iridium-docs-control-key",
- "iridium-docs-doc",
- "iridium-docs-engine",
- "iridium-docs-fonts",
+ "iridium-docs-shell",
  "iridium-docs-ui-egui",
  "log",
  "objc2 0.6.5",
  "objc2-app-kit 0.3.2",
- "objc2-foundation 0.3.2",
- "open",
  "pollster 1.0.1",
- "rfd",
- "serde_json",
- "windows",
  "winit",
  "winresource",
- "wl-clipboard-rs",
- "zbus",
 ]
 
 [[package]]
@@ -3038,6 +3022,36 @@ dependencies = [
  "iridium-docs-metafile",
  "log",
  "vello_cpu",
+]
+
+[[package]]
+name = "iridium-docs-shell"
+version = "0.15.0"
+dependencies = [
+ "arboard",
+ "clipboard-win",
+ "craft-print",
+ "craft-proof",
+ "eframe",
+ "egui",
+ "fmv-macos-events",
+ "getrandom 0.3.4",
+ "iridium-docs-control-key",
+ "iridium-docs-doc",
+ "iridium-docs-engine",
+ "iridium-docs-fonts",
+ "iridium-docs-ui-egui",
+ "log",
+ "objc2 0.6.5",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
+ "open",
+ "pollster 1.0.1",
+ "rfd",
+ "serde_json",
+ "windows",
+ "wl-clipboard-rs",
+ "zbus",
 ]
 
 [[package]]

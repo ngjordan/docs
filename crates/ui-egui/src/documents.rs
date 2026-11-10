@@ -147,7 +147,7 @@ impl WordApp {
     }
 
     /// Whether an open document has work that quitting would lose.
-    pub(crate) fn has_unsaved_documents(&self) -> bool {
+    pub fn has_unsaved_documents(&self) -> bool {
         !self.unsaved_documents().is_empty()
     }
 

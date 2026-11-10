@@ -51,6 +51,7 @@ pub const TABLE: &[(&str, Class)] = &[
     ("testkit", Class::Testkit),
     // apps and tooling
     ("iridium-docs", Class::Exempt),
+    ("shell", Class::Exempt),
     ("cli", Class::Exempt),
     ("web", Class::Exempt),
     ("xtask", Class::Exempt),

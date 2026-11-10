@@ -39,6 +39,7 @@ iridium-docs-mcp = { path = "crates/mcp" }
 iridium-docs-zotero = { path = "crates/zotero" }
 iridium-docs-control-key = { path = "crates/control-key" }
 iridium-docs-ui-egui = { path = "crates/ui-egui" }
+iridium-docs-shell = { path = "crates/docs-shell" }
 iridium-docs-metafile = { path = "crates/metafile" }
 
 # foundation
