@@ -31,7 +31,7 @@ iridium-docs-pdf = { path = "crates/pdf" }
 # Language packs, on #483 SCOWL English and #482); the font store's `language-pack` kind is #486
 # (CP4.1). GitHub serves PR heads from ngjordan/craft-libs, and merged with merge commits they
 # stay in its main.
-iridium-docs-proof = { package = "craft-proof", git = "https://github.com/ngjordan/craft-libs", rev = "136c9a7cb818979f80312ecea234a23101348fa8", version = "=0.1.0" }
+iridium-docs-proof = { package = "craft-proof", git = "https://github.com/ngjordan/craft-libs", rev = "ea5c45461b04eacd9ff9f79a2ffc262b9ab4fe6a", version = "=0.1.0" }
 craft-font-store = { git = "https://github.com/ngjordan/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
 craft-font-catalog = { git = "https://github.com/ngjordan/craft-libs", rev = "762a06a4c6b48b522b7d4de84a87917ef90265e6", version = "=0.1.0" }
 iridium-docs-engine = { path = "crates/engine" }
