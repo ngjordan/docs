@@ -1,5 +1,6 @@
 # Per-row verdicts. level=read: handler located and read/screened; wired: registration read, handler delegates via closure/helper not opened.
 
+
 [verdict."file-new"]
 title = "New"
 verdict = "REAL"
@@ -126,7 +127,6 @@ level = "read"
 evidence = ["crates/engine/src/cmd/tools/specs.rs:146"]
 commands = ["file.compatibility"]
 note = "the checker reports .docx fidelity issues (counters, SmartArt, WordArt) but there is no compatibility checker over a document's content and no way to save in an older format"
-
 
 [verdict."file-versions"]
 title = "Version History"
@@ -933,7 +933,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:143", "crates/engine/src/cmd.rs"]
 commands = ["tools.dictate"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."review-editor"]
 title = "Editor"
@@ -1011,7 +1011,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:154", "crates/engine/src/cmd.rs"]
 commands = ["insert.onlinePicture"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-shape"]
 title = "Shapes"
@@ -1033,7 +1033,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:157", "crates/engine/src/cmd.rs"]
 commands = ["insert.model3d"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-smartart"]
 title = "SmartArt"
@@ -1055,7 +1055,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:160", "crates/engine/src/cmd.rs"]
 commands = ["insert.screenshot"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-canvas"]
 title = "Drawing Canvas"
@@ -1078,7 +1078,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:163", "crates/engine/src/cmd.rs"]
 commands = ["insert.video"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-link"]
 title = "Link"
@@ -1289,7 +1289,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:193", "crates/engine/src/cmd.rs"]
 commands = ["insert.inkEquation"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-symbol"]
 title = "Symbol"
@@ -1381,7 +1381,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:206", "crates/engine/src/cmd.rs"]
 commands = ["draw.inkToMath"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."insert-canvas-draw-insert"]
 title = "Drawing Canvas"
@@ -2010,7 +2010,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:295", "crates/engine/src/cmd.rs"]
 commands = ["review.translate"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."review-language"]
 title = "Language"
@@ -2167,7 +2167,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:317", "crates/engine/src/cmd.rs"]
 commands = ["review.blockAuthors"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."review-restrict"]
 title = "Restrict Editing"
@@ -2337,7 +2337,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:341", "crates/engine/src/cmd.rs"]
 commands = ["view.arrangeAll"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."view-split"]
 title = "Split"
@@ -2352,7 +2352,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:343", "crates/engine/src/cmd.rs"]
 commands = ["view.sideBySide"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."view-syncscroll"]
 title = "Synchronous Scrolling"
@@ -2360,7 +2360,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:344", "crates/engine/src/cmd.rs"]
 commands = ["view.syncScroll"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."view-switchwindows"]
 title = "Switch Windows"
@@ -2411,7 +2411,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:351", "crates/engine/src/cmd.rs"]
 commands = ["view.readLayout"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."developer-richtext"]
 title = "Rich Text Content Control"
@@ -2790,7 +2790,7 @@ verdict = "ABSENT"
 level = "read"
 evidence = ["crates/engine/src/catalog.rs:405", "crates/engine/src/cmd.rs"]
 commands = ["insert.inkEquation"]
-# not registered in crates/engine/src/cmd; catalogue row only
+note = "not registered in crates/engine/src/cmd; catalogue row only"
 
 [verdict."equation-inputformat"]
 title = "Unicode"
