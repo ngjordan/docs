@@ -14,12 +14,41 @@ const DOC_EXTS: &[&str] =
 const IMAGE_EXTS: &[&str] = &["png", "jpg", "jpeg", "gif", "webp", "bmp", "wmf", "emf"];
 const RECIPIENT_EXTS: &[&str] = iridium_docs_engine::cmd::mailings::RECIPIENT_EXTENSIONS;
 mod font_store;
-const CANVAS_ID: &str = "iridium_docs_canvas";
-const LOADING_ID: &str = "iridium_docs_loading";
+// The page's element ids. They use a hyphen, like the rest of the page.
+const CANVAS_ID: &str = "iridium-docs_canvas";
+const LOADING_ID: &str = "iridium-docs_loading";
+
+/// Wait until the page's body is parsed.
+///
+/// Trunk puts the module script in the head, so the app starts while the
+/// document is still empty and the canvas is not there yet.
+async fn wait_for_dom() {
+    let Some(window) = web_sys::window() else { return };
+    let Some(document) = window.document() else { return };
+    if document.ready_state() != "loading" {
+        return;
+    }
+    let promise = js_sys::Promise::new(&mut |resolve, _reject| {
+        let _ = window.set_onload(Some(&resolve));
+    });
+    let _ = wasm_bindgen_futures::JsFuture::from(promise).await;
+    let _ = window.set_onload(None);
+}
 
 pub fn start() {
+    // The wasm's start section runs main when the module is instantiated.
+    // A second call would be a second GPU device drawing to the same canvas,
+    // so the first one wins.
+    static STARTED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+    if STARTED.swap(true, std::sync::atomic::Ordering::SeqCst) {
+        log::warn!("the app is already running; not starting it twice");
+        return;
+    }
     eframe::WebLogger::init(log::LevelFilter::Info).ok();
     wasm_bindgen_futures::spawn_local(async {
+        // Trunk puts the module script in the head, so the page is still being
+        // parsed when the app starts: the canvas is not in the document yet.
+        wait_for_dom().await;
         let Some(document) = web_sys::window().and_then(|w| w.document()) else {
             log::error!("no document");
             return;
