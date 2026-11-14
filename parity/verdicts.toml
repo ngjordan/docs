@@ -1582,19 +1582,19 @@ commands = ["arrange.wrap"]
 
 [verdict."arrange-bringforward"]
 title = "Bring Forward"
-verdict = "PARTIAL"
+verdict = "REAL"
 level = "read"
 evidence = ["crates/engine/src/cmd/objects/specs.rs:227"]
 commands = ["arrange.bringForward"]
-note = "sets text wrapping to In Front Of Text; there is no stacking order between floating objects"
+note = "the object is given a z value above the highest one, so floating objects now stack against each other and not only against the text"
 
 [verdict."arrange-sendbackward"]
 title = "Send Backward"
-verdict = "PARTIAL"
+verdict = "REAL"
 level = "read"
 evidence = ["crates/engine/src/cmd/objects/specs.rs:228"]
 commands = ["arrange.sendBackward"]
-note = "sets text wrapping to Behind Text; there is no stacking order between floating objects"
+note = "the object is given a z value below the lowest one above zero, so floating objects now stack against each other and not only against the text"
 
 [verdict."arrange-selectionpane"]
 title = "Selection Pane"
