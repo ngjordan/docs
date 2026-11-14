@@ -9,10 +9,19 @@
 mod animations;
 #[cfg(target_os = "macos")]
 pub mod apple_events;
+// Desktop only: no system clipboard, native dialogs, spooler or localhost server in a tab.
+#[cfg(not(target_arch = "wasm32"))]
 mod clipboard;
+// Desktop only: no system clipboard, native dialogs, spooler or localhost server in a tab.
+#[cfg(not(target_arch = "wasm32"))]
 mod control_server;
+#[cfg(not(target_arch = "wasm32"))]
 mod default_apps;
+// Desktop only: no system clipboard, native dialogs, spooler or localhost server in a tab.
+#[cfg(not(target_arch = "wasm32"))]
 mod file_dialogs;
+// Desktop only: no system clipboard, native dialogs, spooler or localhost server in a tab.
+#[cfg(not(target_arch = "wasm32"))]
 mod print;
 mod region;
 #[cfg(target_os = "macos")]
@@ -53,7 +62,9 @@ pub struct Shell {
     style: egui::Style,
     zoom: f32,
     geometry: Option<WindowGeometry>,
+    #[cfg(not(target_arch = "wasm32"))]
     key_file: Option<control_server::KeyFile>,
+    #[cfg(not(target_arch = "wasm32"))]
     dialogs: file_dialogs::Launcher,
     // The host's answer for this frame. `InputState` still describes the last painted frame on
     // a hidden logic tick.
@@ -89,14 +100,21 @@ impl Shell {
         // separator (#838).
         let region = region::system();
         let doc = if sample { iridium_docs_engine::sample::sample_document() } else { iridium_docs_engine::blank_document(&region) };
+        #[cfg(not(target_arch = "wasm32"))]
         let (file_dialog, dialogs) = file_dialogs::hook(ctx);
         let mut session = Session::new(doc);
         session.system_region = region;
-        let mut app = WordApp::new(session, services(file_dialog, ctx));
+        #[cfg(not(target_arch = "wasm32"))]
+        let services = services(file_dialog, ctx);
+        #[cfg(target_arch = "wasm32")]
+        let services = services(ctx);
+        let mut app = WordApp::new(session, services);
+        #[cfg(not(target_arch = "wasm32"))]
         app.set_startup_update_check(true);
         load_prefs(&mut app);
         load_user_dictionary(&mut app);
         // Language packs from the suite's font store; an Install click is the person's own.
+        #[cfg(not(target_arch = "wasm32"))]
         iridium_docs_engine::packs::use_font_store(true);
         // A region chosen in File › Options replaces the system's for the first blank
         // document too (#838).
@@ -105,6 +123,7 @@ impl Shell {
             app.session.set_document(doc);
         }
         app.watch_desktop_theme(ctx);
+        #[cfg(not(target_arch = "wasm32"))]
         if prefs_enabled()
             && let Some(dir) = iridium_docs_control_key::settings_dir()
         {
@@ -121,7 +140,9 @@ impl Shell {
             log::info!("title bar: {bar:?}");
             app.mac_titlebar = bar;
         }
+        #[cfg(not(target_arch = "wasm32"))]
         let mut key_file = None;
+        #[cfg(not(target_arch = "wasm32"))]
         if let Some(port) = control_port
             && let Some((rx, file)) = control_server::start(port, ctx.clone(), iridium_docs_control_key::settings_dir().as_deref())
         {
@@ -144,7 +165,9 @@ impl Shell {
             zoom: ctx.zoom_factor(),
             // With nothing restored, the window the system placed is checked all the same.
             geometry: Some(window.unwrap_or_default()),
+            #[cfg(not(target_arch = "wasm32"))]
             key_file,
+            #[cfg(not(target_arch = "wasm32"))]
             dialogs,
             window: RawWindowState::default(),
             #[cfg(target_os = "macos")]
@@ -155,6 +178,7 @@ impl Shell {
         for f in files {
             shell.open_path(&f);
         }
+        #[cfg(not(target_arch = "wasm32"))]
         for f in other_files {
             open_non_unicode(&mut shell.app, &f);
         }
@@ -257,7 +281,10 @@ impl Shell {
     /// after `ui`: those are the passes that ask for one. (Not part of the brief's surface: the
     /// parent window is `eframe::Frame`, which `logic` and `ui` don't receive.)
     pub fn show_file_dialogs(&self, frame: &eframe::Frame) {
+        #[cfg(not(target_arch = "wasm32"))]
         self.dialogs.show(frame);
+        #[cfg(target_arch = "wasm32")]
+        let _ = frame;
     }
 
     /// Open a file path, as File › Open does; a failure is reported in the app's status bar.
@@ -270,9 +297,11 @@ impl Shell {
     /// Persist what the app persists on quit: finish the print jobs, local recovery and the
     /// preferences; and remove the control key file.
     pub fn save_state(&mut self) {
+        #[cfg(not(target_arch = "wasm32"))]
         print::finish_pending_jobs();
         self.app.session.finish_recovery();
         save_prefs(&self.app);
+        #[cfg(not(target_arch = "wasm32"))]
         if let Some(key_file) = &self.key_file {
             key_file.remove();
         }
@@ -394,6 +423,7 @@ fn write_prefs(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()> {
 /// through the system spooler (`print`), the system clipboard's text, formatted copies,
 /// pictures and format names (`clipboard`, #45, #584, #687, #833), the system's animation setting
 /// (`animations`), and making Docs the default app for Word documents (`default_apps`, #295).
+#[cfg(not(target_arch = "wasm32"))]
 fn services(file_dialog: file_dialogs::Hook, ctx: &egui::Context) -> Services {
     Services {
         file_dialog: Some(file_dialog),
@@ -413,6 +443,14 @@ fn services(file_dialog: file_dialogs::Hook, ctx: &egui::Context) -> Services {
     }
 }
 
+/// The browser has no system clipboard handle, native dialogs, spooler or default-app hook: those
+/// entries stay unset (the web host supplies the browser's own).
+#[cfg(target_arch = "wasm32")]
+fn services(ctx: &egui::Context) -> Services {
+    Services { animations_enabled: Some(animations::hook(ctx)), ..Default::default() }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 /// Open a file whose name isn't valid Unicode (#1440). `file.open` takes its path as text, so it
 /// gets the file's bytes under the lossy name, and the document then keeps the real path to save to.
 /// The bytes are read as `file.open` reads a path: only a regular file, and at most 2 GB.

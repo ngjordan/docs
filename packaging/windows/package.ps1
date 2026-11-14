@@ -7,7 +7,7 @@
     iridium-docs-<version>-windows-<arch>.msi            installer (WiX v5), one dual-scope package: for the
                                                       current user by default, no admin rights (#39);
                                                       "Everyone on this computer" installs per machine
-    iridium-docs-<version>-windows-<arch>-portable.zip   iridium docs.exe + iridium docs-cli.exe
+    iridium-docs-<version>-windows-<arch>-portable.zip   iridium-docs.exe + iridium-docs-cli.exe
 
   The binaries link the C runtime statically (+crt-static), so neither the MSI nor the portable
   zip needs the Visual C++ redistributable. Signing is delegated to sign.ps1 (skipped with a
@@ -67,7 +67,7 @@ if (-not $SkipBuild) {
   [Environment]::SetEnvironmentVariable($flagVar, '-C target-feature=+crt-static')
   # Fail the build (rather than warn) if the icon/VERSIONINFO can't be embedded.
   $env:IRIDIUM_DOCS_REQUIRE_WINRES = '1'
-  Invoke-Native "cargo build ($Target)" { cargo build --release --locked -p iridium docs -p iridium docs-cli --target $Target }
+  Invoke-Native "cargo build ($Target)" { cargo build --release --locked -p iridium-docs -p iridium-docs-cli --target $Target }
 }
 
 $Bin = Join-Path $TargetDir "$Target\release"
@@ -82,7 +82,7 @@ function Get-PeHeader([string] $Path) {
   return @{ Machine = [BitConverter]::ToUInt16($bytes, $pe + 4); Subsystem = [BitConverter]::ToUInt16($bytes, $pe + 0x5C) }
 }
 $Machine = switch ($Arch) { 'x64' { 0x8664 } 'x86' { 0x14C } 'arm64' { 0xAA64 } }
-foreach ($check in @(@('iridium docs.exe', 2), @('iridium docs-cli.exe', 3))) {
+foreach ($check in @(@('iridium-docs.exe', 2), @('iridium-docs-cli.exe', 3))) {
   $h = Get-PeHeader (Join-Path $Bin $check[0])
   if ($h.Machine -ne $Machine) { throw "$($check[0]) is for machine 0x$('{0:X}' -f $h.Machine), expected 0x$('{0:X}' -f $Machine) ($Arch)" }
   if ($h.Subsystem -ne $check[1]) { throw "$($check[0]) has PE subsystem $($h.Subsystem), expected $($check[1])" }
@@ -91,9 +91,9 @@ foreach ($check in @(@('iridium docs.exe', 2), @('iridium docs-cli.exe', 3))) {
 $Stage = Join-Path $TargetDir "windows-package\$Arch"
 Remove-Item -Recurse -Force $Stage -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Stage | Out-Null
-Copy-Item (Join-Path $Bin 'iridium docs.exe'), (Join-Path $Bin 'iridium docs-cli.exe') $Stage
+Copy-Item (Join-Path $Bin 'iridium-docs.exe'), (Join-Path $Bin 'iridium-docs-cli.exe') $Stage
 
-& (Join-Path $PSScriptRoot 'sign.ps1') (Join-Path $Stage 'iridium docs.exe') (Join-Path $Stage 'iridium docs-cli.exe')
+& (Join-Path $PSScriptRoot 'sign.ps1') (Join-Path $Stage 'iridium-docs.exe') (Join-Path $Stage 'iridium-docs-cli.exe')
 
 # Required notices ship in every MSI, independently of optional craft-fonts.
 $AppNotices = Join-Path $Stage 'app-notices'
@@ -144,12 +144,12 @@ $rtf = '{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss\fcharset0 Tahoma;}}\vi
   ($paragraphs -join "\par`r`n") + "\par`r`n}`r`n"
 [System.IO.File]::WriteAllText($LicenseRtf, $rtf, [System.Text.Encoding]::ASCII)
 
-# One MSI from one dual-scope source (see iridium docs.wxs and install-policy.wxi): per user by default into
+# One MSI from one dual-scope source (see iridium-docs.wxs and install-policy.wxi): per user by default into
 # %LOCALAPPDATA%\Programs\Iridium\Docs (#39), per machine into Program Files\Iridium on request.
 # The plain name is the one every sibling app, the launcher and the shared windows-arm64 workflow expect.
 $Msi = Join-Path $Dist "iridium-docs-$Version-windows-$Arch.msi"
 Invoke-Native "wix build" {
-  wix build (Join-Path $PSScriptRoot 'iridium docs.wxs') -arch $Arch `
+  wix build (Join-Path $PSScriptRoot 'iridium-docs.wxs') -arch $Arch `
     -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext `
     -d "Version=$MsiVersion" -d "BinDir=$Stage" -d "IconPath=$(Join-Path $Root 'assets\app-icon\iridium-docs.ico')" `
     -d "LicenseRtf=$LicenseRtf" `
@@ -187,8 +187,8 @@ Compress-Archive -Path $Portable -DestinationPath $Zip
 # here; .github/workflows/windows-arm64.yml installs and runs it on ARM64 instead.
 $HostArch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
 if ($Arch -ne 'arm64' -or $HostArch -eq 'arm64') {
-  Invoke-Native 'iridium docs-cli --version' { & (Join-Path $Stage 'iridium docs-cli.exe') --version }
+  Invoke-Native 'iridium-docs-cli --version' { & (Join-Path $Stage 'iridium-docs-cli.exe') --version }
 } else {
-  Write-Output "skipping iridium docs-cli --version: an $Arch build doesn't run on this $HostArch machine"
+  Write-Output "skipping iridium-docs-cli --version: an $Arch build doesn't run on this $HostArch machine"
 }
 Get-Item $Msi, $Zip | Format-Table Name, Length
