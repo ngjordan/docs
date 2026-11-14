@@ -224,8 +224,17 @@ pub fn specs() -> Vec<CommandSpec> {
         })
         .params(r#"{"preset"?: "topLeft|topCenter|topRight|middleLeft|middleCenter|middleRight|bottomLeft|bottomCenter|bottomRight", "x"?: pt, "y"?: pt}"#)
         .when(has_movable),
-        CommandSpec::new("arrange.bringForward", "Bring Forward", "Layout › Arrange", |s, _| with_float(s, |f| f.wrap = Wrap::InFrontOfText)).when(has_movable),
-        CommandSpec::new("arrange.sendBackward", "Send Backward", "Layout › Arrange", |s, _| with_float(s, |f| f.wrap = Wrap::BehindText)).when(has_movable),
+        CommandSpec::new("arrange.bringForward", "Bring Forward", "Layout › Arrange", |s, _| {
+            let z = all_objects(s).iter().filter_map(|(_, o)| o.frame().map(|(_, _, f)| f.z)).max().unwrap_or(0) + 1;
+            with_float(s, |f| (f.wrap, f.z) = (Wrap::InFrontOfText, z))
+        })
+        .when(has_movable),
+        CommandSpec::new("arrange.sendBackward", "Send Backward", "Layout › Arrange", |s, _| {
+            // ponytail: stops at 1 (0 = unordered); renumber the others when objects pile up there.
+            let z = all_objects(s).iter().filter_map(|(_, o)| o.frame().map(|(_, _, f)| f.z)).filter(|&z| z > 0).min().map_or(1, |m| m.saturating_sub(1).max(1));
+            with_float(s, |f| (f.wrap, f.z) = (Wrap::BehindText, z))
+        })
+        .when(has_movable),
         CommandSpec::new("arrange.align", "Align", "Layout › Arrange", |s, v| {
             let h = p::str(v, "value").unwrap_or("center").to_string();
             let tw = crate::cmd::page::sect(s).text_width();

@@ -1278,3 +1278,22 @@ fn only_ink_members_pin_a_group() {
     }
     assert!(!holds_ink(&group), "a group of charts is not pinned");
 }
+
+/// Bring Forward / Send Backward order floating objects among themselves, not only set the wrap.
+#[test]
+fn bring_forward_and_send_backward_stack_floating_objects() {
+    let mut s = Session::new(iridium_docs_doc::Document::new());
+    s.run("text.insert", &json!({"text": "x"})).unwrap();
+    s.run("insert.shape", &json!({"kind": "rectangle"})).unwrap();
+    s.run("insert.shape", &json!({"kind": "rectangle"})).unwrap();
+    let zs = |s: &Session| super::select::all_objects(s).iter().map(|(_, o)| o.frame().unwrap().2.z).collect::<Vec<_>>();
+    s.run("arrange.bringForward", &json!({})).unwrap();
+    let a = zs(&s);
+    let top = *a.iter().max().unwrap();
+    assert!(top > 0 && a.iter().filter(|&&z| z == top).count() == 1, "{a:?}");
+    s.run("arrange.sendBackward", &json!({})).unwrap();
+    let b = zs(&s);
+    let sel = super::select::selected(&s).unwrap().1.frame().unwrap().2.z;
+    assert!(b.iter().filter(|&&z| z > 0).all(|&z| z >= sel), "{b:?}");
+    assert_eq!(super::select::selected(&s).unwrap().1.frame().unwrap().2.wrap, Wrap::BehindText);
+}
