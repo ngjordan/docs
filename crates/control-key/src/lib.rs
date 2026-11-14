@@ -63,7 +63,7 @@ mod tests {
         assert_eq!(parse_instance_id("instance-id=a b\n"), None);
         assert_eq!(parse_instance_id("instance-id=..\n"), None);
         assert_eq!(parse_instance_id("instance-id=\n"), None);
-        assert_eq!(parse_instance_id("app=ph.docs\n"), None);
+        assert_eq!(parse_instance_id("app=ph.iridium.docs\n"), None);
     }
 
     #[test]

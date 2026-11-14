@@ -31,7 +31,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUNDLE_ID: ph.docs
+  BUNDLE_ID: ph.iridium.docs
   TEAM_ID: 5JY6QC2345
   SCHEME_NAME: IridiumDocs
   # The profile's NAME (not its bundle id): Xcode matches

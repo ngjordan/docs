@@ -8,7 +8,7 @@ required substitution did not apply.
 Naming:
   product name  : Docs  -> Docs
   binary/app id : iridium-docs   -> iridium-docs
-  reverse-DNS id: ai.storyteller.iridium-docs -> ph.docs
+  reverse-DNS id: ai.storyteller.iridium-docs -> ph.iridium.docs
   settings dir  : iridium-docs   -> iridium-docs
   accent colour : #3B5BDB     -> #0B6E4F  (Iridium green-teal)
 """
@@ -120,11 +120,11 @@ sub_regex(r"crates/engine/src/", r'"Docs User"', '"Docs User"',
 
 # ---------------------------------------------------------------- 3. app id / paths
 sub_regex("crates/ui-egui/src/i18n/tests.rs",
-          r"ai\.storyteller\.iridium-docs", "ph.docs", note="app id in i18n test")
+          r"ai\.storyteller\.iridium-docs", "ph.iridium.docs", note="app id in i18n test")
 sub_regex("crates/control-key/src/lib.rs",
-          r"ai\.storyteller\.iridium-docs", "ph.docs", note="app id in control-key test")
+          r"ai\.storyteller\.iridium-docs", "ph.iridium.docs", note="app id in control-key test")
 sub_regex("apps/iridium-docs/src/default_apps.rs",
-          r"ai\.storyteller\.iridium-docs", "ph.docs", note="desktop entry id")
+          r"ai\.storyteller\.iridium-docs", "ph.iridium.docs", note="desktop entry id")
 
 # ---------------------------------------------------------------- 4. settings dir
 sub("crates/control-key/src/lib.rs",
@@ -151,11 +151,11 @@ sub_regex("crates/control-key/src/lib.rs",
 # The PNG files are renamed below; the include_bytes! paths must follow.
 sub_regex("crates/ui-egui/src/lib.rs",
           r"assets/app-icon/hicolor/128x128/apps/ai\.storyteller\.iridium-docs\.png",
-          "assets/app-icon/hicolor/128x128/apps/ph.docs.png",
+          "assets/app-icon/hicolor/128x128/apps/ph.iridium.docs.png",
           note="icon path (ui-egui)")
 sub_regex("apps/iridium-docs/src/main.rs",
           r"assets/app-icon/hicolor/256x256/apps/ai\.storyteller\.iridium-docs\.png",
-          "assets/app-icon/hicolor/256x256/apps/ph.docs.png",
+          "assets/app-icon/hicolor/256x256/apps/ph.iridium.docs.png",
           note="icon path (desktop)")
 # The desktop-file path in default_apps.rs is covered by the app-id rename above.
 # (Keep this rule non-fatal so the script stays idempotent on re-runs.)
@@ -219,7 +219,7 @@ CHANGES.append(("assets/app-icon/iridium-docs.svg", "upstream placeholder", "Doc
 HIC = ICON_DIR / "hicolor"
 for p in sorted(HIC.rglob("ai.storyteller.iridium-docs.*")):
     p.unlink()
-    CHANGES.append((str(p.relative_to(ROOT)), "upstream icon", "removed", 1, "renamed to ph.docs"))
+    CHANGES.append((str(p.relative_to(ROOT)), "upstream icon", "removed", 1, "renamed to ph.iridium.docs"))
 
 # ---------------------------------------------------------------- 9. summary
 print(f"{'FILE':62s} {'N':>3s}  CHANGE")

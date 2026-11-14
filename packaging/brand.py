@@ -49,7 +49,7 @@ TEXT_SUFFIXES = {
 # ph.iridium.cad.png). Those must not move.
 #
 # The files are found by GLOB, not by a hardcoded path: the packaging files are
-# themselves named after the app id (ph.docs.desktop), so a hardcoded path
+# themselves named after the app id (ph.iridium.docs.desktop), so a hardcoded path
 # would stop matching after the first rebrand and the rule would silently skip them.
 APP_ID_GLOBS = [
     "packaging/linux/*.desktop",
@@ -178,13 +178,13 @@ def find_current_app_id(brand):
     The id is whatever the last rebrand left behind, so it is read from the files
     that carry it rather than hardcoded. Several sources are consulted, because
     different files spell the id differently: main.rs carries the bare id
-    (ph.docs), the desktop entry is named with the id plus a suffix
-    (ph.docs.desktop), and the icons are named with the id plus .png.
+    (ph.iridium.docs), the desktop entry is named with the id plus a suffix
+    (ph.iridium.docs.desktop), and the icons are named with the id plus .png.
 
     The desktop-entry name is preferred: it is the form that has the fewest other
     spellings to reconcile, and it is the file that gets renamed.
     """
-    # The desktop entry file name: ph.docs.desktop -> ph.docs
+    # The desktop entry file name: ph.iridium.docs.desktop -> ph.iridium.docs
     for p in sorted((ROOT / "packaging" / "linux").glob("*.desktop")):
         stem = p.stem
         if stem.endswith(".desktop"):
@@ -208,7 +208,7 @@ def find_current_app_id(brand):
 def rename_id_files(stale_ids, app_id, check_only=False):
     """Rename the packaging files that are named after the app id.
 
-    ph.docs.desktop -> com.acme.word.desktop, and so on. Without this the
+    ph.iridium.docs.desktop -> com.acme.word.desktop, and so on. Without this the
     next run's glob would not find the file and the id inside it would freeze.
     """
     if not app_id:

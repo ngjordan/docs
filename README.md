@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/app-icon/hicolor/256x256/apps/ph.docs.png" width="128" height="128" alt="Docs icon: a white document sheet with a green I on a green tile">
+  <img src="assets/app-icon/hicolor/256x256/apps/ph.iridium.docs.png" width="128" height="128" alt="Docs icon: a white document sheet with a green I on a green tile">
 </p>
 
 <h1 align="center">Docs</h1>
@@ -337,7 +337,7 @@ MCP.
 | | App | What it's for | Code |
 |:-:|---|---|---|
 | <img src="https://raw.githubusercontent.com/ngjordan/sheets/main/assets/app-icon/hicolor/64x64/apps/ph.sheets.png" alt="" width="32" height="32"> | **Sheets** | Spreadsheets and data | [GitHub](https://github.com/ngjordan/sheets) |
-| <img src="https://raw.githubusercontent.com/ngjordan/docs/main/assets/app-icon/hicolor/64x64/apps/ph.docs.png" alt="" width="32" height="32"> | **Docs** | Word processing and documents | [GitHub](https://github.com/ngjordan/docs) |
+| <img src="https://raw.githubusercontent.com/ngjordan/docs/main/assets/app-icon/hicolor/64x64/apps/ph.iridium.docs.png" alt="" width="32" height="32"> | **Docs** | Word processing and documents | [GitHub](https://github.com/ngjordan/docs) |
 | <img src="https://raw.githubusercontent.com/ngjordan/cad/main/assets/app-icon/hicolor/64x64/apps/ph.cad.png" alt="" width="32" height="32"> | **CAD** | Computer-aided design and drafting | [GitHub](https://github.com/ngjordan/cad) |
 | <img src="https://raw.githubusercontent.com/ngjordan/decks/main/assets/app-icon/hicolor/64x64/apps/ph.decks.png" alt="" width="32" height="32"> | **Decks** | Presentations and slide shows | [GitHub](https://github.com/ngjordan/decks) |
 | <img src="https://raw.githubusercontent.com/ngjordan/pdf/main/assets/app-icon/hicolor/64x64/apps/ph.pdf.png" alt="" width="32" height="32"> | **PDF** | Reading, organizing and protecting PDF files | [GitHub](https://github.com/ngjordan/pdf) |
@@ -374,7 +374,7 @@ part of this repository and WordCraft, under [LICENSE-MIT](LICENSE-MIT) and [LIC
 Forks and modified versions must remove them.
 
 <p align="center">
-  <a href="https://iridium.ph"><img alt="Iridium" src="assets/app-icon/hicolor/64x64/apps/ph.docs.png" width="28"></a><br>
+  <a href="https://iridium.ph"><img alt="Iridium" src="assets/app-icon/hicolor/64x64/apps/ph.iridium.docs.png" width="28"></a><br>
   <sub>Built by <a href="https://iridium.ph">Iridium Technologies, Inc.</a>, from the
   <a href="https://github.com/ngjordan/docs">upstream project</a>.</sub>
 </p>

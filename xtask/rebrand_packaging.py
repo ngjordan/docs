@@ -55,20 +55,20 @@ def sub_regex(rel, pattern, new, count=None, required=True, note=""):
 
 
 # ---- 1. Linux desktop entry -------------------------------------------------
-sub("packaging/linux/ph.docs.desktop",
-    "Icon=ai.storyteller.iridium-docs", "Icon=ph.docs", required=False, note="desktop Icon")
-sub("packaging/linux/ph.docs.desktop",
-    "StartupWMClass=ai.storyteller.iridium-docs", "StartupWMClass=ph.docs",
+sub("packaging/linux/ph.iridium.docs.desktop",
+    "Icon=ai.storyteller.iridium-docs", "Icon=ph.iridium.docs", required=False, note="desktop Icon")
+sub("packaging/linux/ph.iridium.docs.desktop",
+    "StartupWMClass=ai.storyteller.iridium-docs", "StartupWMClass=ph.iridium.docs",
     required=False, note="desktop StartupWMClass")
-sub("packaging/linux/ph.docs.desktop",
+sub("packaging/linux/ph.iridium.docs.desktop",
     "Name=Docs", "Name=Docs", required=False, note="desktop Name")
-sub("packaging/linux/ph.docs.desktop",
+sub("packaging/linux/ph.iridium.docs.desktop",
     "Comment=Write and design documents; open and save Word files",
     "Comment=Write and design documents; open and save Word files", required=False, note="desktop Comment")
 
 # ---- 2. Linux packaging scripts ---------------------------------------------
 for f in ["packaging/linux/package.sh", "packaging/linux/flatpak-bundle.sh"]:
-    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.docs", required=False, note="app id")
+    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.iridium.docs", required=False, note="app id")
     sub_regex(f, r"IRIDIUM_DOCS_MAINTAINER", "IRIDIUM_DOCS_MAINTAINER",
               required=False, note="maintainer var")
     sub_regex(f, r'Docs maintainers <iridium-docs@storyteller\.ai>',
@@ -80,12 +80,12 @@ sub("packaging/linux/nfpm.yaml",
     "homepage: https://iridium.ph", required=False, note="pkg homepage")
 
 # ---- 3. flatpak manifests ---------------------------------------------------
-for f in ["packaging/linux/flatpak/ph.docs.yml",
-          "packaging/linux/flatpak/ph.docs.bundle.yml"]:
-    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.docs", required=False, note="app id")
+for f in ["packaging/linux/flatpak/ph.iridium.docs.yml",
+          "packaging/linux/flatpak/ph.iridium.docs.bundle.yml"]:
+    sub_regex(f, r"ai\.storyteller\.iridium-docs", "ph.iridium.docs", required=False, note="app id")
 
 # ---- 4. icon pipeline -------------------------------------------------------
-sub("packaging/icons.sh", 'ID="ai.storyteller.iridium-docs"', 'ID="ph.docs"',
+sub("packaging/icons.sh", 'ID="ai.storyteller.iridium-docs"', 'ID="ph.iridium.docs"',
     required=False, note="icon app id")
 
 # ---- 5. macOS packaging -----------------------------------------------------

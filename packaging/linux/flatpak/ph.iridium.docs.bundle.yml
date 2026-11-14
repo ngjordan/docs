@@ -9,9 +9,9 @@
 # Wayland, xkbcommon and Vulkan at runtime; the freedesktop runtime has all of them, and the
 # GPU driver comes from its org.freedesktop.Platform.GL extension.
 #
-# ph.docs.yml (same directory) is the from-source manifest for Flathub. Keep
+# ph.iridium.docs.yml (same directory) is the from-source manifest for Flathub. Keep
 # runtime, runtime-version, sdk and finish-args identical in both (packaging-lint checks this).
-id: ph.docs
+id: ph.iridium.docs
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
@@ -98,10 +98,10 @@ modules:
     build-commands:
       - install -Dm755 bin/iridium-docs /app/bin/iridium-docs
       - install -Dm755 bin/iridium-docs-cli /app/bin/iridium-docs-cli
-      - install -Dm644 share/applications/ph.docs.desktop /app/share/applications/ph.docs.desktop
-      - install -Dm644 share/mime/packages/ph.docs.xml /app/share/mime/packages/ph.docs.xml
+      - install -Dm644 share/applications/ph.iridium.docs.desktop /app/share/applications/ph.iridium.docs.desktop
+      - install -Dm644 share/mime/packages/ph.iridium.docs.xml /app/share/mime/packages/ph.iridium.docs.xml
       # Already has the release's version and date substituted by package.sh.
-      - install -Dm644 share/metainfo/ph.docs.metainfo.xml /app/share/metainfo/ph.docs.metainfo.xml
+      - install -Dm644 share/metainfo/ph.iridium.docs.metainfo.xml /app/share/metainfo/ph.iridium.docs.metainfo.xml
       # Docs include the licences of the embedded craft-fonts (OFL-*.txt).
       - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/iridium-docs /app/share/doc/
     sources:

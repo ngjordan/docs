@@ -4,13 +4,13 @@
 #
 #   curl -fsSLO https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/master/cargo/flatpak-cargo-generator.py
 #   python3 flatpak-cargo-generator.py Cargo.lock -o packaging/linux/flatpak/cargo-sources.json
-#   flatpak-builder --user --install --force-clean build-flatpak packaging/linux/flatpak/ph.docs.yml
-#   flatpak run ph.docs
+#   flatpak-builder --user --install --force-clean build-flatpak packaging/linux/flatpak/ph.iridium.docs.yml
+#   flatpak run ph.iridium.docs
 #
 # For Flathub, replace the `dir` source with a `git` source pinned to a release tag and commit.
-# The release's .flatpak bundles come from ph.docs.bundle.yml instead (see there);
+# The release's .flatpak bundles come from ph.iridium.docs.bundle.yml instead (see there);
 # keep runtime, runtime-version, sdk and finish-args identical in both (packaging-lint checks this).
-id: ph.docs
+id: ph.iridium.docs
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
@@ -105,14 +105,14 @@ modules:
       - install -Dm755 target/release/iridium-docs /app/bin/iridium-docs
       - install -Dm644 NOTICE /app/share/doc/iridium-docs/NOTICE
       - install -Dm755 target/release/iridium-docs-cli /app/bin/iridium-docs-cli
-      - install -Dm644 packaging/linux/ph.docs.desktop /app/share/applications/ph.docs.desktop
-      - install -Dm644 packaging/linux/ph.docs.mime.xml /app/share/mime/packages/ph.docs.xml
+      - install -Dm644 packaging/linux/ph.iridium.docs.desktop /app/share/applications/ph.iridium.docs.desktop
+      - install -Dm644 packaging/linux/ph.iridium.docs.mime.xml /app/share/mime/packages/ph.iridium.docs.xml
       - mkdir -p /app/share/icons && cp -R assets/app-icon/hicolor /app/share/icons/
       - >-
         version=$(awk '/^\[/{p=($0=="[workspace.package]");next} p&&$1=="version"{gsub(/[" ]/,"",$3);print $3;exit}' Cargo.toml);
         install -d /app/share/metainfo;
         sed -e "s/@VERSION@/$version/" -e "s/@DATE@/$(date -u +%Y-%m-%d)/"
-        packaging/linux/ph.docs.metainfo.xml.in > /app/share/metainfo/ph.docs.metainfo.xml
+        packaging/linux/ph.iridium.docs.metainfo.xml.in > /app/share/metainfo/ph.iridium.docs.metainfo.xml
     sources:
       - type: dir
         path: ../../..

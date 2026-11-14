@@ -13,10 +13,10 @@ pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
     name: "Docs",
     tagline: "Writing and document design",
     repo: "ngjordan/docs",
-    bundle: "ph.docs",
+    bundle: "ph.iridium.docs",
     former_ids: &[],
     former_names: &[],
-    icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ph.docs.png")),
+    icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ph.iridium.docs.png")),
     accent: Some([0x0b, 0x6e, 0x4f]),
     developer: "Iridium Technologies, Inc.",
 };

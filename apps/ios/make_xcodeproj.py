@@ -20,7 +20,7 @@ import uuid
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "apps/ios")
 PROJ = ROOT / "IridiumDocs.xcodeproj"
-BUNDLE_ID = "ph.docs"
+BUNDLE_ID = "ph.iridium.docs"
 TEAM_ID = "5JY6QC2345"
 # The oldest iOS we support. Apple's SDK requirement is about the SDK a build
 # is compiled against, not this: Xcode 26 + the iOS 26 SDK can still deploy to
