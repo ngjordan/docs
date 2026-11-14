@@ -19,8 +19,8 @@ agent control. This page is the summary; the assessment is
 
 | Number | Value | Kind |
 | --- | --- | --- |
-| Ribbon/menu catalog coverage | **493 / 508 (97.0%)** | measured (`cargo xtask parity` → [`docs/parity-checklist.md`](docs/parity-checklist.md)) |
-| **Feature breadth** (weighted, incl. dialog options, styles, languages beyond the ribbon) | **~80%** | estimated |
+| Ribbon/menu catalog coverage |**[parity/parity.md](parity/parity.md)**| measured (`cargo xtask parity` → [`docs/parity-checklist.md`](docs/parity-checklist.md)) |
+| **Feature breadth** (weighted, incl. dialog options, styles, languages beyond the ribbon) |**[parity/parity.md](parity/parity.md)**| estimated |
 | **Ready for real work** (full target) | **~60%** (55–63%) | estimated, additive weighted sum over the dimensions |
 | **Mainstream practitioner** | **~55%** | estimated: weekly-work depth × discounts for interaction (×0.93), stability (×0.90), file exchange (×0.90) |
 | **Essentials user** | **~63%** | estimated: core-feature depth × discounts for launch (×0.90), discoverability (×0.95), opening received files (×0.92) |

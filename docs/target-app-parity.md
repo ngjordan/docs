@@ -15,8 +15,8 @@ Labels → New Document with one label per recipient continues across sheets for
 
 | Number | Value | Kind |
 |---|---|---|
-| Ribbon/menu catalog coverage | **487 / 502 (97.0%)** | **measured**: `cargo xtask parity` (re-derived this pass from `crates/engine/src/catalog.rs` against every `CommandSpec::new` id in the source; identical to the checked-in `parity-checklist.md`) |
-| Feature breadth (weighted, beyond the ribbon: dialog options, citation styles, proofing languages, chart types, UI languages) | **~80%** | estimated |
+| Ribbon/menu catalog coverage |**[parity/parity.md](../parity/parity.md)**| **measured**: `cargo xtask parity` (re-derived this pass from `crates/engine/src/catalog.rs` against every `CommandSpec::new` id in the source; identical to the checked-in `parity-checklist.md`) |
+| Feature breadth (weighted, beyond the ribbon: dialog options, citation styles, proofing languages, chart types, UI languages) |**[parity/parity.md](../parity/parity.md)**| estimated |
 | Feature depth (weighted by use, table below) | **~68%** | estimated |
 | **Ready for real work** (full target) | **~60%** (range 55–63%) | estimated: weighted sum over the dimension table ([By dimension](#by-dimension)) |
 | **Mainstream practitioner** | **~55%** | estimated, same method |
