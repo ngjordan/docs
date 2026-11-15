@@ -159,9 +159,20 @@ pub fn show(app: &mut WordApp, ctx: &egui::Context) {
         close |= crate::window_close::show(ctx, &shown.response, &Tokens::get(ctx));
     }
     if close {
+        // A modal layer can be raised within a frame but never lowered, so it
+        // is released here, in the frame the dialog goes: set it while the
+        // dialog is closing and this release would be refused. Left alone it
+        // lingers for a frame, and the key after the one that closed the
+        // dialog is swallowed with it.
+        ctx.memory_mut(|m| m.set_modal_layer(egui::LayerId::background()));
         app.canvas.want_focus = true;
     } else {
         app.dialog = Some(d);
+        // A dialog holds the keyboard: Tab must not walk out into the ribbon
+        // behind it.
+        if let Some(shown) = &shown {
+            ctx.memory_mut(|m| m.set_modal_layer(shown.response.layer_id));
+        }
     }
 }
 
