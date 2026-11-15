@@ -62,12 +62,10 @@ pub(super) fn bookmark(app: &mut WordApp, ui: &mut Ui, name: &mut String, by_loc
         });
     });
     ui.add_space(6.0);
-    ui.horizontal_top(|ui| {
+    ui.horizontal(|ui| {
         ui.label(tl!("Sort by:"));
-        ui.vertical(|ui| {
-            ui.radio_value(by_location, false, tl!("Name"));
-            ui.radio_value(by_location, true, tl!("Location"));
-        });
+        ui.radio_value(by_location, false, tl!("Name"));
+        ui.radio_value(by_location, true, tl!("Location"));
     });
     ui.checkbox(hidden, tl!("Hidden bookmarks"));
     let enter = ui.input(|i| i.key_pressed(egui::Key::Enter));

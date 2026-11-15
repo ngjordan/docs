@@ -28,6 +28,17 @@ pub(super) fn nav(app: &mut WordApp, ui: &mut Ui) {
             app.session.find.results.clear();
         }
     }
+    // ↑/↓ step through the results, as Word's navigation pane does. Only
+    // while the search box has the focus: the arrow keys belong to the
+    // document everywhere else.
+    if r.has_focus() && !q.is_empty() {
+        let (up, down) =
+            ui.input_mut(|i| (i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowUp), i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowDown)));
+        if up || down {
+            app.ui.nav_tab = "results".into();
+            let _ = app.run(if down { "edit.findNext" } else { "edit.findPrevious" }, json!({"text": q}));
+        }
+    }
     ui.add_space(4.0);
     ui.horizontal_wrapped(|ui| {
         for (k, l) in [("headings", "Headings"), ("pages", "Pages"), ("results", "Results")] {
@@ -49,7 +60,16 @@ pub(super) fn nav(app: &mut WordApp, ui: &mut Ui) {
         }
         "results" => {
             let results = app.session.find.results.clone();
-            ui.label(egui::RichText::new(format!("{} results", results.len())).small().weak());
+            let n = results.len();
+            let text = if n == 0 {
+                crate::i18n::fmt(tl!("{count} results"), &[("count", "0")])
+            } else {
+                crate::i18n::fmt(
+                    tl!("Result {index} of {count}"),
+                    &[("index", &(app.session.find.current + 1).to_string()), ("count", &n.to_string())],
+                )
+            };
+            ui.label(egui::RichText::new(text).small().weak());
             for (a, b) in results.iter().take(500) {
                 let Some(p) = app.session.doc.para_at(a) else { continue };
                 let from = p.clamp(a.off.saturating_sub(30));

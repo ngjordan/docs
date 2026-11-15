@@ -114,15 +114,15 @@ impl ControlForm {
 pub fn body(app: &mut WordApp, ui: &mut Ui, f: &mut ControlForm) -> bool {
     ui.set_width(420.0);
     egui::Grid::new("cc_props").num_columns(2).spacing([10.0, 6.0]).show(ui, |ui| {
-        ui.label(tl!("Title"));
-        ui.add(egui::TextEdit::singleline(&mut f.title).desired_width(280.0));
+        let l = ui.label(tl!("Title"));
+        ui.add(egui::TextEdit::singleline(&mut f.title).desired_width(280.0)).labelled_by(l.id);
         ui.end_row();
-        ui.label(tl!("Tag"));
-        ui.add(egui::TextEdit::singleline(&mut f.tag).desired_width(280.0));
+        let l = ui.label(tl!("Tag"));
+        ui.add(egui::TextEdit::singleline(&mut f.tag).desired_width(280.0)).labelled_by(l.id);
         ui.end_row();
         if !matches!(f.kind.as_str(), "checkBox" | "picture" | "repeatingSection" | "repeatingSectionItem") {
-            ui.label(tl!("Placeholder text"));
-            ui.add(egui::TextEdit::singleline(&mut f.placeholder).desired_width(280.0));
+            let l = ui.label(tl!("Placeholder text"));
+            ui.add(egui::TextEdit::singleline(&mut f.placeholder).desired_width(280.0)).labelled_by(l.id);
             ui.end_row();
         }
     });
@@ -152,10 +152,10 @@ pub fn body(app: &mut WordApp, ui: &mut Ui, f: &mut ControlForm) -> bool {
         "checkBox" => {
             ui.add_space(6.0);
             ui.horizontal(|ui| {
-                ui.label(tl!("Checked symbol"));
-                ui.add(egui::TextEdit::singleline(&mut f.checked_symbol).desired_width(40.0));
-                ui.label(tl!("Unchecked symbol"));
-                ui.add(egui::TextEdit::singleline(&mut f.unchecked_symbol).desired_width(40.0));
+                let l = ui.label(tl!("Checked symbol"));
+                ui.add(egui::TextEdit::singleline(&mut f.checked_symbol).desired_width(40.0)).labelled_by(l.id);
+                let l = ui.label(tl!("Unchecked symbol"));
+                ui.add(egui::TextEdit::singleline(&mut f.unchecked_symbol).desired_width(40.0)).labelled_by(l.id);
             });
         }
         _ => {}
@@ -165,11 +165,11 @@ pub fn body(app: &mut WordApp, ui: &mut Ui, f: &mut ControlForm) -> bool {
     ui.horizontal(|ui| {
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             // #1906: no forced label color; the theme button text reads on the theme fill.
-            let (okb, cancelb) = crate::dialogs::ok_cancel_responses(ui, |ui| ui.button(tl!("OK")), tl!("Cancel"));
+            let (okb, cancelb) = crate::dialogs::ok_cancel_responses(ui, |ui| ui.add(crate::widgets::primary_button(ui, tl!("OK"))), tl!("Cancel"));
             if cancelb.clicked() || crate::dialogs::cancel_key_pressed(ui) {
                 done = true;
             }
-            if okb.clicked() {
+            if okb.clicked() || ui.input(|i| i.key_pressed(egui::Key::Enter)) {
                 match app.run("developer.properties", f.params()) {
                     Ok(_) => done = true,
                     Err(e) => app.status(e),

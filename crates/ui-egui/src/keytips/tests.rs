@@ -623,3 +623,10 @@ fn closing_the_backstage_ends_its_keytips() {
     assert!(!h.state().ui.backstage);
     assert_eq!(h.state().session.doc.plain_text(iridium_docs_doc::StoryRef::Body).trim(), "c", "C is typed");
 }
+
+#[test]
+fn keytip_on_an_unregistered_command_does_nothing() {
+    let mut a = app();
+    Target::Cmd { id: "tools.dictate", params: serde_json::json!({}) }.run(&mut a);
+    assert!(a.status_msg.is_none());
+}

@@ -90,7 +90,7 @@ pub fn alt_text(app: &mut WordApp, ui: &mut Ui) {
         let decorative = obj.is_decorative();
         ui.label(egui::RichText::new(tl!("Describe what this object shows, for people who can't see it.")).weak());
         ui.add_space(4.0);
-        if let Some(text) = draft_box(ui, ("alt_obj", &pos), obj.alt_text(), !decorative, true)
+        if let Some(text) = draft_box(ui, ("alt_obj", &pos), obj.alt_text(), !decorative, true, None)
             && still_selected(app, &pos)
         {
             let _ = app.run("object.altText", json!({"text": text}));
@@ -111,13 +111,13 @@ pub fn alt_text(app: &mut WordApp, ui: &mut Ui) {
     if let Some((tp, caption, description)) = table {
         ui.label(egui::RichText::new(tl!("Describe what this table shows, for people who can't see it.")).weak());
         ui.add_space(4.0);
-        ui.label(tl!("Title:"));
-        if let Some(t) = draft_box(ui, ("alt_table_title", &tp), caption.as_deref().unwrap_or(""), true, false) {
+        let title_label = ui.label(tl!("Title:"));
+        if let Some(t) = draft_box(ui, ("alt_table_title", &tp), caption.as_deref().unwrap_or(""), true, false, Some(title_label.id)) {
             let _ = app.run("table.altText", json!({"title": t}));
         }
         ui.add_space(4.0);
-        ui.label(tl!("Description:"));
-        if let Some(t) = draft_box(ui, ("alt_table_text", &tp), description.as_deref().unwrap_or(""), true, true) {
+        let text_label = ui.label(tl!("Description:"));
+        if let Some(t) = draft_box(ui, ("alt_table_text", &tp), description.as_deref().unwrap_or(""), true, true, Some(text_label.id)) {
             let _ = app.run("table.altText", json!({"text": t}));
         }
         return;
@@ -131,11 +131,21 @@ fn still_selected(app: &WordApp, pos: &Pos) -> bool {
 
 /// A text box editing `current`; the draft lives in egui memory while it has focus (frame-local
 /// buffers lose keystrokes). Returns the new text when editing ends with a change.
-fn draft_box(ui: &mut Ui, key: impl std::hash::Hash + std::fmt::Debug, current: &str, enabled: bool, multiline: bool) -> Option<String> {
+fn draft_box(
+    ui: &mut Ui,
+    key: impl std::hash::Hash + std::fmt::Debug,
+    current: &str,
+    enabled: bool,
+    multiline: bool,
+    label: Option<egui::Id>,
+) -> Option<String> {
     let key = egui::Id::unique(key);
     let mut text = ui.data(|d| d.get_temp::<String>(key)).unwrap_or_else(|| current.to_string());
     let edit = if multiline { egui::TextEdit::multiline(&mut text).desired_rows(5) } else { egui::TextEdit::singleline(&mut text) };
-    let r = ui.add_enabled(enabled, edit.desired_width(f32::INFINITY));
+    let mut r = ui.add_enabled(enabled, edit.desired_width(f32::INFINITY));
+    if let Some(label) = label {
+        r = r.labelled_by(label);
+    }
     if r.changed() {
         ui.data_mut(|d| d.insert_temp(key, text.clone()));
     }

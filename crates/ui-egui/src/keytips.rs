@@ -64,7 +64,9 @@ impl Target {
                 let _ = app.run("ui.tab", serde_json::json!({ "tab": tab }));
             }
             Target::Cmd { id, params } => {
-                let _ = app.run(id, params);
+                if crate::widgets::enabled(app, id) {
+                    let _ = app.run(id, params);
+                }
             }
             Target::Dialog { name } => {
                 let _ = app.run("ui.dialog", serde_json::json!({ "name": name }));

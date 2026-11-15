@@ -97,22 +97,6 @@ fn choice(ui: &mut Ui, salt: &str, current: &mut String, items: &[(&str, &str)],
     changed
 }
 
-/// A choice list named without a visible label beside it (its heading names a group of choices).
-fn choice_named(ui: &mut Ui, salt: &str, current: &mut String, items: &[(&str, &str)], name: &str) -> bool {
-    let shown = items.iter().find(|(id, _)| *id == current.as_str()).map_or("", |(_, l)| *l);
-    let mut changed = false;
-    let combo = craft_ui::ComboBox::from_id_salt(salt).width(260.0).selected_text(tl!(shown)).show_ui(ui, |ui| {
-        for (id, item) in items {
-            if ui.selectable_label(current == id, tl!(item)).clicked() && current != id {
-                *current = (*id).to_string();
-                changed = true;
-            }
-        }
-    });
-    combo.response.accessible_name(name);
-    changed
-}
-
 /// The output layout, kept while the document is unchanged (laying out every frame would be slow).
 fn layout_of(app: &WordApp, ctx: &egui::Context) -> Arc<DocLayout> {
     let id = egui::Id::unique("print_page_layout");
@@ -182,11 +166,6 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                     app.ui.print.copies = app.printing.settings.copies;
                 } else if hook {
                     ui.label(tl!("Send the document straight to the system print dialog, or save a copy in another format below."));
-                    ui.label(
-                        egui::RichText::new(tl!("The printer, two-sided printing and pages per sheet are chosen in that dialog.")).color(t.text_dim),
-                    );
-                } else {
-                    ui.label(tl!("Save a copy in another format. Printing goes through a PDF you can print from any viewer."));
                 }
                 if ui
                     .add(egui::Button::new(egui::RichText::new(tl!("Save these pages as PDF…")).font(medium(13.5))).min_size(vec2(320.0, 34.0)))
@@ -227,7 +206,8 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                     )
                     .labelled_by(pages_label.id);
                 }
-                choice_named(ui, "print_parity", &mut app.ui.print.parity, &PARITIES, tl!("Pages in the range"));
+                let parity_label = ui.label(egui::RichText::new(tl!("Pages in the range")).font(medium(13.0)));
+                choice(ui, "print_parity", &mut app.ui.print.parity, &PARITIES, &parity_label);
                 let orientation_label = ui.label(egui::RichText::new(tl!("Orientation")).font(medium(13.0)));
                 choice(ui, "print_orientation", &mut app.ui.print.orientation, &ORIENTATIONS, &orientation_label);
                 // Word: Pages per sheet › Scale to paper size. Only the printout changes.
@@ -248,12 +228,11 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                         ui.label(egui::RichText::new(e.to_string()).color(t.red));
                     }
                 }
+                // The export list is the page's way out when the host cannot print,
+                // so it stays on the page either way.
                 ui.add_space(8.0);
                 ui.separator();
                 ui.add_space(4.0);
-                if hook {
-                    ui.label(tl!("Or save a copy in another format:"));
-                }
                 export_formats(app, ui);
             });
         });

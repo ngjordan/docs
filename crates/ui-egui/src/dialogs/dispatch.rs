@@ -377,7 +377,7 @@ fn find_dialog(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
     if replace_mode {
         ui.horizontal(|ui| {
             let replace_label = ui.label(tl!("Replace with:"));
-            if ui.add(egui::TextEdit::singleline(replace).desired_width(228.0)).labelled_by(replace_label.id).gained_focus() {
+            if ui.add(egui::TextEdit::singleline(replace).desired_width(240.0)).labelled_by(replace_label.id).gained_focus() {
                 extra.to_replace = true;
             }
         });
@@ -426,7 +426,8 @@ fn find_dialog(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
     if !replace_mode {
         ui.horizontal(|ui| {
             let lit = app.session.find.highlight;
-            if ui.selectable_label(lit, tl!("Reading Highlight")).clicked() {
+            let mut on = lit;
+            if ui.checkbox(&mut on, tl!("Reading Highlight")).clicked() {
                 let mut v = opts.clone();
                 v["highlight"] = json!(!lit);
                 match app.run("edit.advancedFind", v) {
@@ -442,27 +443,44 @@ fn find_dialog(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
     }
     let mut close = false;
     ui.horizontal(|ui| {
-        if replace_mode {
-            if ui.button(tl!("Replace All")).clicked() {
-                match app.run("edit.replaceAll", opts.clone()) {
-                    Ok(r) => *message = format!("All done. We made {} replacements.", r["replaced"]),
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            if ui.button(tl!("Close")).clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
+                close = true;
+            }
+            // One step per click: `edit.find` would select a match itself, and the step after it skip one.
+            let mut step = None;
+            if ui.button(tl!("Find Next")).clicked() || ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                step = Some("edit.findNext");
+            }
+            if ui.button(tl!("Find Previous")).clicked() {
+                step = Some("edit.findPrevious");
+            }
+            if let Some(cmd) = step {
+                match app.run(cmd, opts.clone()) {
+                    Ok(r) => {
+                        let (n, count) = (r["index"].as_u64().unwrap_or(0) + 1, r["count"].to_string());
+                        *message = crate::i18n::fmt(tl!("Match {index} of {count}"), &[("index", &n.to_string()), ("count", &count)]);
+                    }
                     Err(e) => *message = e,
                 }
             }
-            if ui.button(tl!("Replace")).clicked() {
-                let _ = app.run("edit.replace", opts.clone());
+            if replace_mode {
+                if ui.button(tl!("Replace")).clicked() {
+                    match app.run("edit.replace", opts.clone()) {
+                        Ok(_) => message.clear(),
+                        Err(e) => *message = e,
+                    }
+                }
+                if ui.button(tl!("Replace All")).clicked() {
+                    match app.run("edit.replaceAll", opts.clone()) {
+                        Ok(r) => {
+                            *message = crate::i18n::fmt(tl!("All done. We made {count} replacements."), &[("count", &r["replaced"].to_string())])
+                        }
+                        Err(e) => *message = e,
+                    }
+                }
             }
-        }
-        if ui.button(tl!("Find Next")).clicked() || ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-            // One step per click: `edit.find` would select a match itself, and the step after it skip one.
-            match app.run("edit.findNext", opts.clone()) {
-                Ok(r) => *message = format!("Match {} of {}", r["index"].as_u64().unwrap_or(0) + 1, r["count"]),
-                Err(e) => *message = e,
-            }
-        }
-        if ui.button(tl!("Close")).clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
-            close = true;
-        }
+        });
     });
     close
 }
